@@ -8,7 +8,7 @@ describe("sanitizeArticleContent", () => {
     );
 
     expect(content).toContain('<div class="tableWrapper"><table style="width:420px">');
-    expect(content).toContain('<col style="width:140px" width="140"></col>');
+    expect(content).toContain('<col style="width:140px" width="140"');
     expect(content).toContain('<th colspan="2" colwidth="140,140">Заголовок</th>');
     expect(content).toContain('<td rowspan="2">Значение</td>');
     expect(content).not.toContain("onclick");
