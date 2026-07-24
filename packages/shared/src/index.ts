@@ -183,6 +183,7 @@ export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type UpdateApplicationInput = z.infer<typeof updateApplicationSchema>;
 export type BulkUpdateApplicationsInput = z.infer<typeof bulkUpdateApplicationsSchema>;
+export type ApplicationListQuery = z.infer<typeof applicationListQuerySchema>;
 export type ArticleInput = z.infer<typeof articleInputSchema>;
 export type ProductInput = z.infer<typeof productInputSchema>;
 export type AnalyticsEventInput = z.infer<typeof analyticsEventSchema>;
