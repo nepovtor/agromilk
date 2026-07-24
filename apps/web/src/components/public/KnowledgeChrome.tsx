@@ -38,7 +38,7 @@ export function KnowledgeHeader({ variant }: { variant: KnowledgeLayoutVariant }
     <header className={`${prefix}-header`}>
       <div className={containerClass}>
         <Link href="/" className={`${prefix}-header__logo`} aria-label="Агромилк — на главную">
-          <img src={agromilkAsset("logo-desktop.png")} alt="Агромилк — Свежесть вкуса" />
+          <img src={agromilkAsset("logo-desktop.webp")} alt="Агромилк — Свежесть вкуса" />
         </Link>
         <div className={`${prefix}-header__contacts`}>
           <a className={`${prefix}-header__phone`} href="tel:+375447442338">

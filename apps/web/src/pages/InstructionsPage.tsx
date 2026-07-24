@@ -19,26 +19,26 @@ const instructionPresentationBySlug: Record<string, InstructionPresentation> = {
   "kak-prigotovit-zamenitel-moloka": {
     order: 1,
     title: "Как правильно приготовить заменитель молока",
-    image: agromilkAsset("instruction-prepare-milk.png"),
+    image: agromilkAsset("instruction-prepare-milk.webp"),
     excerpt:
       "Пошаговая инструкция по разделению смеси, выбору темеературы воды и необходимой дозировки",
   },
   "dozirovka-po-vozrastu": {
     order: 2,
     title: "Таблица дозировки по возрасту животного",
-    image: agromilkAsset("instruction-dosage-calf.png"),
+    image: agromilkAsset("instruction-dosage-calf.webp"),
     excerpt: "Рекомендуемые нормы расхода заменителя молока для телят на каждом этапе роста",
   },
   "temperatura-gotovoy-smesi": {
     order: 3,
     title: "Какой должна быть температура готовой смеси",
-    image: agromilkAsset("instruction-temperature.png"),
+    image: agromilkAsset("instruction-temperature.webp"),
     excerpt: "Оптимальная температура воды и готовой смеси для здоровья и хорошего усвоения.",
   },
   "perevod-telenka-na-zcm": {
     order: 4,
     title: "Как переводить теленка на ЗЦМ",
-    image: agromilkAsset("instruction-transition-calves.png"),
+    image: agromilkAsset("instruction-transition-calves.webp"),
     excerpt: "Пошаговая схема перевода теленка с молока или молозива на заменитель молока.",
   },
 };

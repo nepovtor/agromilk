@@ -187,7 +187,7 @@ describe.sequential("critical API scenarios", () => {
         uses: ["Тестовое применение"],
         composition: "Состав",
         preparation: "Приготовление",
-        imageUrl: "/assets/agromilk/product-scene-bag.png",
+        imageUrl: "/assets/agromilk/product-scene-bag.webp",
         status: "draft",
         sortOrder: 1,
         featured: false,

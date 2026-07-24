@@ -22,7 +22,7 @@ export const emptyProductForm: ProductFormValues = {
   usesText: "",
   composition: "",
   preparation: "",
-  imageUrl: "/assets/agromilk/product-scene-bag.png",
+  imageUrl: "/assets/agromilk/product-scene-bag.webp",
   status: "draft",
   sortOrder: 100,
   featured: false,

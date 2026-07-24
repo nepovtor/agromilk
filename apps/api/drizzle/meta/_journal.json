@@ -43,6 +43,13 @@
       "when": 1784839646183,
       "tag": "0005_groovy_shotgun",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1784892909486,
+      "tag": "0006_convert_agromilk_assets_to_webp",
+      "breakpoints": true
     }
   ]
 }

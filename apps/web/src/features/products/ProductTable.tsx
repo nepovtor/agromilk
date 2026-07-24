@@ -73,7 +73,7 @@ export function ProductTable({
               <div className="flex gap-3">
                 <div className="grid size-16 shrink-0 place-items-center rounded-lg bg-slate-50">
                   <img
-                    src={item.imageUrl || "/assets/agromilk/product-scene-bag.png"}
+                    src={item.imageUrl || "/assets/agromilk/product-scene-bag.webp"}
                     alt=""
                     className="max-h-14 max-w-12 object-contain"
                   />

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="apps/web/public/assets/agromilk/logo-desktop.png" alt="Agromilk" width="280">
+  <img src="apps/web/public/assets/agromilk/logo-desktop.webp" alt="Agromilk" width="280">
 </p>
 
 <h1 align="center">Agromilk</h1>

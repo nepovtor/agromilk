@@ -22,7 +22,7 @@ export function PublicLayout({ children, variant = "default" }: PublicLayoutProp
       <header className="agro-public-header">
         <div className="agro-container agro-public-header__inner">
           <Link href="/" className="agro-public-logo" aria-label="Агромилк — на главную">
-            <img src={agromilkAsset("logo-desktop.png")} alt="Агромилк" />
+            <img src={agromilkAsset("logo-desktop.webp")} alt="Агромилк" />
           </Link>
           <nav className="agro-public-nav" aria-label="Основная навигация">
             <Link href="/">Главная</Link>
@@ -36,7 +36,7 @@ export function PublicLayout({ children, variant = "default" }: PublicLayoutProp
       <footer className="agro-public-footer">
         <div className="agro-container agro-public-footer__inner">
           <Link href="/">
-            <img src={agromilkAsset("logo-desktop.png")} alt="Агромилк" />
+            <img src={agromilkAsset("logo-desktop.webp")} alt="Агромилк" />
           </Link>
           <nav>
             <Link href="/instructions">Инструкции</Link>

@@ -36,7 +36,7 @@ const fallbackProducts: ProductRecord[] = [
       "Молочная сыворотка, источники белка и энергии, витаминно-минеральный комплекс. Точные показатели указаны в паспорте качества партии.",
     preparation:
       "Разводить чистой водой согласно инструкции к партии. Использовать свежеприготовленную смесь.",
-    imageUrl: asset("product-scene-bag.png"),
+    imageUrl: asset("product-scene-bag.webp"),
     status: "published",
     sortOrder: 10,
     featured: true,
@@ -58,7 +58,7 @@ const fallbackProducts: ProductRecord[] = [
     composition: "Молочные компоненты, источники белка и жира, витаминно-минеральный комплекс.",
     preparation:
       "Порошок постепенно вносить в воду 45–50 °C. Перед выпаиванием довести смесь до 38–40 °C.",
-    imageUrl: asset("product-scene-bag.png"),
+    imageUrl: asset("product-scene-bag.webp"),
     status: "published",
     sortOrder: 20,
     featured: true,
@@ -75,7 +75,7 @@ const fallbackProducts: ProductRecord[] = [
     uses: ["С 3-й недели жизни", "Добавление в сухой корм КРС"],
     composition: "Молочная основа, растительные белки, жиры, витамины и микроэлементы.",
     preparation: "Смешивать с водой 45–50 °C до однородности. Выпаивать при температуре 38–40 °C.",
-    imageUrl: asset("product-scene-bag.png"),
+    imageUrl: asset("product-scene-bag.webp"),
     status: "published",
     sortOrder: 30,
     featured: false,
@@ -93,7 +93,7 @@ const fallbackProducts: ProductRecord[] = [
     composition: "Молочные и растительные компоненты, источники энергии, витамины и минералы.",
     preparation:
       "Готовить непосредственно перед кормлением и соблюдать дозировку из инструкции к партии.",
-    imageUrl: asset("product-scene-bag.png"),
+    imageUrl: asset("product-scene-bag.webp"),
     status: "published",
     sortOrder: 40,
     featured: false,
@@ -111,7 +111,7 @@ const fallbackProducts: ProductRecord[] = [
     composition: "Молочные и растительные компоненты, витаминно-минеральный комплекс.",
     preparation:
       "Растворять при интенсивном перемешивании. Не хранить готовую смесь длительное время.",
-    imageUrl: asset("product-scene-bag.png"),
+    imageUrl: asset("product-scene-bag.webp"),
     status: "published",
     sortOrder: 50,
     featured: false,
@@ -143,21 +143,21 @@ const consultingItems = [
   {
     title: "Сопровождение на всех этапах",
     text: "Консультации по зоотехнике, ветеринарии и технологии производства кормов.",
-    image: asset("consulting.png"),
+    image: asset("consulting.webp"),
     imageAlt: "Специалист осматривает животных на ферме",
     photoTitle: "Сопровождаем хозяйство от подбора продукта до результата",
   },
   {
     title: "Кормление",
     text: "Подбираем программу с учётом возраста, вида животных и задач конкретного хозяйства.",
-    image: asset("consulting-feeding.jpg"),
+    image: asset("consulting-feeding.webp"),
     imageAlt: "Кормление телёнка молочной смесью из бутылки",
     photoTitle: "Подбираем программу кормления под возраст молодняка",
   },
   {
     title: "Эффективность",
     text: "Помогаем повысить сохранность молодняка и прогнозируемость результатов выращивания.",
-    image: asset("consulting-efficiency.jpg"),
+    image: asset("consulting-efficiency.webp"),
     imageAlt: "Телята получают корм в индивидуальных секциях",
     photoTitle: "Помогаем получить стабильный и измеримый результат",
   },
@@ -312,7 +312,7 @@ export function HomePage() {
       <header className="agro-header">
         <div className="agro-container agro-header__inner">
           <a className="agro-brand" href="#top" aria-label="Агромилк — на главную">
-            <img src={asset("logo-desktop.png")} alt="Агромилк — свежесть вкуса" />
+            <img src={asset("logo-desktop.webp")} alt="Агромилк — свежесть вкуса" />
           </a>
           <nav className="agro-nav" aria-label="Основная навигация">
             <a href="#about">О компании</a>
@@ -420,10 +420,10 @@ export function HomePage() {
                 <span>по Минску от 100 кг</span>
               </div>
               <picture>
-                <source media="(max-width: 580px)" srcSet={asset("hero-animals-mobile.png")} />
+                <source media="(max-width: 580px)" srcSet={asset("hero-animals-mobile.webp")} />
                 <img
                   className="agro-hero__animals"
-                  src={asset("hero-animals-desktop.png")}
+                  src={asset("hero-animals-desktop.webp")}
                   alt="Теленок и продукция Агромилк"
                 />
               </picture>
@@ -516,9 +516,9 @@ export function HomePage() {
                 </ul>
               </div>
               <div className="agro-delivery-banner__art">
-                <img src={asset("product-scene-base.png")} alt="Корова" />
-                <img src={asset("product-scene-bag.png")} alt="Упаковка продукции Агромилк" />
-                <img src={asset("product-scene-cow.png")} alt="Ягнёнок" />
+                <img src={asset("product-scene-base.webp")} alt="Корова" />
+                <img src={asset("product-scene-bag.webp")} alt="Упаковка продукции Агромилк" />
+                <img src={asset("product-scene-cow.webp")} alt="Ягнёнок" />
               </div>
               <div className="agro-delivery-banner__action">
                 <button
@@ -591,7 +591,7 @@ export function HomePage() {
                     <div className="agro-product-card__body">
                       <div className="agro-product-card__image">
                         <img
-                          src={product.imageUrl || asset("product-scene-bag.png")}
+                          src={product.imageUrl || asset("product-scene-bag.webp")}
                           alt={product.name}
                         />
                       </div>
@@ -768,7 +768,7 @@ export function HomePage() {
               onClick={() => setCertificatesOpen(true)}
               aria-label="Увеличить сертификаты"
             >
-              <img src={asset("certificates.png")} alt="Сертификаты качества Агромилк" />
+              <img src={asset("certificates.webp")} alt="Сертификаты качества Агромилк" />
             </button>
           </div>
         </section>
@@ -890,7 +890,7 @@ export function HomePage() {
       <footer className="agro-footer">
         <div className="agro-container agro-footer__grid">
           <div>
-            <img src={asset("logo-desktop.png")} alt="Агромилк" />
+            <img src={asset("logo-desktop.webp")} alt="Агромилк" />
             <p>Современные заменители цельного и обезжиренного молока.</p>
           </div>
           <section>
@@ -948,7 +948,7 @@ export function HomePage() {
                 <p>{detailProduct.description}</p>
               </div>
               <img
-                src={detailProduct.imageUrl || asset("product-scene-bag.png")}
+                src={detailProduct.imageUrl || asset("product-scene-bag.webp")}
                 alt={detailProduct.name}
               />
             </div>
@@ -1015,7 +1015,7 @@ export function HomePage() {
               <X size={22} />
             </button>
             <img
-              src={asset("certificates.png")}
+              src={asset("certificates.webp")}
               alt="Сертификаты качества Агромилк в увеличенном виде"
             />
           </div>
