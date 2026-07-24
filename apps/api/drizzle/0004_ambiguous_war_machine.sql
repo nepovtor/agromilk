@@ -1,0 +1,1 @@
+ALTER TABLE "articles" ADD COLUMN "cover_image_scale" integer DEFAULT 100 NOT NULL;

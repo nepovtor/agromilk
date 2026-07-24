@@ -1,0 +1,222 @@
+/* Admin shell and rich-text editor. */
+.agro-admin {
+  --background: #f4f9fc;
+  --foreground: #132938;
+  --card: #ffffff;
+  --card-foreground: #132938;
+  --primary: #0874c9;
+  --primary-foreground: #ffffff;
+  --secondary: #eaf5fc;
+  --secondary-foreground: #07568f;
+  --muted: #edf6fb;
+  --muted-foreground: #617482;
+  --destructive: #b42318;
+  --border: #d9e8f1;
+  --ring: #68add8;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(224, 242, 252, 0.76),
+      rgba(244, 249, 252, 0) 340px
+    ),
+    var(--background);
+  color: var(--foreground);
+}
+
+.agro-admin h1,
+.agro-admin h2,
+.agro-admin h3 {
+  color: #132938;
+}
+
+.agro-admin input,
+.agro-admin textarea,
+.agro-admin select {
+  border-color: var(--border);
+  background-color: #fbfdfe;
+}
+
+.agro-admin input:focus,
+.agro-admin textarea:focus,
+.agro-admin select:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px rgba(8, 116, 201, 0.14);
+  outline: 0;
+}
+
+.agro-admin .admin-field-band {
+  border: 1px solid var(--border);
+  background: linear-gradient(135deg, #ffffff 0%, #f1f8fc 100%);
+}
+
+.agro-admin .admin-stat-icon {
+  background: #eaf5fc;
+  color: #0874c9;
+}
+
+.agro-admin .admin-water-icon {
+  background: #e7f1fb;
+  color: #0164b1;
+}
+
+.article-editor-main {
+  container-type: inline-size;
+}
+
+.article-template-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.625rem;
+}
+
+@container (min-width: 760px) {
+  .article-template-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .article-template-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.agro-admin .admin-sun-icon {
+  background: #fff4d8;
+  color: #9a6700;
+}
+
+.agro-admin .admin-earth-icon {
+  background: #f3ece2;
+  color: #7a4a22;
+}
+
+.agro-admin .rounded-2xl,
+.agro-admin .rounded-xl {
+  border-radius: 0.5rem;
+}
+
+.agro-admin button.bg-\[var\(--primary\)\] {
+  box-shadow: 0 8px 22px -8px rgba(8, 116, 201, 0.7);
+}
+
+.agro-admin button.bg-\[var\(--primary\)\]:hover {
+  background-color: #0569b7;
+  box-shadow: 0 12px 26px -8px rgba(8, 116, 201, 0.62);
+}
+
+.agro-admin button.border:hover {
+  border-color: #b9daed;
+  background-color: #f1f8fc;
+}
+
+.ProseMirror {
+  min-height: 420px;
+  outline: none;
+  padding: 2rem clamp(1.25rem, 5vw, 4rem) 4rem;
+}
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #98a2b3;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+.editor-prose {
+  max-width: 52rem;
+  margin-inline: auto;
+  color: #344054;
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+.editor-prose > *:first-child {
+  margin-top: 0;
+}
+.editor-prose blockquote {
+  margin: 1.5rem 0;
+  border-left: 3px solid #8b6cff;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  color: #475467;
+  font-style: italic;
+}
+.editor-prose pre {
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  background: #172033;
+  padding: 1rem 1.25rem;
+  color: #f8fafc;
+  font:
+    0.9rem/1.7 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+}
+.editor-prose .ProseMirror-selectednode {
+  outline: 3px solid #c4b5fd;
+  outline-offset: 3px;
+}
+.editor-prose .tableWrapper {
+  border-color: #d8d2f5;
+  box-shadow: 0 8px 24px -20px rgba(82, 54, 170, 0.55);
+}
+.editor-prose table {
+  table-layout: fixed;
+  margin: 0;
+}
+.editor-prose th,
+.editor-prose td {
+  position: relative;
+  min-width: 6rem;
+}
+.editor-prose th {
+  background: #f3f0ff;
+  color: #3d2a7a;
+}
+.editor-prose .selectedCell::after {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: rgba(109, 74, 255, 0.14);
+  pointer-events: none;
+  content: "";
+}
+.editor-prose .column-resize-handle {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  bottom: -2px;
+  z-index: 5;
+  width: 4px;
+  background: #7c5cff;
+  pointer-events: none;
+}
+.resize-cursor {
+  cursor: col-resize;
+}
+.editor-image-upload {
+  display: flex;
+  min-height: 11rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+  border: 1px dashed #a78bfa;
+  border-radius: 0.875rem;
+  background: #f5f3ff;
+  color: #6d4aff;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.editor-image-upload__spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #ddd6fe;
+  border-top-color: #6d4aff;
+  border-radius: 999px;
+  animation: editor-spin 0.7s linear infinite;
+}
+@keyframes editor-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

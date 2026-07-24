@@ -1,0 +1,46 @@
+{
+  "name": "@landing/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsup",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "tsx src/db/prepare-test-db.ts && NODE_ENV=test DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@127.0.0.1:55432/landing_admin_test} COOKIE_SECRET=${COOKIE_SECRET:-test-cookie-secret-at-least-32-characters} ADMIN_EMAIL=${ADMIN_EMAIL:-admin@example.com} ADMIN_PASSWORD=${ADMIN_PASSWORD:-TestPassword123!} vitest run",
+    "start": "node dist/server.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:studio": "drizzle-kit studio",
+    "seed": "tsx src/db/seed.ts"
+  },
+  "dependencies": {
+    "@fastify/cookie": "latest",
+    "@fastify/cors": "latest",
+    "@fastify/helmet": "latest",
+    "@fastify/multipart": "latest",
+    "@fastify/rate-limit": "latest",
+    "@fastify/static": "latest",
+    "@landing/shared": "workspace:*",
+    "bcryptjs": "latest",
+    "dotenv": "latest",
+    "drizzle-orm": "latest",
+    "fastify": "latest",
+    "nodemailer": "latest",
+    "pg": "latest",
+    "sanitize-html": "latest",
+    "file-type": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/nodemailer": "latest",
+    "@types/pg": "latest",
+    "@types/sanitize-html": "latest",
+    "drizzle-kit": "latest",
+    "tsx": "latest",
+    "tsup": "latest",
+    "typescript": "6.0.2"
+    ,"vitest": "latest"
+  }
+}

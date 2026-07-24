@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.idea/
+.vscode/
+*.sqlite
+*.sqlite3
+.eslintcache
+apps/api/uploads/*
+!apps/api/uploads/.gitkeep
+apps/api/drizzle/meta/_journal.json.bak
+coverage/

@@ -1,0 +1,38 @@
+{
+  "name": "landing-admin-platform",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter @landing/shared build && pnpm --parallel --filter @landing/web --filter @landing/api dev",
+    "build": "pnpm --filter @landing/shared build && pnpm --filter @landing/web build && pnpm --filter @landing/api build",
+    "build:netlify": "pnpm --dir packages/shared build && pnpm --dir apps/web build && node scripts/prepare-netlify.mjs",
+    "typecheck": "pnpm --filter @landing/shared build && pnpm --filter @landing/web typecheck && pnpm --filter @landing/api typecheck",
+    "lint": "eslint .",
+    "test": "pnpm --filter @landing/shared build && pnpm --filter @landing/api test",
+    "db:generate": "pnpm --filter @landing/api db:generate",
+    "db:migrate": "pnpm --filter @landing/api db:migrate",
+    "db:studio": "pnpm --filter @landing/api db:studio",
+    "db:seed": "pnpm --filter @landing/api seed",
+    "seed": "pnpm db:seed",
+    "start": "pnpm --filter @landing/api start",
+    "smoke-test": "./scripts/ci-smoke.sh"
+  },
+  "devDependencies": {
+    "@eslint/js": "latest",
+    "concurrently": "latest"
+    ,"eslint": "latest",
+    "eslint-plugin-react-hooks": "latest",
+    "globals": "latest",
+    "typescript-eslint": "latest",
+    "typescript": "6.0.2"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.13.1"
+}

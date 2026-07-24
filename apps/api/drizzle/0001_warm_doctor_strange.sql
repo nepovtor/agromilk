@@ -1,0 +1,2 @@
+ALTER TABLE "media_files" ADD COLUMN "updated_at" timestamp with time zone DEFAULT now() NOT NULL;--> statement-breakpoint
+CREATE INDEX "analytics_visitor_created_idx" ON "analytics_events" USING btree ("visitor_id","created_at");
