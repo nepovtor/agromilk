@@ -92,10 +92,12 @@ const TextAlignment = Extension.create({
           textAlign: {
             default: "left",
             parseHTML: (element: HTMLElement) => element.style.textAlign || "left",
-            renderHTML: (attributes: Record<string, unknown>) =>
-              attributes.textAlign && attributes.textAlign !== "left"
-                ? { style: `text-align: ${String(attributes.textAlign)}` }
-                : {},
+            renderHTML: (attributes: Record<string, unknown>) => {
+              const textAlign = attributes.textAlign;
+              return typeof textAlign === "string" && textAlign !== "left"
+                ? { style: `text-align: ${textAlign}` }
+                : {};
+            },
           },
         },
       },
@@ -699,14 +701,7 @@ function replaceUploadNode(
   replacement: { type: "image"; attrs: Record<string, unknown> } | null,
 ) {
   if (editor.isDestroyed) return;
-  let position: number | null = null;
-  editor.state.doc.descendants((node, pos) => {
-    if (node.type.name === "uploadingImage" && node.attrs.uploadId === uploadId) {
-      position = pos;
-      return false;
-    }
-    return true;
-  });
+  const position = findUploadNodePosition(editor, uploadId);
   if (position === null) return;
   const transaction = editor.state.tr;
   const node = editor.state.doc.nodeAt(position);
@@ -721,6 +716,18 @@ function replaceUploadNode(
     transaction.delete(position, position + node.nodeSize);
   }
   editor.view.dispatch(transaction.scrollIntoView());
+}
+
+function findUploadNodePosition(editor: Editor, uploadId: string): number | null {
+  let position: number | null = null;
+  editor.state.doc.descendants((node, pos) => {
+    if (node.type.name === "uploadingImage" && node.attrs.uploadId === uploadId) {
+      position = pos;
+      return false;
+    }
+    return true;
+  });
+  return position;
 }
 
 function setAlignment(editor: Editor, textAlign: "left" | "center" | "right") {

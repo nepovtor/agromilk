@@ -44,7 +44,22 @@ export function ArticlesPage() {
     api.articles
       .list(q)
       .then(setData)
-      .catch((e) => setError(e.message));
+      .catch((cause: unknown) =>
+        setError(cause instanceof Error ? cause.message : "Не удалось загрузить материалы"),
+      );
+  };
+  const removeArticle = async (article: ArticleRecord) => {
+    if (!confirm(`Удалить «${article.title}»?`)) return;
+    setDeletingId(article.id);
+    setError("");
+    try {
+      await api.articles.remove(article.id);
+      load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Не удалось удалить материал");
+    } finally {
+      setDeletingId(null);
+    }
   };
   useEffect(load, [page, status, search]);
   return (
@@ -151,24 +166,7 @@ export function ArticlesPage() {
                           variant="ghost"
                           className="text-red-600 hover:bg-red-50"
                           disabled={deletingId === a.id}
-                          onClick={async () => {
-                            if (confirm(`Удалить «${a.title}»?`)) {
-                              setDeletingId(a.id);
-                              setError("");
-                              try {
-                                await api.articles.remove(a.id);
-                                load();
-                              } catch (cause) {
-                                setError(
-                                  cause instanceof Error
-                                    ? cause.message
-                                    : "Не удалось удалить материал",
-                                );
-                              } finally {
-                                setDeletingId(null);
-                              }
-                            }
-                          }}
+                          onClick={() => void removeArticle(a)}
                         >
                           <Trash2 size={17} />
                           {deletingId === a.id ? "Удаляем…" : "Удалить"}

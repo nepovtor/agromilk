@@ -22,6 +22,9 @@ const iso = (date: Date) => {
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
+const formatTooltipDate = (value: unknown) =>
+  formatShortDate(typeof value === "string" || typeof value === "number" ? String(value) : "");
+
 export function DashboardPage() {
   const today = new Date();
   const start = new Date();
@@ -158,7 +161,7 @@ export function DashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" tickFormatter={formatShortDate} />
                   <YAxis allowDecimals={false} />
-                  <Tooltip labelFormatter={(v) => formatShortDate(String(v))} />
+                  <Tooltip labelFormatter={formatTooltipDate} />
                   <Line
                     type="monotone"
                     dataKey="visitors"

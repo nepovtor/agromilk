@@ -38,12 +38,6 @@ export const ArrowLeft = make(
     <path d="M19 8v8" opacity=".35" />
   </>,
 );
-export const ArrowUpRight = make(
-  <>
-    <path d="M7 17 17 7M9 7h8v8" />
-    <circle cx="6" cy="18" r="1" fill="currentColor" stroke="none" />
-  </>,
-);
 export const Check = make(
   <>
     <path d="m5 12.5 4.2 4L19 7" />
@@ -66,12 +60,6 @@ export const BadgeCheck = make(
 export const Sparkles = make(
   <>
     <path d="m12 2 1.2 3.8L17 7l-3.8 1.2L12 12l-1.2-3.8L7 7l3.8-1.2zM18.5 13l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8zM5.5 14l.6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7-1.7-.6 1.7-.6z" />
-  </>,
-);
-export const Zap = make(
-  <>
-    <path d="m13.3 2-8 11h6.2L10.7 22l8-12h-6.2z" />
-    <path d="M5 18h3" opacity=".35" />
   </>,
 );
 export const Boxes = make(
@@ -103,12 +91,6 @@ export const MessageCircle = make(
   <>
     <path d="M20 11.5a8 8 0 0 1-8.2 8A9.3 9.3 0 0 1 8 18.7L3.5 20l1.3-4.2A8 8 0 1 1 20 11.5Z" />
     <path d="M8 10h8M8 14h5" />
-  </>,
-);
-export const Send = make(
-  <>
-    <path d="m3 4 18 8-18 8 3-8zM6 12h15" />
-    <path d="m6 12-3-8" opacity=".4" />
   </>,
 );
 export const BarChart3 = make(
@@ -189,81 +171,11 @@ export const Plus = make(
     <circle cx="12" cy="12" r="9" opacity=".25" />
   </>,
 );
-export const Bold = make(
-  <>
-    <path d="M7 4h6a4 4 0 0 1 0 8H7zM7 12h7a4 4 0 0 1 0 8H7z" />
-  </>,
-);
-export const Italic = make(
-  <>
-    <path d="M10 4h7M7 20h7M14 4 10 20" />
-  </>,
-);
-export const Strikethrough = make(
-  <>
-    <path d="M16 6.5C15 5 13.5 4 11.5 4 9 4 7 5.5 7 8c0 1.5.8 2.5 2 3M8 17c1 2 5.5 4 8 1.5 1.2-1.2 1.3-2.4.7-3.5M4 12h16" />
-  </>,
-);
-export const Heading2 = make(
-  <>
-    <path d="M4 5v14M14 5v14M4 12h10M17 11c.5-2 4-2.2 4 0 0 2-4 3.5-4 6h4" />
-  </>,
-);
-export const Code2 = make(
-  <>
-    <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16" />
-  </>,
-);
 export const ImagePlus = make(
   <>
     <rect x="3" y="4" width="14" height="16" rx="2" />
     <circle cx="8" cy="9" r="1.5" />
     <path d="m4 17 4-4 3 3 2-2 4 4M20 5v6M17 8h6" />
-  </>,
-);
-export const Link2 = make(
-  <>
-    <path d="m10 14 4-4M8.5 16.5l-1 1a3.5 3.5 0 0 1-5-5l3-3a3.5 3.5 0 0 1 5 0M15.5 7.5l1-1a3.5 3.5 0 0 1 5 5l-3 3a3.5 3.5 0 0 1-5 0" />
-  </>,
-);
-export const List = make(
-  <>
-    <path d="M9 6h11M9 12h11M9 18h11" />
-    <circle cx="4" cy="6" r="1" fill="currentColor" stroke="none" />
-    <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none" />
-    <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none" />
-  </>,
-);
-export const ListOrdered = make(
-  <>
-    <path d="M10 6h10M10 12h10M10 18h10M4 4v4M3 8h3M3 12c3-2 4 1 0 4h3M3 19h3c0-2-3-1-3-3" />
-  </>,
-);
-export const Minus = make(
-  <>
-    <path d="M4 12h16" />
-    <circle cx="12" cy="12" r="9" opacity=".25" />
-  </>,
-);
-export const Quote = make(
-  <>
-    <path d="M4 11h6v7H4v-7c0-4 2-6 5-7M14 11h6v7h-6v-7c0-4 2-6 5-7" />
-  </>,
-);
-export const Undo2 = make(
-  <>
-    <path d="m8 7-4 4 4 4M4 11h10a6 6 0 0 1 6 6v1" />
-  </>,
-);
-export const Redo2 = make(
-  <>
-    <path d="m16 7 4 4-4 4M20 11H10a6 6 0 0 0-6 6v1" />
-  </>,
-);
-export const Video = make(
-  <>
-    <rect x="3" y="5" width="14" height="14" rx="3" />
-    <path d="m17 10 4-2v8l-4-2zM8 9l5 3-5 3z" />
   </>,
 );
 export const Clipboard = make(

@@ -794,7 +794,7 @@ export function HomePage() {
                 </span>
               </div>
             </div>
-            <form className="agro-order__form" onSubmit={submit} noValidate>
+            <form className="agro-order__form" onSubmit={(event) => void submit(event)} noValidate>
               <div>
                 <h3>Заполните ваши данные</h3>
                 <p>Перезвоним в рабочее время и ответим на вопросы.</p>

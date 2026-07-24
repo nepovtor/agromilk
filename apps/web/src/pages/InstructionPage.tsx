@@ -49,7 +49,9 @@ export function InstructionPage() {
       api.articles
         .publicGet(slug)
         .then(setArticle)
-        .catch((e) => setError(e.message));
+        .catch((cause: unknown) =>
+          setError(cause instanceof Error ? cause.message : "Не удалось загрузить инструкцию"),
+        );
     }
   }, [slug]);
 

@@ -39,16 +39,24 @@ export default tseslint.config(
         "error",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
-      // These require API contract and UI event-handler refactors. Track them in a
-      // focused hardening PR; the remaining recommended type-aware checks run now.
+      "@typescript-eslint/no-unsafe-argument": "error",
+      "@typescript-eslint/no-unsafe-assignment": "error",
+      "@typescript-eslint/no-unsafe-call": "error",
+      "@typescript-eslint/no-unsafe-member-access": "error",
+      "@typescript-eslint/no-base-to-string": "error",
+      "@typescript-eslint/no-misused-promises": "error",
+      "@typescript-eslint/require-await": "off",
+      "@typescript-eslint/restrict-plus-operands": "error",
+    },
+  },
+  {
+    files: ["**/*.test.ts"],
+    rules: {
+      // Fastify's response.json() intentionally returns any in integration tests.
       "@typescript-eslint/no-unsafe-argument": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-call": "off",
       "@typescript-eslint/no-unsafe-member-access": "off",
-      "@typescript-eslint/no-base-to-string": "off",
-      "@typescript-eslint/no-misused-promises": "off",
-      "@typescript-eslint/require-await": "off",
-      "@typescript-eslint/restrict-plus-operands": "off",
     },
   },
 );

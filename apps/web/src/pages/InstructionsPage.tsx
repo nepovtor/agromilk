@@ -74,8 +74,9 @@ export function InstructionsPage() {
         setData([...firstPage.items, ...remaining.flatMap((page) => page.items)]);
         setError("");
       })
-      .catch((e) => {
-        if (!cancelled) setError(e.message);
+      .catch((cause: unknown) => {
+        if (!cancelled)
+          setError(cause instanceof Error ? cause.message : "Не удалось загрузить инструкции");
       });
 
     return () => {

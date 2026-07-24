@@ -15,6 +15,9 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   const [location, navigate] = useLocation();
   const [open, setOpen] = useState(false);
   const { user, logout } = useAuth();
+  const handleLogout = () => {
+    void logout().then(() => navigate("/admin/login"));
+  };
   const sidebar = (
     <aside className="flex h-full w-64 flex-col border-r border-(--border) bg-white p-4">
       <div className="mb-7 flex items-start justify-between px-2">
@@ -55,14 +58,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
           <p className="text-sm font-medium">{user?.name}</p>
           <p className="truncate text-xs text-slate-500">{user?.email}</p>
         </div>
-        <Button
-          variant="ghost"
-          className="w-full justify-start"
-          onClick={async () => {
-            await logout();
-            navigate("/admin/login");
-          }}
-        >
+        <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
           <LogOut size={17} />
           Выйти
         </Button>

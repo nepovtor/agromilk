@@ -7,8 +7,6 @@ import { mediaApi } from "./media.api";
 import { productsApi } from "./products.api";
 import { statisticsApi } from "./statistics.api";
 
-export { ApiError } from "./http";
-
 export const api = {
   auth: authApi,
   applications: applicationsApi,

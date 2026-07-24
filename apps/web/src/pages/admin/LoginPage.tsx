@@ -58,6 +58,15 @@ export function LoginPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
+  const submit = handleSubmit(async (values) => {
+    setError("");
+    try {
+      await login(values.email, values.password);
+      navigate("/admin");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Ошибка входа");
+    }
+  });
   if (!loading && user) return <Redirect to="/admin" />;
   return (
     <div className="agro-admin grid min-h-screen place-items-center px-4">
@@ -93,18 +102,7 @@ export function LoginPage() {
               </div>
             </>
           )}
-          <form
-            className="space-y-5"
-            onSubmit={handleSubmit(async (values) => {
-              setError("");
-              try {
-                await login(values.email, values.password);
-                navigate("/admin");
-              } catch (e) {
-                setError(e instanceof Error ? e.message : "Ошибка входа");
-              }
-            })}
-          >
+          <form className="space-y-5" onSubmit={(event) => void submit(event)}>
             <label className="block">
               <span className="mb-2 block text-sm font-medium">Email</span>
               <Input type="email" autoComplete="username" {...register("email")} />

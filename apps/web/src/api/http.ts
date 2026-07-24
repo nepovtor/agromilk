@@ -1,6 +1,10 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+const configuredApiBaseUrl: unknown = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = (typeof configuredApiBaseUrl === "string" ? configuredApiBaseUrl : "").replace(
+  /\/$/,
+  "",
+);
 
-export class ApiError extends Error {
+class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
@@ -22,7 +26,7 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
         ? options.headers
         : { "Content-Type": "application/json", ...options.headers },
   });
-  const payload = response.status === 204 ? null : await response.json().catch(() => null);
+  const payload: unknown = response.status === 204 ? null : await response.json().catch(() => null);
 
   if (!response.ok) {
     if (response.status === 401 && typeof window !== "undefined") {

@@ -174,7 +174,7 @@ export function useApplications({ applicationId, navigate }: UseApplicationsOpti
           ]),
         ),
       ];
-      const escape = (value: unknown) => `"${String(value ?? "").replace(/"/g, '""')}"`;
+      const escape = (value: string | null | undefined) => `"${(value ?? "").replace(/"/g, '""')}"`;
       const blob = new Blob([`\ufeff${rows.map((row) => row.map(escape).join(";")).join("\n")}`], {
         type: "text/csv;charset=utf-8",
       });

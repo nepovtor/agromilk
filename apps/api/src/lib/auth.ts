@@ -38,7 +38,7 @@ export async function createAdminSession(
   });
 }
 
-export async function resolveAdmin(request: FastifyRequest) {
+async function resolveAdmin(request: FastifyRequest) {
   const signed = request.cookies[SESSION_COOKIE];
   if (!signed) return null;
   const unsigned = request.unsignCookie(signed);
