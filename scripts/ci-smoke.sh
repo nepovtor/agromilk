@@ -17,11 +17,16 @@ LOG_FILE="$(mktemp)"
 SERVER_PID=""
 
 cleanup() {
+  local status=$?
   if [[ -n "$SERVER_PID" ]]; then
     kill "$SERVER_PID" 2>/dev/null || true
     wait "$SERVER_PID" 2>/dev/null || true
   fi
+  if [[ "$status" -ne 0 && -s "$LOG_FILE" ]]; then
+    cat "$LOG_FILE" >&2
+  fi
   rm -f "$COOKIE_JAR" "$LOG_FILE"
+  return "$status"
 }
 trap cleanup EXIT
 
@@ -48,6 +53,6 @@ curl -fsS -H 'Content-Type: application/json' \
   "$BASE/applications" | grep -q '"success":true'
 
 curl -fsS -b "$COOKIE_JAR" "$BASE/admin/applications?page=1&pageSize=10" | grep -q 'CI User'
-curl -fsS "http://127.0.0.1:${PORT}/" | grep -q '<title>Сервис'
+curl -fsS "http://127.0.0.1:${PORT}/" | grep -q '<title>Агромилк'
 
 echo "Smoke test passed"
