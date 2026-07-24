@@ -63,7 +63,7 @@ export function LoginPage() {
     <div className="agro-admin grid min-h-screen place-items-center px-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <div className="mb-4 grid h-12 w-12 place-items-center rounded-lg bg-[var(--primary)] text-lg font-bold text-white">
+          <div className="mb-4 grid h-12 w-12 place-items-center rounded-lg bg-(--primary) text-lg font-bold text-white">
             Ag
           </div>
           <CardTitle className="text-2xl">Вход в агро-пульт</CardTitle>

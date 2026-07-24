@@ -269,7 +269,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   return (
     <div
       className={cn(
-        "relative rounded-2xl border border-[var(--border)] bg-white shadow-sm transition-shadow focus-within:border-violet-300 focus-within:shadow-md",
+        "relative rounded-2xl border border-(--border) bg-white shadow-sm transition-shadow focus-within:border-violet-300 focus-within:shadow-md",
         dragging && "border-violet-400 ring-4 ring-violet-100",
       )}
       onDragEnter={(event) => event.dataTransfer.types.includes("Files") && setDragging(true)}

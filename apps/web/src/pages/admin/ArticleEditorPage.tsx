@@ -49,10 +49,10 @@ export function ArticleEditorPage() {
           <ArrowLeft size={16} />
           Все инструкции
         </Link>
-        <section className="mb-6 overflow-hidden rounded-xl border border-[var(--border)] bg-white shadow-[0_18px_50px_-38px_rgba(17,63,91,.45)]">
+        <section className="mb-6 overflow-hidden rounded-xl border border-(--border) bg-white shadow-[0_18px_50px_-38px_rgba(17,63,91,.45)]">
           <div className="grid gap-5 p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
             <div className="flex min-w-0 items-start gap-4">
-              <span className="hidden size-12 shrink-0 place-items-center rounded-xl bg-[var(--secondary)] text-[var(--primary)] sm:grid">
+              <span className="hidden size-12 shrink-0 place-items-center rounded-xl bg-(--secondary) text-(--primary) sm:grid">
                 <FileText size={22} />
               </span>
               <div className="min-w-0">
@@ -140,11 +140,11 @@ export function ArticleEditorPage() {
           <div className="flex flex-col gap-2 border-t border-slate-100 bg-slate-50/70 px-5 py-3 sm:flex-row sm:items-center sm:px-6">
             <div className="flex items-center justify-between gap-4 text-xs font-semibold text-slate-600 sm:w-52">
               <span>Готовность материала</span>
-              <span className="text-[var(--primary)]">{editor.readyPercent}%</span>
+              <span className="text-(--primary)">{editor.readyPercent}%</span>
             </div>
             <div className="h-2 flex-1 overflow-hidden rounded-full bg-white ring-1 ring-slate-200">
               <div
-                className="h-full rounded-full bg-[var(--primary)] transition-all duration-300"
+                className="h-full rounded-full bg-(--primary) transition-all duration-300"
                 style={{ width: `${editor.readyPercent}%` }}
               />
             </div>

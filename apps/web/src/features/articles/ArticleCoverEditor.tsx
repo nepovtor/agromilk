@@ -68,7 +68,7 @@ export function ArticleCoverEditor({
       </div>
       <div
         className={cn(
-          "overflow-hidden rounded-xl border border-dashed border-[var(--border)] bg-slate-50 transition",
+          "overflow-hidden rounded-xl border border-dashed border-(--border) bg-slate-50 transition",
           dragging && "border-blue-400 bg-blue-50",
         )}
         onDragEnter={(event) => {
@@ -83,7 +83,7 @@ export function ArticleCoverEditor({
       >
         {article.coverImageUrl ? (
           <div
-            className="group relative aspect-video w-full touch-none select-none overflow-hidden bg-slate-200 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]"
+            className="group relative aspect-video w-full touch-none select-none overflow-hidden bg-slate-200 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--ring)"
             role="application"
             tabIndex={0}
             aria-label="Выбор главной точки фотографии. Нажмите или перетащите маркер по фотографии."
@@ -145,7 +145,7 @@ export function ArticleCoverEditor({
               Нажмите на главный объект
             </span>
             <span
-              className="pointer-events-none absolute z-20 grid size-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-[var(--primary)] shadow-[0_2px_12px_rgba(0,0,0,.45)] transition-[left,top] duration-100"
+              className="pointer-events-none absolute z-20 grid size-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-(--primary) shadow-[0_2px_12px_rgba(0,0,0,.45)] transition-[left,top] duration-100"
               style={{
                 left: `${article.coverImagePositionX}%`,
                 top: `${article.coverImagePositionY}%`,
@@ -189,7 +189,7 @@ export function ArticleCoverEditor({
           <label className="block">
             <span className="mb-2 flex items-center justify-between gap-3 text-sm font-medium text-slate-700">
               <span>Размер изображения</span>
-              <strong className="text-[var(--primary)]">{article.coverImageScale}%</strong>
+              <strong className="text-(--primary)">{article.coverImageScale}%</strong>
             </span>
             <input
               type="range"
@@ -197,7 +197,7 @@ export function ArticleCoverEditor({
               max="100"
               step="1"
               value={article.coverImageScale}
-              className="block w-full accent-[var(--primary)]"
+              className="block w-full accent-(--primary)"
               onChange={(event) => onUpdate("coverImageScale", Number(event.target.value))}
             />
             <span className="mt-1 flex justify-between text-[11px] text-slate-400">
@@ -271,7 +271,7 @@ function CoverPosition({
         max="100"
         step="1"
         value={value}
-        className="w-full accent-[var(--primary)]"
+        className="w-full accent-(--primary)"
         onChange={(event) => onChange(Number(event.target.value))}
       />
       <span className="text-right">{value}%</span>

@@ -16,10 +16,10 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const { user, logout } = useAuth();
   const sidebar = (
-    <aside className="flex h-full w-64 flex-col border-r border-[var(--border)] bg-white p-4">
+    <aside className="flex h-full w-64 flex-col border-r border-(--border) bg-white p-4">
       <div className="mb-7 flex items-start justify-between px-2">
         <Link href="/admin" className="group">
-          <span className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--primary)] text-white shadow-sm">
+          <span className="grid h-11 w-11 place-items-center rounded-xl bg-(--primary) text-white shadow-sm">
             <Sparkles size={20} />
           </span>
           <span className="mt-3 block text-xl font-bold leading-tight">Агро-пульт</span>
@@ -40,8 +40,8 @@ export function AdminLayout({ children }: { children: ReactNode }) {
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium",
                 active
-                  ? "bg-[var(--secondary)] text-[var(--secondary-foreground)] shadow-sm"
-                  : "text-slate-600 hover:bg-[var(--muted)]",
+                  ? "bg-(--secondary) text-(--secondary-foreground) shadow-sm"
+                  : "text-slate-600 hover:bg-(--muted)",
               )}
             >
               <Icon size={18} />
@@ -50,7 +50,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
           );
         })}
       </nav>
-      <div className="mt-auto border-t border-[var(--border)] pt-4">
+      <div className="mt-auto border-t border-(--border) pt-4">
         <div className="mb-3 px-3">
           <p className="text-sm font-medium">{user?.name}</p>
           <p className="truncate text-xs text-slate-500">{user?.email}</p>
@@ -80,7 +80,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         </div>
       )}
       <div className="md:pl-64">
-        <header className="flex h-16 items-center border-b border-[var(--border)] bg-white/90 px-4 backdrop-blur md:px-8">
+        <header className="flex h-16 items-center border-b border-(--border) bg-white/90 px-4 backdrop-blur md:px-8">
           <button className="mr-3 md:hidden" onClick={() => setOpen(true)}>
             <Menu />
           </button>

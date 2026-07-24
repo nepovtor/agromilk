@@ -25,7 +25,7 @@ export function ArticleContentEditor({
     <Card>
       <CardHeader className="pb-4">
         <div className="flex items-start gap-3">
-          <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[var(--secondary)] text-xs font-extrabold text-[var(--primary)]">
+          <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-(--secondary) text-xs font-extrabold text-(--primary)">
             02
           </span>
           <div>

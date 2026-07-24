@@ -68,7 +68,7 @@ export function ProductTable({
           {items.map((item) => (
             <article
               key={item.id}
-              className={`rounded-xl border p-3 ${selectedId === item.id ? "border-[var(--ring)] bg-[var(--secondary)]" : "border-slate-200 bg-white"}`}
+              className={`rounded-xl border p-3 ${selectedId === item.id ? "border-(--ring) bg-(--secondary)" : "border-slate-200 bg-white"}`}
             >
               <div className="flex gap-3">
                 <div className="grid size-16 shrink-0 place-items-center rounded-lg bg-slate-50">

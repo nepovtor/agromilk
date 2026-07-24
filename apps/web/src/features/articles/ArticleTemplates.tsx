@@ -46,7 +46,7 @@ export function ArticleTemplates({ onApply }: { onApply: (template: ArticleTempl
     <Card>
       <CardHeader className="pb-4">
         <div className="flex items-start gap-3">
-          <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[var(--secondary)] text-xs font-extrabold text-[var(--primary)]">
+          <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-(--secondary) text-xs font-extrabold text-(--primary)">
             01
           </span>
           <div>
@@ -65,10 +65,10 @@ export function ArticleTemplates({ onApply }: { onApply: (template: ArticleTempl
               <button
                 type="button"
                 key={template.key}
-                className="group flex min-w-0 items-center gap-3 rounded-xl border border-[var(--border)] bg-white p-3 text-left transition hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50/60 hover:shadow-sm"
+                className="group flex min-w-0 items-center gap-3 rounded-xl border border-(--border) bg-white p-3 text-left transition hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50/60 hover:shadow-sm"
                 onClick={() => onApply(template)}
               >
-                <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-slate-50 text-slate-600 transition group-hover:bg-white group-hover:text-[var(--primary)]">
+                <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-slate-50 text-slate-600 transition group-hover:bg-white group-hover:text-(--primary)">
                   <Icon size={17} />
                 </span>
                 <span className="min-w-0">

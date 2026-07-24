@@ -187,7 +187,7 @@ export function ProductForm({
               type="checkbox"
               checked={values.featured}
               onChange={(event) => onChange("featured", event.target.checked)}
-              className="size-4 accent-[var(--primary)]"
+              className="size-4 accent-(--primary)"
             />
             Отметить как популярный
           </label>
