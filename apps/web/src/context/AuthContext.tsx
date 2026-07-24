@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { AdminUser } from "@landing/shared";
-import { api } from "@/api/client";
+import { api } from "@/api";
 
 interface AuthContextValue {
   user: AdminUser | null;

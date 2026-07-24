@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ArticleRecord } from "@landing/shared";
 import { Link } from "wouter";
-import { api } from "@/api/client";
+import { api } from "@/api";
 import { PublicLayout } from "@/components/PublicLayout";
 import { BookOpen } from "@/components/icons";
 import { InstructionCard } from "@/components/public/InstructionCard";

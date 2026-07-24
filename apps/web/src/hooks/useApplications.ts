@@ -5,7 +5,7 @@ import type {
   Paginated,
   UpdateApplicationInput,
 } from "@landing/shared";
-import { api } from "@/api/client";
+import { api } from "@/api";
 import { applicationStatusLabels } from "@/features/applications/application-status";
 
 type UseApplicationsOptions = {

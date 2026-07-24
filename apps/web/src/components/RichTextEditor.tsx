@@ -45,7 +45,7 @@ import {
   UnderlineIcon,
   X,
 } from "lucide-react";
-import { api } from "@/api/client";
+import { api } from "@/api";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

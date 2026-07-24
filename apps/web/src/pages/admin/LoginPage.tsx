@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { api } from "@/api/client";
+import { api } from "@/api";
 
 const googleErrors: Record<string, string> = {
   cancelled: "Вход через Google был отменён.",

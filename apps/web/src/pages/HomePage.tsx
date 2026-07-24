@@ -7,7 +7,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "wouter";
-import { api } from "@/api/client";
+import { api } from "@/api";
 import {
   ArrowRight,
   BadgeCheck,

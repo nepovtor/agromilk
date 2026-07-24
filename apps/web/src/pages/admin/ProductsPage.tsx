@@ -3,7 +3,7 @@ import type { Paginated, ProductRecord, ProductStatus } from "@landing/shared";
 import { Plus } from "@/components/icons";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
-import { api } from "@/api/client";
+import { api } from "@/api";
 import { ProductForm } from "@/features/products/ProductForm";
 import { ProductTable } from "@/features/products/ProductTable";
 import {

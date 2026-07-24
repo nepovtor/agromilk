@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { ArticleRecord, ArticleStatus, Paginated } from "@landing/shared";
 import { Link } from "wouter";
 import { Edit3, ExternalLink, Plus, Search, Trash2 } from "@/components/icons";
-import { api } from "@/api/client";
+import { api } from "@/api";
 import { AdminLayout } from "@/components/AdminLayout";
 import { AdminPagination } from "@/components/admin/AdminPagination";
 import { Badge } from "@/components/ui/badge";

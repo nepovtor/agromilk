@@ -10,7 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { BarChart3, Eye, Inbox, Users } from "@/components/icons";
-import { api } from "@/api/client";
+import { api } from "@/api";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

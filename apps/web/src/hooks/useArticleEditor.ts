@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ArticleInput, ArticleStatus } from "@landing/shared";
-import { api } from "@/api/client";
+import { api } from "@/api";
 import { slugify } from "@/lib/utils";
 import {
   articleToInput,

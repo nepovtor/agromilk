@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
-import { api } from "@/api/client";
+import { api } from "@/api";
 
 const getId = (key: string, storage: Storage) => {
   let value = storage.getItem(key);
