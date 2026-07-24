@@ -8,5 +8,5 @@ export default defineConfig({
   outDir: "dist",
   sourcemap: true,
   clean: true,
-  noExternal: ["@landing/shared"]
+  noExternal: ["@landing/shared"],
 });

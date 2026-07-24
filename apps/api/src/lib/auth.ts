@@ -9,7 +9,11 @@ import { getClientIp } from "./http.js";
 export const SESSION_COOKIE = "admin_session";
 export const hashToken = (token: string) => createHash("sha256").update(token).digest("hex");
 
-export async function createAdminSession(adminId: string, request: FastifyRequest, reply: FastifyReply) {
+export async function createAdminSession(
+  adminId: string,
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
   await db.delete(adminSessions).where(lt(adminSessions.expiresAt, new Date()));
   const token = randomBytes(32).toString("base64url");
   const expiresAt = new Date(Date.now() + env.SESSION_TTL_DAYS * 24 * 60 * 60 * 1000);
@@ -17,17 +21,20 @@ export async function createAdminSession(adminId: string, request: FastifyReques
     adminId,
     tokenHash: hashToken(token),
     expiresAt,
-    ipAddress: getClientIp(request.headers as Record<string, unknown>, request.ip),
-    userAgent: request.headers["user-agent"]
+    ipAddress: getClientIp(request.headers, request.ip),
+    userAgent: request.headers["user-agent"],
   });
-  await db.update(admins).set({ lastLoginAt: new Date(), updatedAt: new Date() }).where(eq(admins.id, adminId));
+  await db
+    .update(admins)
+    .set({ lastLoginAt: new Date(), updatedAt: new Date() })
+    .where(eq(admins.id, adminId));
   reply.setCookie(SESSION_COOKIE, token, {
     path: "/",
     httpOnly: true,
     secure: useSecureCookies,
     sameSite: "lax",
     signed: true,
-    expires: expiresAt
+    expires: expiresAt,
   });
 }
 
@@ -43,15 +50,17 @@ export async function resolveAdmin(request: FastifyRequest) {
       id: admins.id,
       email: admins.email,
       name: admins.name,
-      role: admins.role
+      role: admins.role,
     })
     .from(adminSessions)
     .innerJoin(admins, eq(adminSessions.adminId, admins.id))
-    .where(and(
-      eq(adminSessions.tokenHash, tokenHash),
-      gt(adminSessions.expiresAt, new Date()),
-      eq(admins.isActive, 1)
-    ))
+    .where(
+      and(
+        eq(adminSessions.tokenHash, tokenHash),
+        gt(adminSessions.expiresAt, new Date()),
+        eq(admins.isActive, 1),
+      ),
+    )
     .limit(1);
 
   return row ?? null;
@@ -59,6 +68,7 @@ export async function resolveAdmin(request: FastifyRequest) {
 
 export async function requireAdmin(request: FastifyRequest, reply: FastifyReply) {
   const admin = await resolveAdmin(request);
-  if (!admin) return reply.code(401).send({ error: "UNAUTHORIZED", message: "Требуется авторизация" });
+  if (!admin)
+    return reply.code(401).send({ error: "UNAUTHORIZED", message: "Требуется авторизация" });
   request.admin = admin;
 }

@@ -9,7 +9,10 @@ const [existing] = await db.select().from(admins).where(eq(admins.email, email))
 const passwordHash = await bcrypt.hash(env.ADMIN_PASSWORD, 12);
 
 if (existing && env.ADMIN_FORCE_RESET) {
-  await db.update(admins).set({ passwordHash, name: env.ADMIN_NAME, isActive: 1, updatedAt: new Date() }).where(eq(admins.id, existing.id));
+  await db
+    .update(admins)
+    .set({ passwordHash, name: env.ADMIN_NAME, isActive: 1, updatedAt: new Date() })
+    .where(eq(admins.id, existing.id));
   console.log(`Пароль администратора ${email} обновлён`);
 } else if (existing) {
   console.log(`Администратор ${email} уже существует`);

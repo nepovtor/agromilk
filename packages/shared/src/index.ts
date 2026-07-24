@@ -2,14 +2,74 @@ import { z } from "zod";
 
 z.config({ jitless: true });
 
-export const applicationStatuses = ["new", "viewed", "in_progress", "completed", "rejected"] as const;
+export const applicationStatuses = [
+  "new",
+  "viewed",
+  "in_progress",
+  "completed",
+  "rejected",
+] as const;
 export const articleStatuses = ["draft", "published", "archived"] as const;
 export const productStatuses = ["draft", "published", "archived"] as const;
+
+const pageSchema = z.coerce.number().int().min(1).default(1);
+const searchSchema = z.string().trim().min(1).max(200).optional();
+const dateSchema = z.iso.date();
+
+export const idParamsSchema = z.object({ id: z.uuid() });
+export const slugParamsSchema = z.object({ slug: z.string().trim().min(1).max(220) });
+
+export const applicationListQuerySchema = z.object({
+  page: pageSchema,
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  status: z.enum(applicationStatuses).optional(),
+  search: searchSchema,
+  from: dateSchema.optional(),
+  to: dateSchema.optional(),
+  sort: z.enum(["asc", "desc"]).optional(),
+});
+
+export const publicArticleListQuerySchema = z.object({
+  page: pageSchema,
+  pageSize: z.coerce.number().int().min(1).max(50).default(12),
+});
+
+export const adminArticleListQuerySchema = z.object({
+  page: pageSchema,
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  status: z.enum(articleStatuses).optional(),
+  search: searchSchema,
+});
+
+export const adminProductListQuerySchema = z.object({
+  page: pageSchema,
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  status: z.enum(productStatuses).optional(),
+  search: searchSchema,
+});
+
+export const statisticsRangeQuerySchema = z.object({
+  from: dateSchema.optional(),
+  to: dateSchema.optional(),
+});
+
+export const googleCallbackQuerySchema = z.object({
+  code: z.string().min(1).optional(),
+  state: z.string().min(1).optional(),
+  error: z.string().min(1).optional(),
+});
 
 const coverImageUrlSchema = z
   .string()
   .url()
-  .or(z.string().regex(/^\/(?:uploads|assets\/[A-Za-z0-9/_-]+)\/[A-Za-z0-9._-]+$/, "Некорректный путь к изображению"))
+  .or(
+    z
+      .string()
+      .regex(
+        /^\/(?:uploads|assets\/[A-Za-z0-9/_-]+)\/[A-Za-z0-9._-]+$/,
+        "Некорректный путь к изображению",
+      ),
+  )
   .or(z.literal(""));
 
 export const createApplicationSchema = z.object({
@@ -22,48 +82,79 @@ export const createApplicationSchema = z.object({
   utmSource: z.string().trim().max(200).optional(),
   utmMedium: z.string().trim().max(200).optional(),
   utmCampaign: z.string().trim().max(200).optional(),
-  website: z.string().max(0).optional()
+  website: z.string().max(0).optional(),
 });
 
 export const loginSchema = z.object({
   email: z.string().trim().email(),
-  password: z.string().min(8).max(200)
+  password: z.string().min(8).max(200),
 });
 
 export const updateApplicationSchema = z.object({
   status: z.enum(applicationStatuses).optional(),
-  adminComment: z.string().max(5000).optional()
+  adminComment: z.string().max(5000).optional(),
 });
 
 export const bulkUpdateApplicationsSchema = z.object({
   ids: z.array(z.string().uuid()).min(1, "Выберите хотя бы одну заявку").max(100),
-  status: z.enum(applicationStatuses)
+  status: z.enum(applicationStatuses),
 });
 
 export const productInputSchema = z.object({
   name: z.string().trim().min(3, "Укажите название").max(200),
-  slug: z.string().trim().toLowerCase().transform((value) => value.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")).pipe(z.string().min(1).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug должен содержать латинские буквы, цифры и дефисы").max(220)),
+  slug: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .transform((value) => value.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""))
+    .pipe(
+      z
+        .string()
+        .min(1)
+        .regex(
+          /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+          "Slug должен содержать латинские буквы, цифры и дефисы",
+        )
+        .max(220),
+    ),
   category: z.string().trim().max(120).optional().default("Заменители молока"),
   description: z.string().trim().min(20, "Добавьте описание").max(5000),
-  uses: z.array(z.string().trim().min(2).max(500)).min(1, "Добавьте хотя бы один вариант применения").max(10),
+  uses: z
+    .array(z.string().trim().min(2).max(500))
+    .min(1, "Добавьте хотя бы один вариант применения")
+    .max(10),
   composition: z.string().trim().max(5000).optional().default(""),
   preparation: z.string().trim().max(5000).optional().default(""),
   imageUrl: coverImageUrlSchema.optional(),
   status: z.enum(productStatuses).default("draft"),
   sortOrder: z.coerce.number().int().min(0).max(10_000).default(0),
-  featured: z.boolean().default(false)
+  featured: z.boolean().default(false),
 });
 
 const articleFields = {
   title: z.string().trim().min(3).max(200),
-  slug: z.string().trim().toLowerCase().transform((value) => value.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")).pipe(z.string().min(1).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug должен содержать латинские буквы, цифры и дефисы").max(220)),
+  slug: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .transform((value) => value.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""))
+    .pipe(
+      z
+        .string()
+        .min(1)
+        .regex(
+          /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+          "Slug должен содержать латинские буквы, цифры и дефисы",
+        )
+        .max(220),
+    ),
   excerpt: z.string().trim().max(500),
   content: z.string().max(200_000),
   coverImageUrl: coverImageUrlSchema,
   coverImageScale: z.coerce.number().int().min(40).max(100),
   coverImagePositionX: z.coerce.number().int().min(0).max(100),
   coverImagePositionY: z.coerce.number().int().min(0).max(100),
-  status: z.enum(articleStatuses)
+  status: z.enum(articleStatuses),
 };
 
 export const articleInputSchema = z.object({
@@ -73,7 +164,7 @@ export const articleInputSchema = z.object({
   coverImageScale: articleFields.coverImageScale.default(100),
   coverImagePositionX: articleFields.coverImagePositionX.default(50),
   coverImagePositionY: articleFields.coverImagePositionY.default(50),
-  status: articleFields.status.default("draft")
+  status: articleFields.status.default("draft"),
 });
 export const articleUpdateSchema = z.object(articleFields).partial();
 
@@ -85,7 +176,7 @@ export const analyticsEventSchema = z.object({
   referrer: z.string().max(1000).optional().default(""),
   utmSource: z.string().max(200).optional(),
   utmMedium: z.string().max(200).optional(),
-  utmCampaign: z.string().max(200).optional()
+  utmCampaign: z.string().max(200).optional(),
 });
 
 export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;

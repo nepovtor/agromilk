@@ -1,15 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import {
-  BarChart3,
-  BookOpen,
-  Boxes,
-  Inbox,
-  LogOut,
-  Menu,
-  Sparkles,
-  X,
-} from "@/components/icons";
+import { BarChart3, BookOpen, Boxes, Inbox, LogOut, Menu, Sparkles, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
@@ -31,12 +22,8 @@ export function AdminLayout({ children }: { children: ReactNode }) {
           <span className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--primary)] text-white shadow-sm">
             <Sparkles size={20} />
           </span>
-          <span className="mt-3 block text-xl font-bold leading-tight">
-            Агро-пульт
-          </span>
-          <span className="mt-1 block text-xs font-medium text-slate-500">
-            Agromilk admin
-          </span>
+          <span className="mt-3 block text-xl font-bold leading-tight">Агро-пульт</span>
+          <span className="mt-1 block text-xs font-medium text-slate-500">Agromilk admin</span>
         </Link>
         <button className="md:hidden" onClick={() => setOpen(false)}>
           <X size={20} />
@@ -44,8 +31,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
       </div>
       <nav className="space-y-1">
         {links.map(({ href, label, icon: Icon }) => {
-          const active =
-            href === "/admin" ? location === href : location.startsWith(href);
+          const active = href === "/admin" ? location === href : location.startsWith(href);
           return (
             <Link
               key={href}
@@ -87,10 +73,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
     <div className="agro-admin min-h-screen">
       <div className="fixed inset-y-0 left-0 hidden md:block">{sidebar}</div>
       {open && (
-        <div
-          className="fixed inset-0 z-40 bg-black/30 md:hidden"
-          onClick={() => setOpen(false)}
-        >
+        <div className="fixed inset-0 z-40 bg-black/30 md:hidden" onClick={() => setOpen(false)}>
           <div className="h-full w-64" onClick={(e) => e.stopPropagation()}>
             {sidebar}
           </div>

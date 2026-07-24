@@ -14,11 +14,7 @@
   --border: #d9e8f1;
   --ring: #68add8;
   background:
-    linear-gradient(
-      180deg,
-      rgba(224, 242, 252, 0.76),
-      rgba(244, 249, 252, 0) 340px
-    ),
+    linear-gradient(180deg, rgba(224, 242, 252, 0.76), rgba(244, 249, 252, 0) 340px),
     var(--background);
   color: var(--foreground);
 }

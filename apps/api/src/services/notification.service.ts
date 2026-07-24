@@ -60,8 +60,7 @@ export async function sendApplicationEmail(application: Application) {
 }
 
 export async function sendApplicationTelegram(application: Application) {
-  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID)
-    return { skipped: true };
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) return { skipped: true };
   const response = await fetch(
     `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
     {
@@ -75,9 +74,6 @@ export async function sendApplicationTelegram(application: Application) {
       signal: AbortSignal.timeout(10_000),
     },
   );
-  if (!response.ok)
-    throw new Error(
-      `Telegram API: ${response.status} ${await response.text()}`,
-    );
+  if (!response.ok) throw new Error(`Telegram API: ${response.status} ${await response.text()}`);
   return { skipped: false };
 }

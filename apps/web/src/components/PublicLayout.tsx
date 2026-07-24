@@ -12,10 +12,7 @@ type PublicLayoutProps = {
   variant?: "default" | KnowledgeLayoutVariant;
 };
 
-export function PublicLayout({
-  children,
-  variant = "default",
-}: PublicLayoutProps) {
+export function PublicLayout({ children, variant = "default" }: PublicLayoutProps) {
   if (variant !== "default") {
     return <KnowledgeLayout variant={variant}>{children}</KnowledgeLayout>;
   }
@@ -24,11 +21,7 @@ export function PublicLayout({
     <div className="agromilk-public min-h-screen">
       <header className="agro-public-header">
         <div className="agro-container agro-public-header__inner">
-          <Link
-            href="/"
-            className="agro-public-logo"
-            aria-label="Агромилк — на главную"
-          >
+          <Link href="/" className="agro-public-logo" aria-label="Агромилк — на главную">
             <img src={agromilkAsset("logo-desktop.png")} alt="Агромилк" />
           </Link>
           <nav className="agro-public-nav" aria-label="Основная навигация">
@@ -64,10 +57,7 @@ function KnowledgeLayout({
   children: ReactNode;
   variant: KnowledgeLayoutVariant;
 }) {
-  const pageClass =
-    variant === "article"
-      ? "agro-article-layout-page"
-      : "agro-instructions-page";
+  const pageClass = variant === "article" ? "agro-article-layout-page" : "agro-instructions-page";
 
   return (
     <div className={`agromilk-public agromilk-public--${variant} min-h-screen`}>

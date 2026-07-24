@@ -13,17 +13,33 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
-  useEffect(() => { api.auth.me().then((r) => setUser(r.user)).catch(() => setUser(null)).finally(() => setLoading(false)); }, []);
+  useEffect(() => {
+    api.auth
+      .me()
+      .then((r) => setUser(r.user))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
+  }, []);
   useEffect(() => {
     const expire = () => setUser(null);
     window.addEventListener("admin-session-expired", expire);
     return () => window.removeEventListener("admin-session-expired", expire);
   }, []);
-  const value = useMemo<AuthContextValue>(() => ({
-    user, loading,
-    login: async (email, password) => { const result = await api.auth.login({ email, password }); setUser(result.user); },
-    logout: async () => { await api.auth.logout(); setUser(null); }
-  }), [user, loading]);
+  const value = useMemo<AuthContextValue>(
+    () => ({
+      user,
+      loading,
+      login: async (email, password) => {
+        const result = await api.auth.login({ email, password });
+        setUser(result.user);
+      },
+      logout: async () => {
+        await api.auth.logout();
+        setUser(null);
+      },
+    }),
+    [user, loading],
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

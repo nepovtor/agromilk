@@ -6,11 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import type {
-  ArticleInput,
-  ArticleRecord,
-  ArticleStatus,
-} from "@landing/shared";
+import type { ArticleInput, ArticleRecord, ArticleStatus } from "@landing/shared";
 import { Link, useLocation, useParams } from "wouter";
 import {
   ArrowLeft,
@@ -72,8 +68,7 @@ const templates = [
     label: "Рекомендация",
     icon: FileText,
     title: "Как подготовить рацион ...",
-    excerpt:
-      "Короткий разбор с нормами, частыми ошибками и финальной проверкой.",
+    excerpt: "Короткий разбор с нормами, частыми ошибками и финальной проверкой.",
     content:
       "<h2>TL;DR</h2><p>Коротко: ...</p><h2>Когда это нужно</h2><p>...</p><h2>Шаги</h2><ol><li>...</li><li>...</li><li>...</li></ol><h2>Частые ошибки</h2><ul><li>...</li><li>...</li></ul><h2>Финальная проверка</h2><p>...</p>",
   },
@@ -116,11 +111,7 @@ const stripHtml = (html: string) =>
     .trim();
 
 const escapeHtml = (value: string) =>
-  value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 const toInput = (article: ArticleRecord): ArticleInput => ({
   title: article.title,
@@ -146,9 +137,7 @@ export function ArticleEditorPage() {
   const [coverDragging, setCoverDragging] = useState(false);
   const [error, setError] = useState("");
   const [preview, setPreview] = useState(false);
-  const [previewMode, setPreviewMode] = useState<"desktop" | "mobile">(
-    "desktop",
-  );
+  const [previewMode, setPreviewMode] = useState<"desktop" | "mobile">("desktop");
   const [slugTouched, setSlugTouched] = useState(false);
   const [copied, setCopied] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
@@ -186,19 +175,13 @@ export function ArticleEditorPage() {
   const titleLimit = 200;
   const excerptLimit = 500;
 
-  const update = <K extends keyof ArticleInput>(
-    key: K,
-    value: ArticleInput[K],
-  ) => {
+  const update = <K extends keyof ArticleInput>(key: K, value: ArticleInput[K]) => {
     setData((current) => ({ ...current, [key]: value }));
     setDirty(true);
   };
 
   const save = useCallback(
-    async (
-      status?: ArticleStatus,
-      options: { returnToList?: boolean } = {},
-    ) => {
+    async (status?: ArticleStatus, options: { returnToList?: boolean } = {}) => {
       setSaving(true);
       setError("");
       const payload = { ...data, status: status ?? data.status };
@@ -234,8 +217,7 @@ export function ArticleEditorPage() {
   }, [data.status, save, saving]);
 
   const applyTemplate = (template: (typeof templates)[number]) => {
-    if (data.content && !window.confirm("Заменить текущий текст шаблоном?"))
-      return;
+    if (data.content && !window.confirm("Заменить текущий текст шаблоном?")) return;
     setData((current) => ({
       ...current,
       title: current.title || template.title,
@@ -285,14 +267,8 @@ export function ArticleEditorPage() {
   const moveCoverFocus = (deltaX: number, deltaY: number) => {
     setData((current) => ({
       ...current,
-      coverImagePositionX: Math.min(
-        100,
-        Math.max(0, current.coverImagePositionX + deltaX),
-      ),
-      coverImagePositionY: Math.min(
-        100,
-        Math.max(0, current.coverImagePositionY + deltaY),
-      ),
+      coverImagePositionX: Math.min(100, Math.max(0, current.coverImagePositionX + deltaX)),
+      coverImagePositionY: Math.min(100, Math.max(0, current.coverImagePositionY + deltaY)),
     }));
     setDirty(true);
   };
@@ -316,8 +292,7 @@ export function ArticleEditorPage() {
   const remove = async () => {
     if (!id || !editing) return;
     const title = data.title.trim() || "материал без названия";
-    if (!window.confirm(`Удалить «${title}» без возможности восстановления?`))
-      return;
+    if (!window.confirm(`Удалить «${title}» без возможности восстановления?`)) return;
 
     setDeleting(true);
     setError("");
@@ -325,9 +300,7 @@ export function ArticleEditorPage() {
       await api.articles.remove(id);
       navigate("/admin/articles");
     } catch (cause) {
-      setError(
-        cause instanceof Error ? cause.message : "Не удалось удалить материал",
-      );
+      setError(cause instanceof Error ? cause.message : "Не удалось удалить материал");
       setDeleting(false);
     }
   };
@@ -367,13 +340,10 @@ export function ArticleEditorPage() {
                   <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
                     {editing ? "Редактирование инструкции" : "Новая инструкция"}
                   </h1>
-                  <Badge className={statusColors[data.status]}>
-                    {statusLabels[data.status]}
-                  </Badge>
+                  <Badge className={statusColors[data.status]}>{statusLabels[data.status]}</Badge>
                 </div>
                 <p className="mt-2 text-sm text-slate-500">
-                  Соберите материал, проверьте его вид и опубликуйте — всё на
-                  одном экране.
+                  Соберите материал, проверьте его вид и опубликуйте — всё на одном экране.
                 </p>
                 <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-slate-500">
                   <span>{wordCount} слов</span>
@@ -430,11 +400,7 @@ export function ArticleEditorPage() {
                 disabled={saving || deleting}
                 onClick={() => void save()}
               >
-                {saving ? (
-                  <Loader2 className="animate-spin" size={17} />
-                ) : (
-                  <Save size={17} />
-                )}
+                {saving ? <Loader2 className="animate-spin" size={17} /> : <Save size={17} />}
                 Сохранить
               </Button>
               <Button
@@ -541,8 +507,7 @@ export function ArticleEditorPage() {
                     maxLength={titleLimit}
                     onChange={(event) => {
                       update("title", event.target.value);
-                      if (!slugTouched)
-                        update("slug", slugify(event.target.value));
+                      if (!slugTouched) update("slug", slugify(event.target.value));
                     }}
                     placeholder="Например: Как подготовить телят к смене рациона"
                     className="h-12 text-base font-semibold sm:text-lg"
@@ -560,9 +525,7 @@ export function ArticleEditorPage() {
                     <Textarea
                       value={data.excerpt}
                       maxLength={excerptLimit}
-                      onChange={(event) =>
-                        update("excerpt", event.target.value)
-                      }
+                      onChange={(event) => update("excerpt", event.target.value)}
                       placeholder="Смысл материала в одну-две строки"
                       className="min-h-24"
                     />
@@ -580,9 +543,7 @@ export function ArticleEditorPage() {
                 </label>
 
                 <div className="min-w-0">
-                  <span className="mb-2 block text-sm font-medium">
-                    Текст материала
-                  </span>
+                  <span className="mb-2 block text-sm font-medium">Текст материала</span>
                   <RichTextEditor
                     value={data.content}
                     onChange={(value) => update("content", value)}
@@ -596,9 +557,7 @@ export function ArticleEditorPage() {
             <Card>
               <CardHeader className="pb-4">
                 <CardTitle>Настройки материала</CardTitle>
-                <p className="mt-1 text-sm text-slate-500">
-                  Всё необходимое перед публикацией.
-                </p>
+                <p className="mt-1 text-sm text-slate-500">Всё необходимое перед публикацией.</p>
               </CardHeader>
               <CardContent className="space-y-5">
                 <label className="block">
@@ -606,9 +565,7 @@ export function ArticleEditorPage() {
                   <Select
                     className="w-full"
                     value={data.status}
-                    onChange={(event) =>
-                      update("status", event.target.value as ArticleStatus)
-                    }
+                    onChange={(event) => update("status", event.target.value as ArticleStatus)}
                   >
                     <option value="draft">Черновик</option>
                     <option value="published">Опубликована</option>
@@ -635,12 +592,7 @@ export function ArticleEditorPage() {
                     value={data.slug}
                     onChange={(event) => {
                       setSlugTouched(true);
-                      update(
-                        "slug",
-                        event.target.value
-                          .toLowerCase()
-                          .replace(/[^a-z0-9-]/g, ""),
-                      );
+                      update("slug", event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""));
                     }}
                     placeholder="article-slug"
                   />
@@ -665,12 +617,8 @@ export function ArticleEditorPage() {
                 <div className="border-t border-slate-100 pt-5">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-slate-800">
-                        Обложка
-                      </p>
-                      <p className="mt-0.5 text-xs text-slate-400">
-                        JPG, PNG, WebP или GIF
-                      </p>
+                      <p className="text-sm font-semibold text-slate-800">Обложка</p>
+                      <p className="mt-0.5 text-xs text-slate-400">JPG, PNG, WebP или GIF</p>
                     </div>
                     {data.coverImageUrl && (
                       <button
@@ -688,8 +636,7 @@ export function ArticleEditorPage() {
                       coverDragging && "border-blue-400 bg-blue-50",
                     )}
                     onDragEnter={(event) => {
-                      if (event.dataTransfer.types.includes("Files"))
-                        setCoverDragging(true);
+                      if (event.dataTransfer.types.includes("Files")) setCoverDragging(true);
                     }}
                     onDragOver={(event) => event.preventDefault()}
                     onDragLeave={() => setCoverDragging(false)}
@@ -797,9 +744,7 @@ export function ArticleEditorPage() {
                         <span className="font-medium text-slate-700">
                           {coverUploading ? "Загрузка..." : "Добавить обложку"}
                         </span>
-                        <span className="text-xs text-slate-400">
-                          или перетащите файл сюда
-                        </span>
+                        <span className="text-xs text-slate-400">или перетащите файл сюда</span>
                       </button>
                     )}
                   </div>
@@ -808,9 +753,7 @@ export function ArticleEditorPage() {
                       <label className="block">
                         <span className="mb-2 flex items-center justify-between gap-3 text-sm font-medium text-slate-700">
                           <span>Размер изображения</span>
-                          <strong className="text-[var(--primary)]">
-                            {data.coverImageScale}%
-                          </strong>
+                          <strong className="text-[var(--primary)]">{data.coverImageScale}%</strong>
                         </span>
                         <input
                           type="range"
@@ -820,10 +763,7 @@ export function ArticleEditorPage() {
                           value={data.coverImageScale}
                           className="block w-full accent-[var(--primary)]"
                           onChange={(event) =>
-                            update(
-                              "coverImageScale",
-                              Number(event.target.value),
-                            )
+                            update("coverImageScale", Number(event.target.value))
                           }
                         />
                         <span className="mt-1 flex justify-between text-[11px] text-slate-400">
@@ -833,13 +773,10 @@ export function ArticleEditorPage() {
                       </label>
 
                       <div className="border-t border-slate-100 pt-4">
-                        <p className="text-sm font-medium text-slate-700">
-                          Центр кадра
-                        </p>
+                        <p className="text-sm font-medium text-slate-700">Центр кадра</p>
                         <p className="mt-1 text-xs leading-5 text-slate-500">
-                          Нажмите на важный объект прямо на фотографии или
-                          перетащите фиолетовый маркер. Выбранная точка задаёт
-                          фокус кадра при обрезке.
+                          Нажмите на важный объект прямо на фотографии или перетащите фиолетовый
+                          маркер. Выбранная точка задаёт фокус кадра при обрезке.
                         </p>
                         <Button
                           type="button"
@@ -865,15 +802,10 @@ export function ArticleEditorPage() {
                                 value={data.coverImagePositionX}
                                 className="w-full accent-[var(--primary)]"
                                 onChange={(event) =>
-                                  update(
-                                    "coverImagePositionX",
-                                    Number(event.target.value),
-                                  )
+                                  update("coverImagePositionX", Number(event.target.value))
                                 }
                               />
-                              <span className="text-right">
-                                {data.coverImagePositionX}%
-                              </span>
+                              <span className="text-right">{data.coverImagePositionX}%</span>
                             </label>
                             <label className="grid grid-cols-[92px_1fr_36px] items-center gap-2 text-xs text-slate-500">
                               <span>Вертикаль</span>
@@ -885,15 +817,10 @@ export function ArticleEditorPage() {
                                 value={data.coverImagePositionY}
                                 className="w-full accent-[var(--primary)]"
                                 onChange={(event) =>
-                                  update(
-                                    "coverImagePositionY",
-                                    Number(event.target.value),
-                                  )
+                                  update("coverImagePositionY", Number(event.target.value))
                                 }
                               />
-                              <span className="text-right">
-                                {data.coverImagePositionY}%
-                              </span>
+                              <span className="text-right">{data.coverImagePositionY}%</span>
                             </label>
                           </div>
                         </details>
@@ -905,9 +832,7 @@ export function ArticleEditorPage() {
                     type="file"
                     accept="image/jpeg,image/png,image/webp,image/gif"
                     className="hidden"
-                    onChange={(event) =>
-                      void uploadCover(event.target.files?.[0])
-                    }
+                    onChange={(event) => void uploadCover(event.target.files?.[0])}
                   />
                 </div>
 
@@ -969,9 +894,7 @@ export function ArticleEditorPage() {
                   sandbox=""
                   className={cn(
                     "h-full min-h-[620px] rounded-2xl bg-white shadow-sm transition-all",
-                    previewMode === "mobile"
-                      ? "w-[390px] max-w-full"
-                      : "w-full",
+                    previewMode === "mobile" ? "w-[390px] max-w-full" : "w-full",
                   )}
                   srcDoc={previewDoc}
                 />

@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import {
   EditorContent,
   Extension,
@@ -97,8 +91,7 @@ const TextAlignment = Extension.create({
         attributes: {
           textAlign: {
             default: "left",
-            parseHTML: (element: HTMLElement) =>
-              element.style.textAlign || "left",
+            parseHTML: (element: HTMLElement) => element.style.textAlign || "left",
             renderHTML: (attributes: Record<string, unknown>) =>
               attributes.textAlign && attributes.textAlign !== "left"
                 ? { style: `text-align: ${String(attributes.textAlign)}` }
@@ -121,12 +114,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
 
   const uploadImage = useCallback(async ({ file, position }: UploadRequest) => {
     const currentEditor = editorRef.current;
-    if (
-      !currentEditor ||
-      currentEditor.isDestroyed ||
-      !file.type.startsWith("image/")
-    )
-      return;
+    if (!currentEditor || currentEditor.isDestroyed || !file.type.startsWith("image/")) return;
 
     const uploadId = crypto.randomUUID();
     currentEditor
@@ -147,11 +135,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
       setUploadError("");
     } catch (error) {
       replaceUploadNode(currentEditor, uploadId, null);
-      setUploadError(
-        error instanceof Error
-          ? error.message
-          : "Не удалось загрузить изображение",
-      );
+      setUploadError(error instanceof Error ? error.message : "Не удалось загрузить изображение");
     } finally {
       if (fileRef.current) fileRef.current.value = "";
     }
@@ -180,9 +164,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
       }),
       Placeholder.configure({
         placeholder: ({ node }) =>
-          node.type.name === "heading"
-            ? "Заголовок"
-            : "Начните писать или нажмите «+»…",
+          node.type.name === "heading" ? "Заголовок" : "Начните писать или нажмите «+»…",
       }),
       UploadingImage,
     ],
@@ -250,8 +232,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
 
   useEffect(() => {
     if (!editor || editor.isDestroyed) return;
-    const updateTableState = () =>
-      setInTable(!editor.isDestroyed && editor.isActive("table"));
+    const updateTableState = () => setInTable(!editor.isDestroyed && editor.isActive("table"));
     updateTableState();
     editor.on("selectionUpdate", updateTableState);
     editor.on("transaction", updateTableState);
@@ -275,8 +256,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
     const current = editor.getAttributes("link").href as string | undefined;
     const input = window.prompt("Введите адрес ссылки", current ?? "https://");
     if (input === null) return;
-    if (!input.trim())
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    if (!input.trim()) editor.chain().focus().extendMarkRange("link").unsetLink().run();
     else
       editor
         .chain()
@@ -292,12 +272,9 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
         "relative rounded-2xl border border-[var(--border)] bg-white shadow-sm transition-shadow focus-within:border-violet-300 focus-within:shadow-md",
         dragging && "border-violet-400 ring-4 ring-violet-100",
       )}
-      onDragEnter={(event) =>
-        event.dataTransfer.types.includes("Files") && setDragging(true)
-      }
+      onDragEnter={(event) => event.dataTransfer.types.includes("Files") && setDragging(true)}
       onDragLeave={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null))
-          setDragging(false);
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false);
       }}
       onDragOver={(event) => {
         if (event.dataTransfer.types.includes("Files")) event.preventDefault();
@@ -307,9 +284,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
         editor={editor}
         options={{ placement: "top", offset: 8 }}
         shouldShow={({ editor: current }) =>
-          !current.state.selection.empty &&
-          current.isEditable &&
-          !current.isActive("table")
+          !current.state.selection.empty && current.isEditable && !current.isActive("table")
         }
       >
         <div
@@ -321,9 +296,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
               label="Жирный"
               active={editor.isActive("bold")}
               onClick={() =>
-                runEditorAction(editor, () =>
-                  editor.chain().focus().toggleBold().run(),
-                )
+                runEditorAction(editor, () => editor.chain().focus().toggleBold().run())
               }
             >
               <Bold />
@@ -332,9 +305,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
               label="Курсив"
               active={editor.isActive("italic")}
               onClick={() =>
-                runEditorAction(editor, () =>
-                  editor.chain().focus().toggleItalic().run(),
-                )
+                runEditorAction(editor, () => editor.chain().focus().toggleItalic().run())
               }
             >
               <Italic />
@@ -343,9 +314,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
               label="Подчёркнутый"
               active={editor.isActive("underline")}
               onClick={() =>
-                runEditorAction(editor, () =>
-                  editor.chain().focus().toggleUnderline().run(),
-                )
+                runEditorAction(editor, () => editor.chain().focus().toggleUnderline().run())
               }
             >
               <UnderlineIcon />
@@ -354,46 +323,34 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
               label="Зачёркнутый"
               active={editor.isActive("strike")}
               onClick={() =>
-                runEditorAction(editor, () =>
-                  editor.chain().focus().toggleStrike().run(),
-                )
+                runEditorAction(editor, () => editor.chain().focus().toggleStrike().run())
               }
             >
               <Strikethrough />
             </MenuButton>
             <span className="mx-1 h-5 w-px bg-slate-200" />
-            <MenuButton
-              label="Ссылка"
-              active={editor.isActive("link")}
-              onClick={insertLink}
-            >
+            <MenuButton label="Ссылка" active={editor.isActive("link")} onClick={insertLink}>
               <Link2 />
             </MenuButton>
             <span className="mx-1 h-5 w-px bg-slate-200" />
             <MenuButton
               label="По левому краю"
               active={editor.isActive({ textAlign: "left" })}
-              onClick={() =>
-                runEditorAction(editor, () => setAlignment(editor, "left"))
-              }
+              onClick={() => runEditorAction(editor, () => setAlignment(editor, "left"))}
             >
               <AlignLeft />
             </MenuButton>
             <MenuButton
               label="По центру"
               active={editor.isActive({ textAlign: "center" })}
-              onClick={() =>
-                runEditorAction(editor, () => setAlignment(editor, "center"))
-              }
+              onClick={() => runEditorAction(editor, () => setAlignment(editor, "center"))}
             >
               <AlignCenter />
             </MenuButton>
             <MenuButton
               label="По правому краю"
               active={editor.isActive({ textAlign: "right" })}
-              onClick={() =>
-                runEditorAction(editor, () => setAlignment(editor, "right"))
-              }
+              onClick={() => runEditorAction(editor, () => setAlignment(editor, "right"))}
             >
               <AlignRight />
             </MenuButton>
@@ -433,8 +390,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
 
       <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2.5">
         <p className="text-xs font-medium text-slate-500">
-          Выделите текст для форматирования · «+» добавляет изображение, таблицу
-          и другие блоки
+          Выделите текст для форматирования · «+» добавляет изображение, таблицу и другие блоки
         </p>
         <ChevronDown className="size-4 text-slate-300" aria-hidden="true" />
       </div>
@@ -453,8 +409,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
           if (file)
             void uploadImage({
               file,
-              position:
-                uploadPositionRef.current ?? editor.state.selection.from,
+              position: uploadPositionRef.current ?? editor.state.selection.from,
             });
           uploadPositionRef.current = null;
         }}
@@ -480,9 +435,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
         <div className="pointer-events-none absolute inset-0 z-40 grid place-items-center rounded-2xl bg-violet-50/90">
           <div className="rounded-xl border border-dashed border-violet-400 bg-white px-8 py-6 text-center shadow-lg">
             <ImagePlus className="mx-auto mb-2 size-6 text-violet-600" />
-            <p className="text-sm font-semibold text-violet-800">
-              Отпустите изображение здесь
-            </p>
+            <p className="text-sm font-semibold text-violet-800">Отпустите изображение здесь</p>
           </div>
         </div>
       )}
@@ -510,45 +463,33 @@ function InsertMenu({
       hint: "Главный раздел",
       icon: <Heading1 />,
       action: () =>
-        runEditorAction(editor, () =>
-          editor.chain().focus().toggleHeading({ level: 1 }).run(),
-        ),
+        runEditorAction(editor, () => editor.chain().focus().toggleHeading({ level: 1 }).run()),
     },
     {
       label: "Заголовок 2",
       hint: "Крупный раздел",
       icon: <Heading2 />,
       action: () =>
-        runEditorAction(editor, () =>
-          editor.chain().focus().toggleHeading({ level: 2 }).run(),
-        ),
+        runEditorAction(editor, () => editor.chain().focus().toggleHeading({ level: 2 }).run()),
     },
     {
       label: "Заголовок 3",
       hint: "Подраздел",
       icon: <Heading3 />,
       action: () =>
-        runEditorAction(editor, () =>
-          editor.chain().focus().toggleHeading({ level: 3 }).run(),
-        ),
+        runEditorAction(editor, () => editor.chain().focus().toggleHeading({ level: 3 }).run()),
     },
     {
       label: "Маркированный список",
       hint: "Простой список",
       icon: <List />,
-      action: () =>
-        runEditorAction(editor, () =>
-          editor.chain().focus().toggleBulletList().run(),
-        ),
+      action: () => runEditorAction(editor, () => editor.chain().focus().toggleBulletList().run()),
     },
     {
       label: "Нумерованный список",
       hint: "Последовательные шаги",
       icon: <ListOrdered />,
-      action: () =>
-        runEditorAction(editor, () =>
-          editor.chain().focus().toggleOrderedList().run(),
-        ),
+      action: () => runEditorAction(editor, () => editor.chain().focus().toggleOrderedList().run()),
     },
     {
       label: "Изображение",
@@ -562,30 +503,20 @@ function InsertMenu({
       icon: <Table2 />,
       action: () =>
         runEditorAction(editor, () =>
-          editor
-            .chain()
-            .focus()
-            .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-            .run(),
+          editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
         ),
     },
     {
       label: "Цитата",
       hint: "Выделенный фрагмент",
       icon: <Quote />,
-      action: () =>
-        runEditorAction(editor, () =>
-          editor.chain().focus().toggleBlockquote().run(),
-        ),
+      action: () => runEditorAction(editor, () => editor.chain().focus().toggleBlockquote().run()),
     },
     {
       label: "Блок кода",
       hint: "Форматированный код",
       icon: <Code2 />,
-      action: () =>
-        runEditorAction(editor, () =>
-          editor.chain().focus().toggleCodeBlock().run(),
-        ),
+      action: () => runEditorAction(editor, () => editor.chain().focus().toggleCodeBlock().run()),
     },
   ];
 
@@ -612,9 +543,7 @@ function InsertMenu({
               {item.icon}
             </span>
             <span>
-              <span className="block text-sm font-medium text-slate-800">
-                {item.label}
-              </span>
+              <span className="block text-sm font-medium text-slate-800">{item.label}</span>
               <span className="block text-xs text-slate-400">{item.hint}</span>
             </span>
           </button>
@@ -637,31 +566,19 @@ function TableToolbar({ editor }: { editor: Editor }) {
         </span>
         <TableAction
           label="Строка выше"
-          onClick={() =>
-            runEditorAction(editor, () =>
-              editor.chain().focus().addRowBefore().run(),
-            )
-          }
+          onClick={() => runEditorAction(editor, () => editor.chain().focus().addRowBefore().run())}
         >
           <BetweenHorizontalStart />
         </TableAction>
         <TableAction
           label="Строка ниже"
-          onClick={() =>
-            runEditorAction(editor, () =>
-              editor.chain().focus().addRowAfter().run(),
-            )
-          }
+          onClick={() => runEditorAction(editor, () => editor.chain().focus().addRowAfter().run())}
         >
           <BetweenHorizontalEnd />
         </TableAction>
         <TableAction
           label="Удалить строку"
-          onClick={() =>
-            runEditorAction(editor, () =>
-              editor.chain().focus().deleteRow().run(),
-            )
-          }
+          onClick={() => runEditorAction(editor, () => editor.chain().focus().deleteRow().run())}
         >
           <Rows3 />
         </TableAction>
@@ -669,9 +586,7 @@ function TableToolbar({ editor }: { editor: Editor }) {
         <TableAction
           label="Столбец слева"
           onClick={() =>
-            runEditorAction(editor, () =>
-              editor.chain().focus().addColumnBefore().run(),
-            )
+            runEditorAction(editor, () => editor.chain().focus().addColumnBefore().run())
           }
         >
           <BetweenVerticalStart />
@@ -679,20 +594,14 @@ function TableToolbar({ editor }: { editor: Editor }) {
         <TableAction
           label="Столбец справа"
           onClick={() =>
-            runEditorAction(editor, () =>
-              editor.chain().focus().addColumnAfter().run(),
-            )
+            runEditorAction(editor, () => editor.chain().focus().addColumnAfter().run())
           }
         >
           <BetweenVerticalEnd />
         </TableAction>
         <TableAction
           label="Удалить столбец"
-          onClick={() =>
-            runEditorAction(editor, () =>
-              editor.chain().focus().deleteColumn().run(),
-            )
-          }
+          onClick={() => runEditorAction(editor, () => editor.chain().focus().deleteColumn().run())}
         >
           <Columns3 />
         </TableAction>
@@ -700,30 +609,20 @@ function TableToolbar({ editor }: { editor: Editor }) {
         <TableAction
           label="Строка заголовков"
           onClick={() =>
-            runEditorAction(editor, () =>
-              editor.chain().focus().toggleHeaderRow().run(),
-            )
+            runEditorAction(editor, () => editor.chain().focus().toggleHeaderRow().run())
           }
         >
           <PanelTop />
         </TableAction>
         <TableAction
           label="Объединить ячейки"
-          onClick={() =>
-            runEditorAction(editor, () =>
-              editor.chain().focus().mergeCells().run(),
-            )
-          }
+          onClick={() => runEditorAction(editor, () => editor.chain().focus().mergeCells().run())}
         >
           <Merge />
         </TableAction>
         <TableAction
           label="Разделить ячейку"
-          onClick={() =>
-            runEditorAction(editor, () =>
-              editor.chain().focus().splitCell().run(),
-            )
-          }
+          onClick={() => runEditorAction(editor, () => editor.chain().focus().splitCell().run())}
         >
           <SplitSquareVertical />
         </TableAction>
@@ -731,11 +630,7 @@ function TableToolbar({ editor }: { editor: Editor }) {
         <TableAction
           label="Удалить таблицу"
           danger
-          onClick={() =>
-            runEditorAction(editor, () =>
-              editor.chain().focus().deleteTable().run(),
-            )
-          }
+          onClick={() => runEditorAction(editor, () => editor.chain().focus().deleteTable().run())}
         >
           <Trash2 />
         </TableAction>
@@ -763,8 +658,7 @@ function TableAction({
       onClick={onClick}
       className={cn(
         "inline-flex h-8 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 text-xs font-medium text-slate-600 shadow-sm transition hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 [&>svg]:size-3.5",
-        danger &&
-          "text-red-600 hover:border-red-200 hover:bg-red-50 hover:text-red-700",
+        danger && "text-red-600 hover:border-red-200 hover:bg-red-50 hover:text-red-700",
       )}
     >
       {children}
@@ -792,10 +686,7 @@ function MenuButton({
       title={label}
       aria-label={label}
       onClick={onClick}
-      className={cn(
-        "size-8 rounded-lg [&>svg]:size-4",
-        active && "bg-violet-100 text-violet-700",
-      )}
+      className={cn("size-8 rounded-lg [&>svg]:size-4", active && "bg-violet-100 text-violet-700")}
     >
       {children}
     </Button>
@@ -810,10 +701,7 @@ function replaceUploadNode(
   if (editor.isDestroyed) return;
   let position: number | null = null;
   editor.state.doc.descendants((node, pos) => {
-    if (
-      node.type.name === "uploadingImage" &&
-      node.attrs.uploadId === uploadId
-    ) {
+    if (node.type.name === "uploadingImage" && node.attrs.uploadId === uploadId) {
       position = pos;
       return false;
     }
@@ -845,9 +733,7 @@ function runEditorAction(editor: Editor, action: () => void) {
 }
 
 function getImageFiles(files?: FileList | null) {
-  return Array.from(files ?? []).filter((file) =>
-    file.type.startsWith("image/"),
-  );
+  return Array.from(files ?? []).filter((file) => file.type.startsWith("image/"));
 }
 
 function isAllowedYoutubeUrl(value: string) {
@@ -856,12 +742,7 @@ function isAllowedYoutubeUrl(value: string) {
     const hostname = url.hostname.toLowerCase().replace(/^www\./, "");
     return (
       url.protocol === "https:" &&
-      [
-        "youtube.com",
-        "m.youtube.com",
-        "youtu.be",
-        "youtube-nocookie.com",
-      ].includes(hostname)
+      ["youtube.com", "m.youtube.com", "youtu.be", "youtube-nocookie.com"].includes(hostname)
     );
   } catch {
     return false;
@@ -870,9 +751,7 @@ function isAllowedYoutubeUrl(value: string) {
 
 function normalizeLink(value: string) {
   const trimmed = value.trim();
-  return /^(https?:|mailto:|tel:)/i.test(trimmed)
-    ? trimmed
-    : `https://${trimmed}`;
+  return /^(https?:|mailto:|tel:)/i.test(trimmed) ? trimmed : `https://${trimmed}`;
 }
 
 function sanitizePastedHtml(html: string) {
@@ -883,13 +762,7 @@ function sanitizePastedHtml(html: string) {
   document.querySelectorAll("*").forEach((element) => {
     for (const attribute of Array.from(element.attributes)) {
       const name = attribute.name.toLowerCase();
-      if (
-        name === "href" ||
-        name === "src" ||
-        name === "alt" ||
-        name === "title"
-      )
-        continue;
+      if (name === "href" || name === "src" || name === "alt" || name === "title") continue;
       const tag = element.tagName.toLowerCase();
       const numericValue = /^\d+(?:,\d+)*$/.test(attribute.value);
       if (
@@ -898,8 +771,7 @@ function sanitizePastedHtml(html: string) {
         numericValue
       )
         continue;
-      if (tag === "col" && name === "width" && /^\d+$/.test(attribute.value))
-        continue;
+      if (tag === "col" && name === "width" && /^\d+$/.test(attribute.value)) continue;
       element.removeAttribute(attribute.name);
     }
   });

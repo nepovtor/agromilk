@@ -30,7 +30,9 @@ function getApiOrigin() {
     throw new Error("API_PROXY_URL не должна содержать логин, пароль, query-параметры или hash.");
   }
   if (url.pathname !== "/") {
-    throw new Error("API_PROXY_URL должна содержать только origin без пути, например https://agromilk-api.onrender.com.");
+    throw new Error(
+      "API_PROXY_URL должна содержать только origin без пути, например https://agromilk-api.onrender.com.",
+    );
   }
 
   return url.origin;

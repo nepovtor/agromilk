@@ -3,10 +3,7 @@ import { config } from "dotenv";
 import { z } from "zod";
 
 config({
-  path: [
-    path.resolve(process.cwd(), ".env"),
-    path.resolve(process.cwd(), "../../.env"),
-  ],
+  path: [path.resolve(process.cwd(), ".env"), path.resolve(process.cwd(), "../../.env")],
   quiet: true,
 });
 
@@ -15,15 +12,13 @@ const booleanFromEnv = z.preprocess((value) => {
   return ["1", "true", "yes", "on"].includes(value.toLowerCase());
 }, z.boolean());
 const optionalSecret = z.preprocess(
-  (value) => typeof value === "string" && value.trim() === "" ? undefined : value,
+  (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
   z.string().trim().min(1).optional(),
 );
 
 const envSchema = z
   .object({
-    NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     HOST: z.string().default("0.0.0.0"),
     PORT: z.coerce.number().int().positive().default(3000),
     DATABASE_URL: z.string().min(1),
@@ -76,7 +71,8 @@ const envSchema = z
       context.addIssue({
         code: "custom",
         path: [value.GOOGLE_CLIENT_ID ? "GOOGLE_CLIENT_SECRET" : "GOOGLE_CLIENT_ID"],
-        message: "для Google OAuth необходимо задать GOOGLE_CLIENT_ID и GOOGLE_CLIENT_SECRET вместе",
+        message:
+          "для Google OAuth необходимо задать GOOGLE_CLIENT_ID и GOOGLE_CLIENT_SECRET вместе",
       });
     if (value.NODE_ENV !== "production") return;
     if (value.ADMIN_PASSWORD === "ChangeMe123!")
@@ -95,10 +91,7 @@ const envSchema = z
 
 const parsed = envSchema.safeParse(process.env);
 if (!parsed.success) {
-  console.error(
-    "Некорректные переменные окружения:",
-    parsed.error.flatten().fieldErrors,
-  );
+  console.error("Некорректные переменные окружения:", parsed.error.flatten().fieldErrors);
   process.exit(1);
 }
 

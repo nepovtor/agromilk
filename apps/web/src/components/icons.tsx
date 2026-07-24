@@ -4,57 +4,314 @@ export type IconProps = SVGProps<SVGSVGElement> & { size?: number | string };
 type Shape = ReactNode;
 
 function Icon({ size = 24, children, ...props }: IconProps & { children: Shape }) {
-  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>{children}</svg>;
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      {children}
+    </svg>
+  );
 }
-const make = (shape: Shape) => function CustomIcon(props: IconProps) { return <Icon {...props}>{shape}</Icon>; };
+const make = (shape: Shape) =>
+  function CustomIcon(props: IconProps) {
+    return <Icon {...props}>{shape}</Icon>;
+  };
 
-export const ArrowRight = make(<><path d="M5 12h13M14 7l5 5-5 5"/><path d="M5 8v8" opacity=".35"/></>);
-export const ArrowLeft = make(<><path d="M19 12H6M10 7l-5 5 5 5"/><path d="M19 8v8" opacity=".35"/></>);
-export const ArrowUpRight = make(<><path d="M7 17 17 7M9 7h8v8"/><circle cx="6" cy="18" r="1" fill="currentColor" stroke="none"/></>);
-export const Check = make(<><path d="m5 12.5 4.2 4L19 7"/><path d="M18 11v5a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3" opacity=".3"/></>);
-export const CheckCircle2 = make(<><path d="m7.5 12.2 3 3 6.5-7"/><path d="M20 11a8 8 0 1 1-3-6.2"/><circle cx="19" cy="5" r="1" fill="currentColor" stroke="none"/></>);
-export const BadgeCheck = make(<><path d="m8.2 12.2 2.4 2.4 5.2-5.5"/><path d="m12 2.8 2.2 1.4 2.6-.1 1.1 2.4 2.1 1.6-.6 2.6.6 2.5-2.1 1.7-1.1 2.4-2.6-.2L12 18.5l-2.2-1.4-2.6.2-1.1-2.4L4 13.2l.6-2.5L4 8.1l2.1-1.6 1.1-2.4 2.6.1z"/></>);
-export const Sparkles = make(<><path d="m12 2 1.2 3.8L17 7l-3.8 1.2L12 12l-1.2-3.8L7 7l3.8-1.2zM18.5 13l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8zM5.5 14l.6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7-1.7-.6 1.7-.6z"/></>);
-export const Zap = make(<><path d="m13.3 2-8 11h6.2L10.7 22l8-12h-6.2z"/><path d="M5 18h3" opacity=".35"/></>);
-export const Boxes = make(<><path d="M4 7.5 12 3l8 4.5-8 4.5zM4 7.5V16l8 5 8-5V7.5M12 12v9"/><path d="m8 5 8 4.5" opacity=".35"/></>);
-export const BookOpen = make(<><path d="M3.5 5.5c3-1.2 5.8-.5 8.5 1.5v13c-2.7-2-5.5-2.7-8.5-1.5zM20.5 5.5C17.5 4.3 14.7 5 12 7v13c2.7-2 5.5-2.7 8.5-1.5z"/><path d="M7 9h2M15 9h2M7 12h2" opacity=".45"/></>);
-export const ShieldCheck = make(<><path d="M12 2.8 20 6v5.6c0 4.5-3.1 7.8-8 9.6-4.9-1.8-8-5.1-8-9.6V6z"/><path d="m8.2 12 2.4 2.4 5-5.2"/></>);
-export const Clock3 = make(<><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5v6l4 2"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></>);
-export const MessageCircle = make(<><path d="M20 11.5a8 8 0 0 1-8.2 8A9.3 9.3 0 0 1 8 18.7L3.5 20l1.3-4.2A8 8 0 1 1 20 11.5Z"/><path d="M8 10h8M8 14h5"/></>);
-export const Send = make(<><path d="m3 4 18 8-18 8 3-8zM6 12h15"/><path d="m6 12-3-8" opacity=".4"/></>);
-export const BarChart3 = make(<><path d="M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7M2 20h20"/><path d="M5 7h2M17 10h2" opacity=".4"/></>);
-export const Eye = make(<><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></>);
-export const Inbox = make(<><path d="M4 5h16l2 9v5H2v-5z"/><path d="M2.5 14h5l1.5 2h6l1.5-2h5M8 8h8"/></>);
-export const Users = make(<><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-1.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V19M15 5.5a3 3 0 0 1 0 5.8M16.5 14a4 4 0 0 1 4 4v1"/></>);
-export const Search = make(<><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/><path d="M8 8h5" opacity=".35"/></>);
-export const Trash2 = make(<><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/><path d="M9 2h6" opacity=".35"/></>);
-export const X = make(<><path d="m6 6 12 12M18 6 6 18"/><circle cx="12" cy="12" r="9" opacity=".25"/></>);
-export const Menu = make(<><path d="M4 6h16M4 12h11M4 18h16"/><circle cx="19" cy="12" r="1" fill="currentColor" stroke="none"/></>);
-export const Phone = make(<><path d="M7.2 3.5 10 7.8 7.9 10c1.2 2.6 3.3 4.7 5.9 5.9l2.2-2.1 4.4 2.8-.7 3.2c-.2.8-.9 1.3-1.7 1.3C9.7 20.7 3.3 14.3 2.9 6c0-.8.5-1.5 1.3-1.7z"/></>);
-export const LogOut = make(<><path d="M10 4H5v16h5M14 8l4 4-4 4M9 12h9"/></>);
-export const Edit3 = make(<><path d="m14.5 5.5 4 4L9 19l-5 1 1-5zM13 7l4 4"/><path d="M4 5h5" opacity=".35"/></>);
-export const ExternalLink = make(<><path d="M13 5h6v6M19 5 10 14"/><path d="M11 5H5v14h14v-6"/></>);
-export const Plus = make(<><path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="9" opacity=".25"/></>);
-export const Bold = make(<><path d="M7 4h6a4 4 0 0 1 0 8H7zM7 12h7a4 4 0 0 1 0 8H7z"/></>);
-export const Italic = make(<><path d="M10 4h7M7 20h7M14 4 10 20"/></>);
-export const Strikethrough = make(<><path d="M16 6.5C15 5 13.5 4 11.5 4 9 4 7 5.5 7 8c0 1.5.8 2.5 2 3M8 17c1 2 5.5 4 8 1.5 1.2-1.2 1.3-2.4.7-3.5M4 12h16"/></>);
-export const Heading2 = make(<><path d="M4 5v14M14 5v14M4 12h10M17 11c.5-2 4-2.2 4 0 0 2-4 3.5-4 6h4"/></>);
-export const Code2 = make(<><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16"/></>);
-export const ImagePlus = make(<><rect x="3" y="4" width="14" height="16" rx="2"/><circle cx="8" cy="9" r="1.5"/><path d="m4 17 4-4 3 3 2-2 4 4M20 5v6M17 8h6"/></>);
-export const Link2 = make(<><path d="m10 14 4-4M8.5 16.5l-1 1a3.5 3.5 0 0 1-5-5l3-3a3.5 3.5 0 0 1 5 0M15.5 7.5l1-1a3.5 3.5 0 0 1 5 5l-3 3a3.5 3.5 0 0 1-5 0"/></>);
-export const List = make(<><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/></>);
-export const ListOrdered = make(<><path d="M10 6h10M10 12h10M10 18h10M4 4v4M3 8h3M3 12c3-2 4 1 0 4h3M3 19h3c0-2-3-1-3-3"/></>);
-export const Minus = make(<><path d="M4 12h16"/><circle cx="12" cy="12" r="9" opacity=".25"/></>);
-export const Quote = make(<><path d="M4 11h6v7H4v-7c0-4 2-6 5-7M14 11h6v7h-6v-7c0-4 2-6 5-7"/></>);
-export const Undo2 = make(<><path d="m8 7-4 4 4 4M4 11h10a6 6 0 0 1 6 6v1"/></>);
-export const Redo2 = make(<><path d="m16 7 4 4-4 4M20 11H10a6 6 0 0 0-6 6v1"/></>);
-export const Video = make(<><rect x="3" y="5" width="14" height="14" rx="3"/><path d="m17 10 4-2v8l-4-2zM8 9l5 3-5 3z"/></>);
-export const Clipboard = make(<><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M9 9h6M9 13h6M9 17h4"/></>);
-export const FileText = make(<><path d="M6 2h8l4 4v16H6zM14 2v5h4M9 11h6M9 15h6M9 19h4"/></>);
-export const Laptop = make(<><rect x="4" y="4" width="16" height="12" rx="2"/><path d="M2 19h20M9 19h6"/></>);
-export const Loader2 = make(<><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M17 3v4h4"/></>);
-export const RefreshCcw = make(<><path d="M20 7v5h-5M4 17v-5h5M18.5 12A7 7 0 0 0 6 7.5L4 12M5.5 12A7 7 0 0 0 18 16.5l2-4.5"/></>);
-export const Save = make(<><path d="M4 3h14l2 2v16H4zM8 3v6h8V3M8 21v-7h8v7"/></>);
-export const Smartphone = make(<><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M10 5h4M11 19h2"/></>);
-export const UploadCloud = make(<><path d="M7 18H5a4 4 0 0 1-.5-8A7 7 0 0 1 18 8.5a4.5 4.5 0 0 1 .5 9.5H17M12 20V10M8.5 13.5 12 10l3.5 3.5"/></>);
-export const Wand2 = make(<><path d="m4 20 11-11 3 3L7 23zM14 8l3 3M19 3v4M17 5h4M7 3l.7 2.3L10 6l-2.3.7L7 9l-.7-2.3L4 6l2.3-.7z"/></>);
+export const ArrowRight = make(
+  <>
+    <path d="M5 12h13M14 7l5 5-5 5" />
+    <path d="M5 8v8" opacity=".35" />
+  </>,
+);
+export const ArrowLeft = make(
+  <>
+    <path d="M19 12H6M10 7l-5 5 5 5" />
+    <path d="M19 8v8" opacity=".35" />
+  </>,
+);
+export const ArrowUpRight = make(
+  <>
+    <path d="M7 17 17 7M9 7h8v8" />
+    <circle cx="6" cy="18" r="1" fill="currentColor" stroke="none" />
+  </>,
+);
+export const Check = make(
+  <>
+    <path d="m5 12.5 4.2 4L19 7" />
+    <path d="M18 11v5a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3" opacity=".3" />
+  </>,
+);
+export const CheckCircle2 = make(
+  <>
+    <path d="m7.5 12.2 3 3 6.5-7" />
+    <path d="M20 11a8 8 0 1 1-3-6.2" />
+    <circle cx="19" cy="5" r="1" fill="currentColor" stroke="none" />
+  </>,
+);
+export const BadgeCheck = make(
+  <>
+    <path d="m8.2 12.2 2.4 2.4 5.2-5.5" />
+    <path d="m12 2.8 2.2 1.4 2.6-.1 1.1 2.4 2.1 1.6-.6 2.6.6 2.5-2.1 1.7-1.1 2.4-2.6-.2L12 18.5l-2.2-1.4-2.6.2-1.1-2.4L4 13.2l.6-2.5L4 8.1l2.1-1.6 1.1-2.4 2.6.1z" />
+  </>,
+);
+export const Sparkles = make(
+  <>
+    <path d="m12 2 1.2 3.8L17 7l-3.8 1.2L12 12l-1.2-3.8L7 7l3.8-1.2zM18.5 13l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8zM5.5 14l.6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7-1.7-.6 1.7-.6z" />
+  </>,
+);
+export const Zap = make(
+  <>
+    <path d="m13.3 2-8 11h6.2L10.7 22l8-12h-6.2z" />
+    <path d="M5 18h3" opacity=".35" />
+  </>,
+);
+export const Boxes = make(
+  <>
+    <path d="M4 7.5 12 3l8 4.5-8 4.5zM4 7.5V16l8 5 8-5V7.5M12 12v9" />
+    <path d="m8 5 8 4.5" opacity=".35" />
+  </>,
+);
+export const BookOpen = make(
+  <>
+    <path d="M3.5 5.5c3-1.2 5.8-.5 8.5 1.5v13c-2.7-2-5.5-2.7-8.5-1.5zM20.5 5.5C17.5 4.3 14.7 5 12 7v13c2.7-2 5.5-2.7 8.5-1.5z" />
+    <path d="M7 9h2M15 9h2M7 12h2" opacity=".45" />
+  </>,
+);
+export const ShieldCheck = make(
+  <>
+    <path d="M12 2.8 20 6v5.6c0 4.5-3.1 7.8-8 9.6-4.9-1.8-8-5.1-8-9.6V6z" />
+    <path d="m8.2 12 2.4 2.4 5-5.2" />
+  </>,
+);
+export const Clock3 = make(
+  <>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 6.5v6l4 2" />
+    <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+  </>,
+);
+export const MessageCircle = make(
+  <>
+    <path d="M20 11.5a8 8 0 0 1-8.2 8A9.3 9.3 0 0 1 8 18.7L3.5 20l1.3-4.2A8 8 0 1 1 20 11.5Z" />
+    <path d="M8 10h8M8 14h5" />
+  </>,
+);
+export const Send = make(
+  <>
+    <path d="m3 4 18 8-18 8 3-8zM6 12h15" />
+    <path d="m6 12-3-8" opacity=".4" />
+  </>,
+);
+export const BarChart3 = make(
+  <>
+    <path d="M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7M2 20h20" />
+    <path d="M5 7h2M17 10h2" opacity=".4" />
+  </>,
+);
+export const Eye = make(
+  <>
+    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+    <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+    <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+  </>,
+);
+export const Inbox = make(
+  <>
+    <path d="M4 5h16l2 9v5H2v-5z" />
+    <path d="M2.5 14h5l1.5 2h6l1.5-2h5M8 8h8" />
+  </>,
+);
+export const Users = make(
+  <>
+    <circle cx="9" cy="8" r="3" />
+    <path d="M3.5 19v-1.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V19M15 5.5a3 3 0 0 1 0 5.8M16.5 14a4 4 0 0 1 4 4v1" />
+  </>,
+);
+export const Search = make(
+  <>
+    <circle cx="10.5" cy="10.5" r="6.5" />
+    <path d="m15.5 15.5 5 5" />
+    <path d="M8 8h5" opacity=".35" />
+  </>,
+);
+export const Trash2 = make(
+  <>
+    <path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6" />
+    <path d="M9 2h6" opacity=".35" />
+  </>,
+);
+export const X = make(
+  <>
+    <path d="m6 6 12 12M18 6 6 18" />
+    <circle cx="12" cy="12" r="9" opacity=".25" />
+  </>,
+);
+export const Menu = make(
+  <>
+    <path d="M4 6h16M4 12h11M4 18h16" />
+    <circle cx="19" cy="12" r="1" fill="currentColor" stroke="none" />
+  </>,
+);
+export const Phone = make(
+  <>
+    <path d="M7.2 3.5 10 7.8 7.9 10c1.2 2.6 3.3 4.7 5.9 5.9l2.2-2.1 4.4 2.8-.7 3.2c-.2.8-.9 1.3-1.7 1.3C9.7 20.7 3.3 14.3 2.9 6c0-.8.5-1.5 1.3-1.7z" />
+  </>,
+);
+export const LogOut = make(
+  <>
+    <path d="M10 4H5v16h5M14 8l4 4-4 4M9 12h9" />
+  </>,
+);
+export const Edit3 = make(
+  <>
+    <path d="m14.5 5.5 4 4L9 19l-5 1 1-5zM13 7l4 4" />
+    <path d="M4 5h5" opacity=".35" />
+  </>,
+);
+export const ExternalLink = make(
+  <>
+    <path d="M13 5h6v6M19 5 10 14" />
+    <path d="M11 5H5v14h14v-6" />
+  </>,
+);
+export const Plus = make(
+  <>
+    <path d="M12 5v14M5 12h14" />
+    <circle cx="12" cy="12" r="9" opacity=".25" />
+  </>,
+);
+export const Bold = make(
+  <>
+    <path d="M7 4h6a4 4 0 0 1 0 8H7zM7 12h7a4 4 0 0 1 0 8H7z" />
+  </>,
+);
+export const Italic = make(
+  <>
+    <path d="M10 4h7M7 20h7M14 4 10 20" />
+  </>,
+);
+export const Strikethrough = make(
+  <>
+    <path d="M16 6.5C15 5 13.5 4 11.5 4 9 4 7 5.5 7 8c0 1.5.8 2.5 2 3M8 17c1 2 5.5 4 8 1.5 1.2-1.2 1.3-2.4.7-3.5M4 12h16" />
+  </>,
+);
+export const Heading2 = make(
+  <>
+    <path d="M4 5v14M14 5v14M4 12h10M17 11c.5-2 4-2.2 4 0 0 2-4 3.5-4 6h4" />
+  </>,
+);
+export const Code2 = make(
+  <>
+    <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16" />
+  </>,
+);
+export const ImagePlus = make(
+  <>
+    <rect x="3" y="4" width="14" height="16" rx="2" />
+    <circle cx="8" cy="9" r="1.5" />
+    <path d="m4 17 4-4 3 3 2-2 4 4M20 5v6M17 8h6" />
+  </>,
+);
+export const Link2 = make(
+  <>
+    <path d="m10 14 4-4M8.5 16.5l-1 1a3.5 3.5 0 0 1-5-5l3-3a3.5 3.5 0 0 1 5 0M15.5 7.5l1-1a3.5 3.5 0 0 1 5 5l-3 3a3.5 3.5 0 0 1-5 0" />
+  </>,
+);
+export const List = make(
+  <>
+    <path d="M9 6h11M9 12h11M9 18h11" />
+    <circle cx="4" cy="6" r="1" fill="currentColor" stroke="none" />
+    <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none" />
+    <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none" />
+  </>,
+);
+export const ListOrdered = make(
+  <>
+    <path d="M10 6h10M10 12h10M10 18h10M4 4v4M3 8h3M3 12c3-2 4 1 0 4h3M3 19h3c0-2-3-1-3-3" />
+  </>,
+);
+export const Minus = make(
+  <>
+    <path d="M4 12h16" />
+    <circle cx="12" cy="12" r="9" opacity=".25" />
+  </>,
+);
+export const Quote = make(
+  <>
+    <path d="M4 11h6v7H4v-7c0-4 2-6 5-7M14 11h6v7h-6v-7c0-4 2-6 5-7" />
+  </>,
+);
+export const Undo2 = make(
+  <>
+    <path d="m8 7-4 4 4 4M4 11h10a6 6 0 0 1 6 6v1" />
+  </>,
+);
+export const Redo2 = make(
+  <>
+    <path d="m16 7 4 4-4 4M20 11H10a6 6 0 0 0-6 6v1" />
+  </>,
+);
+export const Video = make(
+  <>
+    <rect x="3" y="5" width="14" height="14" rx="3" />
+    <path d="m17 10 4-2v8l-4-2zM8 9l5 3-5 3z" />
+  </>,
+);
+export const Clipboard = make(
+  <>
+    <rect x="5" y="4" width="14" height="17" rx="2" />
+    <path d="M9 4V2h6v2M9 9h6M9 13h6M9 17h4" />
+  </>,
+);
+export const FileText = make(
+  <>
+    <path d="M6 2h8l4 4v16H6zM14 2v5h4M9 11h6M9 15h6M9 19h4" />
+  </>,
+);
+export const Laptop = make(
+  <>
+    <rect x="4" y="4" width="16" height="12" rx="2" />
+    <path d="M2 19h20M9 19h6" />
+  </>,
+);
+export const Loader2 = make(
+  <>
+    <path d="M20 12a8 8 0 1 1-2.3-5.7" />
+    <path d="M17 3v4h4" />
+  </>,
+);
+export const RefreshCcw = make(
+  <>
+    <path d="M20 7v5h-5M4 17v-5h5M18.5 12A7 7 0 0 0 6 7.5L4 12M5.5 12A7 7 0 0 0 18 16.5l2-4.5" />
+  </>,
+);
+export const Save = make(
+  <>
+    <path d="M4 3h14l2 2v16H4zM8 3v6h8V3M8 21v-7h8v7" />
+  </>,
+);
+export const Smartphone = make(
+  <>
+    <rect x="7" y="2" width="10" height="20" rx="2" />
+    <path d="M10 5h4M11 19h2" />
+  </>,
+);
+export const UploadCloud = make(
+  <>
+    <path d="M7 18H5a4 4 0 0 1-.5-8A7 7 0 0 1 18 8.5a4.5 4.5 0 0 1 .5 9.5H17M12 20V10M8.5 13.5 12 10l3.5 3.5" />
+  </>,
+);
+export const Wand2 = make(
+  <>
+    <path d="m4 20 11-11 3 3L7 23zM14 8l3 3M19 3v4M17 5h4M7 3l.7 2.3L10 6l-2.3.7L7 9l-.7-2.3L4 6l2.3-.7z" />
+  </>,
+);

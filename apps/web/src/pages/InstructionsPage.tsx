@@ -27,37 +27,36 @@ const instructionPresentationBySlug: Record<string, InstructionPresentation> = {
     order: 2,
     title: "Таблица дозировки по возрасту животного",
     image: agromilkAsset("instruction-dosage-calf.png"),
-    excerpt:
-      "Рекомендуемые нормы расхода заменителя молока для телят на каждом этапе роста",
+    excerpt: "Рекомендуемые нормы расхода заменителя молока для телят на каждом этапе роста",
   },
   "temperatura-gotovoy-smesi": {
     order: 3,
     title: "Какой должна быть температура готовой смеси",
     image: agromilkAsset("instruction-temperature.png"),
-    excerpt:
-      "Оптимальная температура воды и готовой смеси для здоровья и хорошего усвоения.",
+    excerpt: "Оптимальная температура воды и готовой смеси для здоровья и хорошего усвоения.",
   },
   "perevod-telenka-na-zcm": {
     order: 4,
     title: "Как переводить теленка на ЗЦМ",
     image: agromilkAsset("instruction-transition-calves.png"),
-    excerpt:
-      "Пошаговая схема перевода теленка с молока или молозива на заменитель молока.",
+    excerpt: "Пошаговая схема перевода теленка с молока или молозива на заменитель молока.",
   },
 };
 
 export function InstructionsPage() {
   const [data, setData] = useState<ArticleRecord[] | null>(null);
   const [error, setError] = useState("");
-  const articles = data && [...data].sort((a, b) => {
-    const aOrder = instructionPresentationBySlug[a.slug]?.order;
-    const bOrder = instructionPresentationBySlug[b.slug]?.order;
+  const articles =
+    data &&
+    [...data].sort((a, b) => {
+      const aOrder = instructionPresentationBySlug[a.slug]?.order;
+      const bOrder = instructionPresentationBySlug[b.slug]?.order;
 
-    if (aOrder !== undefined && bOrder !== undefined) return aOrder - bOrder;
-    if (aOrder !== undefined) return -1;
-    if (bOrder !== undefined) return 1;
-    return 0;
-  });
+      if (aOrder !== undefined && bOrder !== undefined) return aOrder - bOrder;
+      if (aOrder !== undefined) return -1;
+      if (bOrder !== undefined) return 1;
+      return 0;
+    });
 
   useEffect(() => {
     let cancelled = false;
@@ -72,10 +71,7 @@ export function InstructionsPage() {
         const remaining = await Promise.all(remainingPages);
         if (cancelled) return;
 
-        setData([
-          ...firstPage.items,
-          ...remaining.flatMap((page) => page.items),
-        ]);
+        setData([...firstPage.items, ...remaining.flatMap((page) => page.items)]);
         setError("");
       })
       .catch((e) => {
@@ -91,10 +87,7 @@ export function InstructionsPage() {
     <PublicLayout variant="instructions">
       <section className="agro-instructions-hero">
         <div className="agro-instructions-container agro-instructions-hero__inner">
-          <nav
-            className="agro-instructions-breadcrumb"
-            aria-label="Хлебные крошки"
-          >
+          <nav className="agro-instructions-breadcrumb" aria-label="Хлебные крошки">
             <Link href="/">Главная</Link>
             <span aria-hidden="true">/</span>
             <span>Инструкции</span>
@@ -128,8 +121,7 @@ export function InstructionsPage() {
           {articles && articles.length > 0 && (
             <div className="agro-instruction-list">
               {articles.map((article) => {
-                const presentation =
-                  instructionPresentationBySlug[article.slug];
+                const presentation = instructionPresentationBySlug[article.slug];
 
                 return (
                   <InstructionCard

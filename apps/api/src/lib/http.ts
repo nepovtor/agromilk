@@ -1,12 +1,10 @@
-import type { FastifyReply } from "fastify";
-import type { ZodError } from "zod";
+import type { z } from "zod";
+import { ValidationError } from "./errors.js";
 
-export function sendValidationError(reply: FastifyReply, error: ZodError) {
-  return reply.code(400).send({
-    error: "VALIDATION_ERROR",
-    message: "Проверьте введённые данные",
-    fields: error.flatten().fieldErrors
-  });
+export function parseOrThrow<T extends z.ZodType>(schema: T, input: unknown): z.output<T> {
+  const parsed = schema.safeParse(input);
+  if (!parsed.success) throw ValidationError.fromZod(parsed.error);
+  return parsed.data;
 }
 
 export function getClientIp(headers: Record<string, unknown>, fallback: string) {

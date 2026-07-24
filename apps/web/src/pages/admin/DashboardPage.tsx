@@ -33,25 +33,16 @@ export function DashboardPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const rangeError =
-    !from || !to || from > to
-      ? "Дата начала должна быть раньше даты окончания"
-      : "";
+    !from || !to || from > to ? "Дата начала должна быть раньше даты окончания" : "";
   useEffect(() => {
     if (!from || !to || from > to) return;
-    Promise.all([
-      api.statistics.summary(from, to),
-      api.statistics.timeline(from, to),
-    ])
+    Promise.all([api.statistics.summary(from, to), api.statistics.timeline(from, to)])
       .then(([s, t]) => {
         setSummary(s);
         setTimeline(t.items);
         setError("");
       })
-      .catch((e) =>
-        setError(
-          e instanceof Error ? e.message : "Не удалось загрузить статистику",
-        ),
-      )
+      .catch((e) => setError(e instanceof Error ? e.message : "Не удалось загрузить статистику"))
       .finally(() => setLoading(false));
   }, [from, to]);
   const setPeriod = (days: number) => {
@@ -135,22 +126,16 @@ export function DashboardPage() {
           </div>
         </div>
       </div>
-      {(rangeError || error) && (
-        <p className="mb-4 text-red-600">{rangeError || error}</p>
-      )}
+      {(rangeError || error) && <p className="mb-4 text-red-600">{rangeError || error}</p>}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map(({ label, value, icon: Icon, tone }) => (
           <Card key={label}>
             <CardContent className="flex items-center justify-between pt-6">
               <div>
                 <p className="text-sm text-slate-500">{label}</p>
-                <p className="mt-2 text-3xl font-bold">
-                  {loading ? "…" : (value ?? "—")}
-                </p>
+                <p className="mt-2 text-3xl font-bold">{loading ? "…" : (value ?? "—")}</p>
               </div>
-              <div
-                className={`grid h-12 w-12 place-items-center rounded-lg ${tone}`}
-              >
+              <div className={`grid h-12 w-12 place-items-center rounded-lg ${tone}`}>
                 <Icon />
               </div>
             </CardContent>

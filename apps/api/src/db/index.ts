@@ -7,8 +7,7 @@ export const pool = new Pool({
   connectionString: env.DATABASE_URL,
   max: 10,
   ssl:
-    (env.DATABASE_SSL ??
-    (env.NODE_ENV === "production" && !env.DATABASE_URL.includes("localhost")))
+    (env.DATABASE_SSL ?? (env.NODE_ENV === "production" && !env.DATABASE_URL.includes("localhost")))
       ? { rejectUnauthorized: false }
       : undefined,
 });

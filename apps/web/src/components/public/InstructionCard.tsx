@@ -9,20 +9,11 @@ type InstructionCardProps = {
   title: string;
 };
 
-export function InstructionCard({
-  excerpt,
-  href,
-  image,
-  title,
-}: InstructionCardProps) {
+export function InstructionCard({ excerpt, href, image, title }: InstructionCardProps) {
   return (
     <Link className="agro-instruction-card" href={href}>
       <div className="agro-instruction-card__image">
-        {image ? (
-          <img src={image} alt="" />
-        ) : (
-          <BookOpen size={64} aria-hidden="true" />
-        )}
+        {image ? <img src={image} alt="" /> : <BookOpen size={64} aria-hidden="true" />}
       </div>
       <div className="agro-instruction-card__content">
         <h2>{title}</h2>

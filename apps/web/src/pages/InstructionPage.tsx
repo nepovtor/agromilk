@@ -11,9 +11,7 @@ type ArticleBreadcrumbProps = {
 };
 
 function ArticleBreadcrumb({ title, bottom = false }: ArticleBreadcrumbProps) {
-  const positionClass = bottom
-    ? " agro-article-detail__breadcrumb--bottom"
-    : "";
+  const positionClass = bottom ? " agro-article-detail__breadcrumb--bottom" : "";
 
   return (
     <nav
@@ -36,9 +34,7 @@ function ArticleBreadcrumb({ title, bottom = false }: ArticleBreadcrumbProps) {
 function ArticleRequestState({ error }: { error?: string }) {
   return (
     <section className="agro-article-detail__state">
-      <PublicState error={Boolean(error)}>
-        {error || "Загружаем инструкцию…"}
-      </PublicState>
+      <PublicState error={Boolean(error)}>{error || "Загружаем инструкцию…"}</PublicState>
     </section>
   );
 }
@@ -70,17 +66,13 @@ export function InstructionPage() {
         <article className="agro-article-detail">
           <header
             className={`agro-article-detail__hero${
-              article.coverImageUrl
-                ? " agro-article-detail__hero--with-cover"
-                : ""
+              article.coverImageUrl ? " agro-article-detail__hero--with-cover" : ""
             }`}
           >
             {article.coverImageUrl && (
               <div
                 className={`agro-article-detail__cover-frame${
-                  article.coverImageScale < 100
-                    ? " agro-article-detail__cover-frame--scaled"
-                    : ""
+                  article.coverImageScale < 100 ? " agro-article-detail__cover-frame--scaled" : ""
                 }`}
                 style={
                   {
@@ -108,9 +100,7 @@ export function InstructionPage() {
             <div className="agro-article-detail__hero-inner">
               <ArticleBreadcrumb title={article.title} />
               <h1>{article.title}</h1>
-              {article.excerpt && (
-                <p className="agro-article-detail__lead">{article.excerpt}</p>
-              )}
+              {article.excerpt && <p className="agro-article-detail__lead">{article.excerpt}</p>}
             </div>
           </header>
           <section className="agro-article-detail__body">

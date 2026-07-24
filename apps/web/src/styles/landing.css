@@ -1879,12 +1879,7 @@
     order: -1;
     min-height: 315px;
     overflow: hidden;
-    background: radial-gradient(
-      circle at 50% 76%,
-      #153d54 0,
-      #0c2636 38%,
-      #071923 74%
-    );
+    background: radial-gradient(circle at 50% 76%, #153d54 0, #0c2636 38%, #071923 74%);
   }
   .agro-hero__visual::after {
     position: absolute;

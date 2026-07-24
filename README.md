@@ -57,12 +57,12 @@ Agromilk — готовое к развёртыванию монорепо с а
 
 ## Стек и структура
 
-| Слой | Технологии |
-| --- | --- |
-| Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, Wouter, TipTap, Recharts |
-| API | Node.js 22, Fastify 5, Zod, bcryptjs, Nodemailer |
-| Данные | PostgreSQL 17, Drizzle ORM |
-| Инфраструктура | pnpm workspaces, Docker Compose, GitHub Actions, Render, Netlify |
+| Слой           | Технологии                                                           |
+| -------------- | -------------------------------------------------------------------- |
+| Frontend       | React 19, TypeScript, Vite, Tailwind CSS 4, Wouter, TipTap, Recharts |
+| API            | Node.js 22, Fastify 5, Zod, bcryptjs, Nodemailer                     |
+| Данные         | PostgreSQL 17, Drizzle ORM                                           |
+| Инфраструктура | pnpm workspaces, Docker Compose, GitHub Actions, Render, Netlify     |
 
 ```text
 apps/web/       React-приложение

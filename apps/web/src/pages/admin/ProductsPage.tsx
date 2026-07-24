@@ -1,20 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import type {
-  Paginated,
-  ProductInput,
-  ProductRecord,
-  ProductStatus,
-} from "@landing/shared";
-import {
-  Boxes,
-  Edit3,
-  Plus,
-  Save,
-  Search,
-  Trash2,
-  UploadCloud,
-  X,
-} from "@/components/icons";
+import type { Paginated, ProductInput, ProductRecord, ProductStatus } from "@landing/shared";
+import { Boxes, Edit3, Plus, Save, Search, Trash2, UploadCloud, X } from "@/components/icons";
 import { api } from "@/api/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Badge } from "@/components/ui/badge";
@@ -209,9 +195,7 @@ export function ProductsPage() {
       const result = await api.media.upload(file);
       update("imageUrl", result.url);
     } catch (e) {
-      setError(
-        e instanceof Error ? e.message : "Не удалось загрузить изображение",
-      );
+      setError(e instanceof Error ? e.message : "Не удалось загрузить изображение");
     } finally {
       setUploading(false);
     }
@@ -223,8 +207,7 @@ export function ProductsPage() {
         <div>
           <h1 className="text-3xl font-bold">Каталог продукции</h1>
           <p className="mt-1 text-slate-500">
-            Управление карточками, характеристиками и порядком отображения на
-            сайте.
+            Управление карточками, характеристиками и порядком отображения на сайте.
           </p>
         </div>
         <Button onClick={resetForm}>
@@ -236,16 +219,11 @@ export function ProductsPage() {
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(420px,.85fr)]">
         <Card>
           <CardHeader>
-            <CardTitle>
-              {selectedId ? "Редактирование продукта" : "Новый продукт"}
-            </CardTitle>
+            <CardTitle>{selectedId ? "Редактирование продукта" : "Новый продукт"}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-5">
             {error && (
-              <div
-                className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700"
-                role="alert"
-              >
+              <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
                 {error}
               </div>
             )}
@@ -309,17 +287,12 @@ export function ProductsPage() {
               />
             </label>
             <label className="block text-sm font-medium">
-              Применение{" "}
-              <span className="font-normal text-slate-400">
-                — один пункт в строке
-              </span>
+              Применение <span className="font-normal text-slate-400">— один пункт в строке</span>
               <Textarea
                 className="mt-2 min-h-32"
                 value={form.usesText}
                 onChange={(e) => update("usesText", e.target.value)}
-                placeholder={
-                  "Со 2-й недели жизни\nАвтоматические кормовые станции"
-                }
+                placeholder={"Со 2-й недели жизни\nАвтоматические кормовые станции"}
               />
             </label>
             <div className="grid gap-4 md:grid-cols-2">
@@ -369,9 +342,7 @@ export function ProductsPage() {
                   alt="Предпросмотр"
                   className="h-24 w-24 rounded-lg object-contain bg-white"
                 />
-                <span className="break-all text-xs text-slate-500">
-                  {form.imageUrl}
-                </span>
+                <span className="break-all text-xs text-slate-500">{form.imageUrl}</span>
               </div>
             )}
             <div className="grid gap-4 md:grid-cols-2">
@@ -380,9 +351,7 @@ export function ProductsPage() {
                 <Select
                   className="mt-2"
                   value={form.status}
-                  onChange={(e) =>
-                    update("status", e.target.value as ProductStatus)
-                  }
+                  onChange={(e) => update("status", e.target.value as ProductStatus)}
                 >
                   {Object.entries(statusLabels).map(([value, label]) => (
                     <option value={value} key={value}>
@@ -421,9 +390,7 @@ export function ProductsPage() {
                         load();
                       } catch (cause) {
                         setError(
-                          cause instanceof Error
-                            ? cause.message
-                            : "Не удалось удалить продукт",
+                          cause instanceof Error ? cause.message : "Не удалось удалить продукт",
                         );
                       } finally {
                         setDeletingId(null);
@@ -453,10 +420,7 @@ export function ProductsPage() {
           <CardContent>
             <div className="mb-4 grid gap-3 sm:grid-cols-[1fr_160px] xl:grid-cols-1">
               <div className="relative">
-                <Search
-                  className="absolute left-3 top-3.5 text-slate-400"
-                  size={17}
-                />
+                <Search className="absolute left-3 top-3.5 text-slate-400" size={17} />
                 <Input
                   className="pl-9"
                   value={search}
@@ -464,10 +428,7 @@ export function ProductsPage() {
                   placeholder="Поиск по каталогу"
                 />
               </div>
-              <Select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              >
+              <Select value={status} onChange={(e) => setStatus(e.target.value)}>
                 <option value="">Все статусы</option>
                 {Object.entries(statusLabels).map(([value, label]) => (
                   <option value={value} key={value}>
@@ -478,9 +439,7 @@ export function ProductsPage() {
             </div>
             <div className="space-y-3">
               {data?.items.length === 0 && (
-                <p className="py-8 text-center text-sm text-slate-500">
-                  Продукты не найдены
-                </p>
+                <p className="py-8 text-center text-sm text-slate-500">Продукты не найдены</p>
               )}
               {data?.items.map((item) => (
                 <article
@@ -490,10 +449,7 @@ export function ProductsPage() {
                   <div className="flex gap-3">
                     <div className="grid size-16 shrink-0 place-items-center rounded-lg bg-slate-50">
                       <img
-                        src={
-                          item.imageUrl ||
-                          "/assets/agromilk/product-scene-bag.png"
-                        }
+                        src={item.imageUrl || "/assets/agromilk/product-scene-bag.png"}
                         alt=""
                         className="max-h-14 max-w-12 object-contain"
                       />
@@ -501,9 +457,7 @@ export function ProductsPage() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className="font-semibold leading-tight">
-                            {item.name}
-                          </p>
+                          <p className="font-semibold leading-tight">{item.name}</p>
                           <p className="mt-1 text-xs text-slate-500">
                             {item.category} · порядок {item.sortOrder}
                           </p>

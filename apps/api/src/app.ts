@@ -10,6 +10,7 @@ import Fastify from "fastify";
 import { sql } from "drizzle-orm";
 import { env, isProduction, useSecureCookies } from "./config/env.js";
 import { db } from "./db/index.js";
+import { ApiError, ValidationError } from "./lib/errors.js";
 import { analyticsRoutes } from "./routes/analytics.routes.js";
 import { adminApplicationRoutes, publicApplicationRoutes } from "./routes/applications.routes.js";
 import { adminArticleRoutes, publicArticleRoutes } from "./routes/articles.routes.js";
@@ -23,27 +24,55 @@ export async function buildApp() {
   const app = Fastify({
     logger: { level: isProduction ? "info" : "debug" },
     trustProxy: env.TRUST_PROXY,
-    bodyLimit: 1_000_000
+    bodyLimit: 1_000_000,
   });
   app.decorateRequest("admin", null);
 
   await app.register(helmet, {
-    contentSecurityPolicy: useSecureCookies ? {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "https:"],
-        frameSrc: ["'self'", "https://www.youtube.com", "https://www.youtube-nocookie.com"],
-        connectSrc: ["'self'"],
-        upgradeInsecureRequests: []
-      }
-    } : false
+    contentSecurityPolicy: useSecureCookies
+      ? {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            frameSrc: ["'self'", "https://www.youtube.com", "https://www.youtube-nocookie.com"],
+            connectSrc: ["'self'"],
+            upgradeInsecureRequests: [],
+          },
+        }
+      : false,
   });
   if (!isProduction) await app.register(cors, { origin: true, credentials: true });
   await app.register(cookie, { secret: env.COOKIE_SECRET, hook: "onRequest" });
   await app.register(rateLimit, { max: 300, timeWindow: "1 minute" });
   await app.register(multipart, { limits: { fileSize: env.MAX_UPLOAD_SIZE, files: 1 } });
+
+  app.setErrorHandler((error, request, reply) => {
+    if (error instanceof ApiError) {
+      return reply.code(error.statusCode).send({
+        error: error.code,
+        message: error.message,
+        ...(error instanceof ValidationError && error.fields ? { fields: error.fields } : {}),
+      });
+    }
+
+    request.log.error(error);
+    if ((error as { code?: string }).code === "FST_REQ_FILE_TOO_LARGE") {
+      return reply.code(413).send({
+        error: "FILE_TOO_LARGE",
+        message: `Максимальный размер файла: ${Math.floor(env.MAX_UPLOAD_SIZE / 1024 / 1024)} МБ`,
+      });
+    }
+    const typedError = error as { statusCode?: number; message?: string };
+    const statusCode =
+      typedError.statusCode && typedError.statusCode >= 400 ? typedError.statusCode : 500;
+    return reply.code(statusCode).send({
+      error: statusCode === 500 ? "INTERNAL_SERVER_ERROR" : "REQUEST_ERROR",
+      message:
+        statusCode === 500 ? "Внутренняя ошибка сервера" : typedError.message || "Ошибка запроса",
+    });
+  });
 
   app.addHook("onSend", async (request, reply, payload) => {
     const requestPath = request.url.split("?", 1)[0] || "/";
@@ -63,9 +92,19 @@ export async function buildApp() {
   app.addHook("onRequest", async (request, reply) => {
     if (!isProduction || ["GET", "HEAD", "OPTIONS"].includes(request.method)) return;
     const origin = request.headers.origin;
-    const sameRequestHost = origin && (() => { try { return new URL(origin).host === request.headers.host; } catch { return false; } })();
+    const sameRequestHost =
+      origin &&
+      (() => {
+        try {
+          return new URL(origin).host === request.headers.host;
+        } catch {
+          return false;
+        }
+      })();
     if (origin && !sameRequestHost && origin !== env.APP_ORIGIN && origin !== env.APP_URL) {
-      return reply.code(403).send({ error: "INVALID_ORIGIN", message: "Источник запроса не разрешён" });
+      return reply
+        .code(403)
+        .send({ error: "INVALID_ORIGIN", message: "Источник запроса не разрешён" });
     }
   });
 
@@ -78,7 +117,9 @@ export async function buildApp() {
       await db.execute(sql`select 1`);
       return { status: "ok", database: "ok", time: new Date().toISOString() };
     } catch {
-      return reply.code(503).send({ status: "error", database: "unavailable", time: new Date().toISOString() });
+      return reply
+        .code(503)
+        .send({ status: "error", database: "unavailable", time: new Date().toISOString() });
     }
   });
   await app.register(authRoutes, { prefix: "/api/v1/auth" });
@@ -95,10 +136,16 @@ export async function buildApp() {
 
   const webDist = path.resolve(process.cwd(), process.env.WEB_DIST_PATH || "../web/dist");
   if (existsSync(path.join(webDist, "index.html"))) {
-    await app.register(fastifyStatic, { root: webDist, prefix: "/", decorateReply: true, wildcard: false });
+    await app.register(fastifyStatic, {
+      root: webDist,
+      prefix: "/",
+      decorateReply: true,
+      wildcard: false,
+    });
     app.setNotFoundHandler((request, reply) => {
       const requestPath = request.url.split("?", 1)[0] || "/";
-      const isStaticFile = requestPath.startsWith("/assets/") || /\.[a-z0-9]{1,8}$/i.test(requestPath);
+      const isStaticFile =
+        requestPath.startsWith("/assets/") || /\.[a-z0-9]{1,8}$/i.test(requestPath);
 
       if (requestPath.startsWith("/api/") || requestPath.startsWith("/uploads/") || isStaticFile) {
         return reply.code(404).send({ error: "NOT_FOUND" });
@@ -106,19 +153,6 @@ export async function buildApp() {
       return reply.sendFile("index.html");
     });
   }
-
-  app.setErrorHandler((error, request, reply) => {
-    request.log.error(error);
-    if ((error as { code?: string }).code === "FST_REQ_FILE_TOO_LARGE") {
-      return reply.code(413).send({ error: "FILE_TOO_LARGE", message: `Максимальный размер файла: ${Math.floor(env.MAX_UPLOAD_SIZE / 1024 / 1024)} МБ` });
-    }
-    const typedError = error as { statusCode?: number; message?: string };
-    const statusCode = typedError.statusCode && typedError.statusCode >= 400 ? typedError.statusCode : 500;
-    return reply.code(statusCode).send({
-      error: statusCode === 500 ? "INTERNAL_SERVER_ERROR" : "REQUEST_ERROR",
-      message: statusCode === 500 ? "Внутренняя ошибка сервера" : (typedError.message || "Ошибка запроса")
-    });
-  });
 
   return app;
 }

@@ -105,12 +105,8 @@
           "name": "admin_sessions_admin_id_admins_id_fk",
           "tableFrom": "admin_sessions",
           "tableTo": "admins",
-          "columnsFrom": [
-            "admin_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["admin_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -635,12 +631,8 @@
           "name": "articles_author_id_admins_id_fk",
           "tableFrom": "articles",
           "tableTo": "admins",
-          "columnsFrom": [
-            "author_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["author_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -735,12 +727,8 @@
           "name": "media_files_uploaded_by_admins_id_fk",
           "tableFrom": "media_files",
           "tableTo": "admins",
-          "columnsFrom": [
-            "uploaded_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["uploaded_by"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -910,31 +898,17 @@
     "public.application_status": {
       "name": "application_status",
       "schema": "public",
-      "values": [
-        "new",
-        "viewed",
-        "in_progress",
-        "completed",
-        "rejected"
-      ]
+      "values": ["new", "viewed", "in_progress", "completed", "rejected"]
     },
     "public.article_status": {
       "name": "article_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "published",
-        "archived"
-      ]
+      "values": ["draft", "published", "archived"]
     },
     "public.product_status": {
       "name": "product_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "published",
-        "archived"
-      ]
+      "values": ["draft", "published", "archived"]
     }
   },
   "schemas": {},

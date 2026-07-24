@@ -1,55 +1,40 @@
-import {
-  and,
-  asc,
-  count,
-  desc,
-  eq,
-  gte,
-  ilike,
-  inArray,
-  lte,
-  or,
-} from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray, lte, or } from "drizzle-orm";
 import type { FastifyPluginAsync } from "fastify";
 import {
   bulkUpdateApplicationsSchema,
   createApplicationSchema,
+  applicationListQuerySchema,
+  idParamsSchema,
   updateApplicationSchema,
 } from "@landing/shared";
 import { db } from "../db/index.js";
 import { applications } from "../db/schema.js";
 import { requireAdmin } from "../lib/auth.js";
-import { getClientIp, sendValidationError } from "../lib/http.js";
+import { NotFoundError } from "../lib/errors.js";
+import { getClientIp, parseOrThrow } from "../lib/http.js";
 import { serializeDates } from "../lib/serialize.js";
-import {
-  sendApplicationEmail,
-  sendApplicationTelegram,
-} from "../services/notification.service.js";
+import { sendApplicationEmail, sendApplicationTelegram } from "../services/notification.service.js";
 
 export const publicApplicationRoutes: FastifyPluginAsync = async (app) => {
   app.post(
     "/",
     { config: { rateLimit: { max: 5, timeWindow: "10 minutes" } } },
     async (request, reply) => {
-      const parsed = createApplicationSchema.safeParse(request.body);
-      if (!parsed.success) return sendValidationError(reply, parsed.error);
-      if (parsed.data.website) return { success: true };
+      const data = parseOrThrow(createApplicationSchema, request.body);
+      if (data.website) return { success: true };
 
       const [created] = await db
         .insert(applications)
         .values({
-          name: parsed.data.name,
-          phone: parsed.data.phone,
-          email: parsed.data.email || null,
-          message: parsed.data.message || "",
-          sourcePage: parsed.data.sourcePage || null,
-          utmSource: parsed.data.utmSource || null,
-          utmMedium: parsed.data.utmMedium || null,
-          utmCampaign: parsed.data.utmCampaign || null,
-          ipAddress: getClientIp(
-            request.headers as Record<string, unknown>,
-            request.ip,
-          ),
+          name: data.name,
+          phone: data.phone,
+          email: data.email || null,
+          message: data.message || "",
+          sourcePage: data.sourcePage || null,
+          utmSource: data.utmSource || null,
+          utmMedium: data.utmMedium || null,
+          utmCampaign: data.utmCampaign || null,
+          ipAddress: getClientIp(request.headers as Record<string, unknown>, request.ip),
           userAgent: request.headers["user-agent"],
         })
         .returning();
@@ -72,17 +57,10 @@ export const adminApplicationRoutes: FastifyPluginAsync = async (app) => {
   app.addHook("preHandler", requireAdmin);
 
   app.get("/", async (request) => {
-    const query = request.query as Record<string, string | undefined>;
-    const page = Math.max(1, Number(query.page) || 1);
-    const pageSize = Math.min(100, Math.max(1, Number(query.pageSize) || 20));
+    const query = parseOrThrow(applicationListQuerySchema, request.query);
+    const { page, pageSize } = query;
     const conditions = [];
-    if (query.status)
-      conditions.push(
-        eq(
-          applications.status,
-          query.status as (typeof applications.status.enumValues)[number],
-        ),
-      );
+    if (query.status) conditions.push(eq(applications.status, query.status));
     if (query.search) {
       const pattern = `%${query.search}%`;
       conditions.push(
@@ -94,18 +72,11 @@ export const adminApplicationRoutes: FastifyPluginAsync = async (app) => {
       );
     }
     if (query.from)
-      conditions.push(
-        gte(applications.createdAt, new Date(`${query.from}T00:00:00.000Z`)),
-      );
+      conditions.push(gte(applications.createdAt, new Date(`${query.from}T00:00:00.000Z`)));
     if (query.to)
-      conditions.push(
-        lte(applications.createdAt, new Date(`${query.to}T23:59:59.999Z`)),
-      );
+      conditions.push(lte(applications.createdAt, new Date(`${query.to}T23:59:59.999Z`)));
     const where = conditions.length ? and(...conditions) : undefined;
-    const order =
-      query.sort === "asc"
-        ? asc(applications.createdAt)
-        : desc(applications.createdAt);
+    const order = query.sort === "asc" ? asc(applications.createdAt) : desc(applications.createdAt);
 
     const [items, totalRows] = await Promise.all([
       db
@@ -129,56 +100,42 @@ export const adminApplicationRoutes: FastifyPluginAsync = async (app) => {
     };
   });
 
-  app.patch("/bulk", async (request, reply) => {
-    const parsed = bulkUpdateApplicationsSchema.safeParse(request.body);
-    if (!parsed.success) return sendValidationError(reply, parsed.error);
+  app.patch("/bulk", async (request) => {
+    const data = parseOrThrow(bulkUpdateApplicationsSchema, request.body);
     const updated = await db
       .update(applications)
-      .set({ status: parsed.data.status, updatedAt: new Date() })
-      .where(inArray(applications.id, parsed.data.ids))
+      .set({ status: data.status, updatedAt: new Date() })
+      .where(inArray(applications.id, data.ids))
       .returning({ id: applications.id });
     return { success: true, updated: updated.length };
   });
 
-  app.get("/:id", async (request, reply) => {
-    const { id } = request.params as { id: string };
-    const [item] = await db
-      .select()
-      .from(applications)
-      .where(eq(applications.id, id))
-      .limit(1);
-    if (!item) return reply.code(404).send({ error: "NOT_FOUND" });
-    if (item.status === "new")
-      await db
-        .update(applications)
-        .set({ status: "viewed", updatedAt: new Date() })
-        .where(eq(applications.id, id));
-    return serializeDates({
-      ...item,
-      status: item.status === "new" ? "viewed" : item.status,
-    });
+  app.get("/:id", async (request) => {
+    const { id } = parseOrThrow(idParamsSchema, request.params);
+    const [item] = await db.select().from(applications).where(eq(applications.id, id)).limit(1);
+    if (!item) throw new NotFoundError("Заявка не найдена");
+    return serializeDates(item);
   });
 
-  app.patch("/:id", async (request, reply) => {
-    const parsed = updateApplicationSchema.safeParse(request.body);
-    if (!parsed.success) return sendValidationError(reply, parsed.error);
-    const { id } = request.params as { id: string };
+  app.patch("/:id", async (request) => {
+    const data = parseOrThrow(updateApplicationSchema, request.body);
+    const { id } = parseOrThrow(idParamsSchema, request.params);
     const [updated] = await db
       .update(applications)
-      .set({ ...parsed.data, updatedAt: new Date() })
+      .set({ ...data, updatedAt: new Date() })
       .where(eq(applications.id, id))
       .returning();
-    if (!updated) return reply.code(404).send({ error: "NOT_FOUND" });
+    if (!updated) throw new NotFoundError("Заявка не найдена");
     return serializeDates(updated);
   });
 
-  app.delete("/:id", async (request, reply) => {
-    const { id } = request.params as { id: string };
+  app.delete("/:id", async (request) => {
+    const { id } = parseOrThrow(idParamsSchema, request.params);
     const [deleted] = await db
       .delete(applications)
       .where(eq(applications.id, id))
       .returning({ id: applications.id });
-    if (!deleted) return reply.code(404).send({ error: "NOT_FOUND" });
+    if (!deleted) throw new NotFoundError("Заявка не найдена");
     return { success: true };
   });
 };

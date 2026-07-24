@@ -67,10 +67,7 @@ export function ArticlesPage() {
         <CardContent className="pt-6">
           <div className="mb-5 flex flex-col gap-3 sm:flex-row">
             <div className="relative flex-1">
-              <Search
-                className="absolute left-3 top-3.5 text-slate-400"
-                size={17}
-              />
+              <Search className="absolute left-3 top-3.5 text-slate-400" size={17} />
               <Input
                 className="pl-9"
                 placeholder="Культура, тема или slug"
@@ -120,10 +117,7 @@ export function ArticlesPage() {
             <TableBody>
               {data?.items.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={4}
-                    className="py-10 text-center text-slate-500"
-                  >
+                  <TableCell colSpan={4} className="py-10 text-center text-slate-500">
                     Материалов не найдено
                   </TableCell>
                 </TableRow>
@@ -135,19 +129,13 @@ export function ArticlesPage() {
                       <p className="mt-1 text-xs text-slate-500">/{a.slug}</p>
                     </TableCell>
                     <TableCell>
-                      <Badge className={colors[a.status]}>
-                        {labels[a.status]}
-                      </Badge>
+                      <Badge className={colors[a.status]}>{labels[a.status]}</Badge>
                     </TableCell>
                     <TableCell>{formatDate(a.updatedAt)}</TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-1">
                         {a.status === "published" && (
-                          <a
-                            href={`/instructions/${a.slug}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
+                          <a href={`/instructions/${a.slug}`} target="_blank" rel="noreferrer">
                             <Button size="icon" variant="ghost">
                               <ExternalLink size={17} />
                             </Button>

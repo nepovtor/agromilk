@@ -910,9 +910,7 @@
   width: 100%;
   height: 294px;
   object-fit: cover;
-  object-position:
-    var(--article-cover-position-x, 50%)
-    var(--article-cover-position-y, 50%);
+  object-position: var(--article-cover-position-x, 50%) var(--article-cover-position-y, 50%);
 }
 
 .agro-article-detail__cover-frame--scaled {
@@ -941,9 +939,7 @@
   width: calc(100% + 56px);
   height: calc(100% + 56px);
   object-fit: cover;
-  object-position:
-    var(--article-cover-position-x, 50%)
-    var(--article-cover-position-y, 50%);
+  object-position: var(--article-cover-position-x, 50%) var(--article-cover-position-y, 50%);
   filter: blur(24px);
   opacity: 0.78;
   transform: scale(1.06);
@@ -1049,8 +1045,7 @@
   white-space: nowrap;
 }
 
-.agro-article-detail__breadcrumb--bottom
-  .agro-article-detail__breadcrumb-current {
+.agro-article-detail__breadcrumb--bottom .agro-article-detail__breadcrumb-current {
   flex-basis: auto;
 }
 
@@ -1058,11 +1053,7 @@
   display: grid;
   min-height: 1519px;
   place-items: start center;
-  background: linear-gradient(
-    to bottom,
-    var(--article-pale) 0 294px,
-    #fff 294px
-  );
+  background: linear-gradient(to bottom, var(--article-pale) 0 294px, #fff 294px);
   padding-top: 334px;
 }
 
@@ -1370,8 +1361,7 @@
     white-space: normal;
   }
 
-  .agro-article-detail__breadcrumb--bottom
-    .agro-article-detail__breadcrumb-current {
+  .agro-article-detail__breadcrumb--bottom .agro-article-detail__breadcrumb-current {
     flex-basis: 100%;
   }
 

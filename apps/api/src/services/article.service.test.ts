@@ -18,7 +18,9 @@ describe("sanitizeArticleContent", () => {
   });
 
   it("keeps safe text alignment only", () => {
-    const content = sanitizeArticleContent('<p style="text-align: center; position: fixed">По центру</p>');
+    const content = sanitizeArticleContent(
+      '<p style="text-align: center; position: fixed">По центру</p>',
+    );
 
     expect(content).toBe('<p style="text-align:center">По центру</p>');
   });

@@ -1,18 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import type {
-  ApplicationRecord,
-  ApplicationStatus,
-  Paginated,
-} from "@landing/shared";
+import type { ApplicationRecord, ApplicationStatus, Paginated } from "@landing/shared";
 import { useLocation, useParams } from "wouter";
-import {
-  CheckCircle2,
-  Eye,
-  FileText,
-  Search,
-  Trash2,
-  X,
-} from "@/components/icons";
+import { CheckCircle2, Eye, FileText, Search, Trash2, X } from "@/components/icons";
 import { api } from "@/api/client";
 import { AdminLayout } from "@/components/AdminLayout";
 import { AdminPagination } from "@/components/admin/AdminPagination";
@@ -60,8 +49,7 @@ export function ApplicationsPage() {
   const [sort, setSort] = useState<"desc" | "asc">("desc");
   const [selected, setSelected] = useState<ApplicationRecord | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [bulkStatus, setBulkStatus] =
-    useState<ApplicationStatus>("in_progress");
+  const [bulkStatus, setBulkStatus] = useState<ApplicationStatus>("in_progress");
   const [bulkSaving, setBulkSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -92,11 +80,7 @@ export function ApplicationsPage() {
         setSelectedIds(new Set());
         setError("");
       })
-      .catch((e) =>
-        setError(
-          e instanceof Error ? e.message : "Не удалось загрузить заявки",
-        ),
-      )
+      .catch((e) => setError(e instanceof Error ? e.message : "Не удалось загрузить заявки"))
       .finally(() => setLoading(false));
   }, [queryFor]);
   const open = useCallback(
@@ -108,9 +92,7 @@ export function ApplicationsPage() {
           current
             ? {
                 ...current,
-                items: current.items.map((entry) =>
-                  entry.id === item.id ? item : entry,
-                ),
+                items: current.items.map((entry) => (entry.id === item.id ? item : entry)),
               }
             : current,
         );
@@ -134,22 +116,17 @@ export function ApplicationsPage() {
           current
             ? {
                 ...current,
-                items: current.items.map((entry) =>
-                  entry.id === item.id ? item : entry,
-                ),
+                items: current.items.map((entry) => (entry.id === item.id ? item : entry)),
               }
             : current,
         );
       })
-      .catch((cause: unknown) =>
-        setError(cause instanceof Error ? cause.message : "Ошибка"),
-      );
+      .catch((cause: unknown) => setError(cause instanceof Error ? cause.message : "Ошибка"));
   }, [id]);
 
   const visibleIds = data?.items.map((item) => item.id) ?? [];
   const allVisibleSelected =
-    visibleIds.length > 0 &&
-    visibleIds.every((itemId) => selectedIds.has(itemId));
+    visibleIds.length > 0 && visibleIds.every((itemId) => selectedIds.has(itemId));
 
   const exportCsv = async () => {
     setExporting(true);
@@ -157,27 +134,13 @@ export function ApplicationsPage() {
     try {
       const first = await api.applications.list(queryFor(1, 100));
       const responses: Paginated<ApplicationRecord>[] = [];
-      for (
-        let nextPage = 2;
-        nextPage <= first.pagination.totalPages;
-        nextPage += 1
-      ) {
+      for (let nextPage = 2; nextPage <= first.pagination.totalPages; nextPage += 1) {
         responses.push(await api.applications.list(queryFor(nextPage, 100)));
       }
       const items = [first, ...responses].flatMap((response) => response.items);
-      const escape = (value: unknown) =>
-        `"${String(value ?? "").replace(/"/g, '""')}"`;
+      const escape = (value: unknown) => `"${String(value ?? "").replace(/"/g, '""')}"`;
       const rows = [
-        [
-          "Дата",
-          "Клиент",
-          "Телефон",
-          "Email",
-          "Сообщение",
-          "Статус",
-          "Комментарий",
-          "Источник",
-        ],
+        ["Дата", "Клиент", "Телефон", "Email", "Сообщение", "Статус", "Комментарий", "Источник"],
         ...items.map((item) => [
           item.createdAt,
           item.name,
@@ -189,10 +152,9 @@ export function ApplicationsPage() {
           item.sourcePage,
         ]),
       ];
-      const blob = new Blob(
-        [`\ufeff${rows.map((row) => row.map(escape).join(";")).join("\n")}`],
-        { type: "text/csv;charset=utf-8" },
-      );
+      const blob = new Blob([`\ufeff${rows.map((row) => row.map(escape).join(";")).join("\n")}`], {
+        type: "text/csv;charset=utf-8",
+      });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -202,9 +164,7 @@ export function ApplicationsPage() {
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 0);
     } catch (cause) {
-      setError(
-        cause instanceof Error ? cause.message : "Не удалось выгрузить заявки",
-      );
+      setError(cause instanceof Error ? cause.message : "Не удалось выгрузить заявки");
     } finally {
       setExporting(false);
     }
@@ -218,9 +178,7 @@ export function ApplicationsPage() {
       await api.applications.bulkUpdate([...selectedIds], bulkStatus);
       load();
     } catch (cause) {
-      setError(
-        cause instanceof Error ? cause.message : "Не удалось изменить заявки",
-      );
+      setError(cause instanceof Error ? cause.message : "Не удалось изменить заявки");
     } finally {
       setBulkSaving(false);
     }
@@ -234,11 +192,7 @@ export function ApplicationsPage() {
             Запросы хозяйств на продукцию, консультации и поставки.
           </p>
         </div>
-        <Button
-          variant="outline"
-          disabled={exporting}
-          onClick={() => void exportCsv()}
-        >
+        <Button variant="outline" disabled={exporting} onClick={() => void exportCsv()}>
           <FileText size={17} />
           {exporting ? "Готовим файл…" : "Выгрузить CSV"}
         </Button>
@@ -254,10 +208,7 @@ export function ApplicationsPage() {
             }}
           >
             <div className="relative">
-              <Search
-                className="absolute left-3 top-3.5 text-slate-400"
-                size={17}
-              />
+              <Search className="absolute left-3 top-3.5 text-slate-400" size={17} />
               <Input
                 className="pl-9"
                 placeholder="Хозяйство, телефон или email"
@@ -338,9 +289,7 @@ export function ApplicationsPage() {
               <Select
                 className="sm:ml-auto sm:w-48"
                 value={bulkStatus}
-                onChange={(event) =>
-                  setBulkStatus(event.target.value as ApplicationStatus)
-                }
+                onChange={(event) => setBulkStatus(event.target.value as ApplicationStatus)}
               >
                 {Object.entries(labels).map(([value, label]) => (
                   <option value={value} key={value}>
@@ -348,19 +297,11 @@ export function ApplicationsPage() {
                   </option>
                 ))}
               </Select>
-              <Button
-                size="sm"
-                disabled={bulkSaving}
-                onClick={() => void applyBulkStatus()}
-              >
+              <Button size="sm" disabled={bulkSaving} onClick={() => void applyBulkStatus()}>
                 <CheckCircle2 size={16} />
                 {bulkSaving ? "Обновляем…" : "Изменить статус"}
               </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setSelectedIds(new Set())}
-              >
+              <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())}>
                 Отменить выбор
               </Button>
             </div>
@@ -377,9 +318,7 @@ export function ApplicationsPage() {
                       setSelectedIds((current) => {
                         const next = new Set(current);
                         visibleIds.forEach((itemId) =>
-                          event.target.checked
-                            ? next.add(itemId)
-                            : next.delete(itemId),
+                          event.target.checked ? next.add(itemId) : next.delete(itemId),
                         );
                         return next;
                       })
@@ -400,10 +339,7 @@ export function ApplicationsPage() {
                 </TableRow>
               ) : data?.items.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={6}
-                    className="py-10 text-center text-slate-500"
-                  >
+                  <TableCell colSpan={6} className="py-10 text-center text-slate-500">
                     Запросов не найдено
                   </TableCell>
                 </TableRow>
@@ -411,9 +347,7 @@ export function ApplicationsPage() {
                 data?.items.map((item) => (
                   <TableRow
                     key={item.id}
-                    className={
-                      selectedIds.has(item.id) ? "bg-blue-50" : undefined
-                    }
+                    className={selectedIds.has(item.id) ? "bg-blue-50" : undefined}
                   >
                     <TableCell>
                       <input
@@ -436,14 +370,10 @@ export function ApplicationsPage() {
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell>
                       <div>{item.phone}</div>
-                      <div className="text-xs text-slate-500">
-                        {item.email || "—"}
-                      </div>
+                      <div className="text-xs text-slate-500">{item.email || "—"}</div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={badgeClass[item.status]}>
-                        {labels[item.status]}
-                      </Badge>
+                      <Badge className={badgeClass[item.status]}>{labels[item.status]}</Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-1">
@@ -551,11 +481,7 @@ function ApplicationPanel({
   }, [onClose]);
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/35"
-      onClick={onClose}
-      role="presentation"
-    >
+    <div className="fixed inset-0 z-50 bg-black/35" onClick={onClose} role="presentation">
       <aside
         className="ml-auto h-full w-full max-w-xl overflow-y-auto bg-white p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
@@ -568,9 +494,7 @@ function ApplicationPanel({
             <h2 className="text-2xl font-bold" id="application-panel-title">
               Карточка запроса
             </h2>
-            <p className="mt-1 text-sm text-slate-500">
-              {formatDate(item.createdAt)}
-            </p>
+            <p className="mt-1 text-sm text-slate-500">{formatDate(item.createdAt)}</p>
           </div>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X />
@@ -586,9 +510,7 @@ function ApplicationPanel({
               <span className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Позвонить
               </span>
-              <strong className="mt-1 block text-sm text-blue-700">
-                {item.phone}
-              </strong>
+              <strong className="mt-1 block text-sm text-blue-700">{item.phone}</strong>
             </a>
             {item.email ? (
               <a
@@ -598,9 +520,7 @@ function ApplicationPanel({
                 <span className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
                   Написать
                 </span>
-                <strong className="mt-1 block truncate text-sm text-blue-700">
-                  {item.email}
-                </strong>
+                <strong className="mt-1 block truncate text-sm text-blue-700">{item.email}</strong>
               </a>
             ) : (
               <Info label="Email" value="Не указан" />
@@ -623,19 +543,11 @@ function ApplicationPanel({
             </Select>
           </label>
           <label className="block">
-            <span className="mb-2 block text-sm font-medium">
-              Рабочая заметка агронома
-            </span>
-            <Textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
+            <span className="mb-2 block text-sm font-medium">Рабочая заметка агронома</span>
+            <Textarea value={comment} onChange={(e) => setComment(e.target.value)} />
           </label>
           {error && (
-            <p
-              className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"
-              role="alert"
-            >
+            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
               {error}
             </p>
           )}
@@ -653,11 +565,7 @@ function ApplicationPanel({
                   }),
                 );
               } catch (cause) {
-                setError(
-                  cause instanceof Error
-                    ? cause.message
-                    : "Не удалось сохранить заявку",
-                );
+                setError(cause instanceof Error ? cause.message : "Не удалось сохранить заявку");
               } finally {
                 setSaving(false);
               }
@@ -677,11 +585,7 @@ function ApplicationPanel({
                   await api.applications.remove(item.id);
                   onDeleted();
                 } catch (cause) {
-                  setError(
-                    cause instanceof Error
-                      ? cause.message
-                      : "Не удалось удалить заявку",
-                  );
+                  setError(cause instanceof Error ? cause.message : "Не удалось удалить заявку");
                   setDeleting(false);
                 }
               }
@@ -698,9 +602,7 @@ function ApplicationPanel({
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-        {label}
-      </p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
       <p className="mt-1 whitespace-pre-wrap text-sm leading-6">{value}</p>
     </div>
   );

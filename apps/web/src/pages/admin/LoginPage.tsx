@@ -5,13 +5,7 @@ import { loginSchema, type LoginInput } from "@landing/shared";
 import { Redirect, useLocation } from "wouter";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { api } from "@/api/client";
 
@@ -35,10 +29,7 @@ function GoogleLogo() {
         fill="#34A853"
         d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1a5.8 5.8 0 0 1-5.5-4H3.2v2.6A10 10 0 0 0 12 22Z"
       />
-      <path
-        fill="#FBBC05"
-        d="M6.5 14a6 6 0 0 1 0-4V7.4H3.2a10 10 0 0 0 0 9.2L6.5 14Z"
-      />
+      <path fill="#FBBC05" d="M6.5 14a6 6 0 0 1 0-4V7.4H3.2a10 10 0 0 0 0 9.2L6.5 14Z" />
       <path
         fill="#EA4335"
         d="M12 5.9c1.5 0 2.9.5 4 1.5l3-3A10 10 0 0 0 3.2 7.4L6.5 10A5.8 5.8 0 0 1 12 6Z"
@@ -52,9 +43,7 @@ export function LoginPage() {
   const [, navigate] = useLocation();
   const [error, setError] = useState(() => {
     if (typeof window === "undefined") return "";
-    const code = new URLSearchParams(window.location.search).get(
-      "google_error",
-    );
+    const code = new URLSearchParams(window.location.search).get("google_error");
     return code ? googleErrors[code] || "Не удалось войти через Google." : "";
   });
   const [googleEnabled, setGoogleEnabled] = useState(false);
@@ -118,35 +107,17 @@ export function LoginPage() {
           >
             <label className="block">
               <span className="mb-2 block text-sm font-medium">Email</span>
-              <Input
-                type="email"
-                autoComplete="username"
-                {...register("email")}
-              />
-              {errors.email && (
-                <span className="text-xs text-red-600">
-                  {errors.email.message}
-                </span>
-              )}
+              <Input type="email" autoComplete="username" {...register("email")} />
+              {errors.email && <span className="text-xs text-red-600">{errors.email.message}</span>}
             </label>
             <label className="block">
               <span className="mb-2 block text-sm font-medium">Пароль</span>
-              <Input
-                type="password"
-                autoComplete="current-password"
-                {...register("password")}
-              />
+              <Input type="password" autoComplete="current-password" {...register("password")} />
               {errors.password && (
-                <span className="text-xs text-red-600">
-                  {errors.password.message}
-                </span>
+                <span className="text-xs text-red-600">{errors.password.message}</span>
               )}
             </label>
-            {error && (
-              <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700">
-                {error}
-              </p>
-            )}
+            {error && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
             <Button className="w-full" size="lg" disabled={isSubmitting}>
               {isSubmitting ? "Вход…" : "Войти"}
             </Button>

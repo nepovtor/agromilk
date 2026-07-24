@@ -27,13 +27,8 @@ const footerContent = {
   },
 };
 
-export function KnowledgeHeader({
-  variant,
-}: {
-  variant: KnowledgeLayoutVariant;
-}) {
-  const prefix =
-    variant === "article" ? "agro-article-layout" : "agro-instructions";
+export function KnowledgeHeader({ variant }: { variant: KnowledgeLayoutVariant }) {
+  const prefix = variant === "article" ? "agro-article-layout" : "agro-instructions";
   const containerClass =
     variant === "article"
       ? `${prefix}-header__inner`
@@ -42,15 +37,8 @@ export function KnowledgeHeader({
   return (
     <header className={`${prefix}-header`}>
       <div className={containerClass}>
-        <Link
-          href="/"
-          className={`${prefix}-header__logo`}
-          aria-label="Агромилк — на главную"
-        >
-          <img
-            src={agromilkAsset("logo-desktop.png")}
-            alt="Агромилк — Свежесть вкуса"
-          />
+        <Link href="/" className={`${prefix}-header__logo`} aria-label="Агромилк — на главную">
+          <img src={agromilkAsset("logo-desktop.png")} alt="Агромилк — Свежесть вкуса" />
         </Link>
         <div className={`${prefix}-header__contacts`}>
           <a className={`${prefix}-header__phone`} href="tel:+375447442338">
@@ -68,18 +56,13 @@ export function KnowledgeHeader({
   );
 }
 
-export function KnowledgeFooter({
-  variant,
-}: {
-  variant: KnowledgeLayoutVariant;
-}) {
+export function KnowledgeFooter({ variant }: { variant: KnowledgeLayoutVariant }) {
   const isArticle = variant === "article";
   const prefix = isArticle ? "agro-article-layout" : "agro-instructions";
   const innerClass = isArticle
     ? `${prefix}-footer__inner`
     : `agro-instructions-container ${prefix}-footer__grid`;
-  const sectionClass = (name: string) =>
-    isArticle ? `${prefix}-footer__${name}` : undefined;
+  const sectionClass = (name: string) => (isArticle ? `${prefix}-footer__${name}` : undefined);
 
   return (
     <footer className={`${prefix}-footer`}>
@@ -90,9 +73,7 @@ export function KnowledgeFooter({
             <a href="tel:+375447442338">{footerContent.contacts.phone}</a>
             <span>{footerContent.contacts.office}</span>
             <span>{footerContent.contacts.fax}</span>
-            <a href={`mailto:${footerContent.contacts.email}`}>
-              {footerContent.contacts.email}
-            </a>
+            <a href={`mailto:${footerContent.contacts.email}`}>{footerContent.contacts.email}</a>
             <Link className={`${prefix}-footer__privacy`} href="/privacy">
               Политика конфиденциальности
             </Link>
@@ -100,9 +81,7 @@ export function KnowledgeFooter({
         </section>
         <section className={sectionClass("address")}>
           <h2>Адрес</h2>
-          <address className={`${prefix}-footer__copy`}>
-            {footerContent.address}
-          </address>
+          <address className={`${prefix}-footer__copy`}>{footerContent.address}</address>
         </section>
         <section className={sectionClass("hours")}>
           <h2>Время работы</h2>
