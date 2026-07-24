@@ -1,7 +1,36 @@
-# Landing Admin Platform
+<p align="center">
+  <img src="apps/web/public/assets/agromilk/logo-desktop.png" alt="Agromilk" width="280">
+</p>
 
-Полноценный full-stack сайт Агромилк с адаптивной публичной частью, управляемым каталогом, формой заявок, базой инструкций и защищённой административной панелью.
+<h1 align="center">Agromilk</h1>
 
+<p align="center">
+  Full-stack платформа для продажи заменителей цельного молока:
+  публичный сайт, каталог, база знаний, заявки и административная панель.
+</p>
+
+<p align="center">
+  <a href="https://github.com/nepovtor/agromilk/actions/workflows/ci.yml">
+    <img src="https://github.com/nepovtor/agromilk/actions/workflows/ci.yml/badge.svg" alt="CI">
+  </a>
+  <img src="https://img.shields.io/badge/Node.js-22-339933?logo=nodedotjs&logoColor=white" alt="Node.js 22">
+  <img src="https://img.shields.io/badge/pnpm-10.13-F69220?logo=pnpm&logoColor=white" alt="pnpm 10.13">
+  <img src="https://img.shields.io/badge/TypeScript-5%2F6-3178C6?logo=typescript&logoColor=white" alt="TypeScript">
+</p>
+
+<p align="center">
+  <a href="#локальный-запуск">Локальный запуск</a> ·
+  <a href="#возможности">Возможности</a> ·
+  <a href="docs/DEPLOYMENT.md">Деплой</a> ·
+  <a href="docs/PRODUCTION_CHECKLIST.md">Production checklist</a> ·
+  <a href="SECURITY.md">Безопасность</a>
+</p>
+
+---
+
+## О проекте
+
+Agromilk — готовое к развёртыванию монорепо с адаптивной витриной бренда и полноценным контуром управления контентом. Посетители могут изучать продукцию и инструкции и оставлять заявки, а команда — управлять каталогом, публикациями и обращениями из защищённой админ-панели.
 
 ## Готовые разделы сайта
 
@@ -28,7 +57,12 @@
 
 ## Стек и структура
 
-Frontend: React 19, TypeScript, Vite, Tailwind CSS 4, shadcn/ui-compatible компоненты, Wouter, TipTap и Recharts. Backend: Node.js 22, Fastify 5, PostgreSQL 17, Drizzle ORM, Zod, bcryptjs и Nodemailer. Менеджер пакетов — pnpm 10.13.1.
+| Слой | Технологии |
+| --- | --- |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, Wouter, TipTap, Recharts |
+| API | Node.js 22, Fastify 5, Zod, bcryptjs, Nodemailer |
+| Данные | PostgreSQL 17, Drizzle ORM |
+| Инфраструктура | pnpm workspaces, Docker Compose, GitHub Actions, Render, Netlify |
 
 ```text
 apps/web/       React-приложение
