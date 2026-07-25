@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, type LoginInput } from "@landing/shared";
+import { loginSchema, type LoginInput } from "@agromilk/shared";
 import { Redirect, useLocation } from "wouter";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";

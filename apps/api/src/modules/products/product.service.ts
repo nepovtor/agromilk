@@ -1,4 +1,4 @@
-import type { ProductInput } from "@landing/shared";
+import type { ProductInput } from "@agromilk/shared";
 import { ConflictError, isUniqueConstraintError, NotFoundError } from "../../lib/errors.js";
 import { toProductRecord } from "./product.mapper.js";
 import { ProductRepository } from "./product.repository.js";

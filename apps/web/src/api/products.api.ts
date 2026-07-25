@@ -1,4 +1,4 @@
-import type { Paginated, ProductInput, ProductRecord } from "@landing/shared";
+import type { Paginated, ProductInput, ProductRecord } from "@agromilk/shared";
 import { request } from "./http";
 
 export const productsApi = {

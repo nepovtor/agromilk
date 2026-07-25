@@ -1,4 +1,4 @@
-import type { ProductRecord } from "@landing/shared";
+import type { ProductRecord } from "@agromilk/shared";
 import type { InferSelectModel } from "drizzle-orm";
 import type { products } from "../../db/schema.js";
 

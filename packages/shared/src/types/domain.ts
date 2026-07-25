@@ -28,6 +28,7 @@ export type AdminUser = { id: string; email: string; name: string; role: string 
 
 export type ApplicationRecord = {
   id: string;
+  visitorId: string | null;
   name: string;
   phone: string;
   email: string | null;

@@ -1,4 +1,4 @@
-import type { ArticleInput, ArticleRecord, ArticleStatus } from "@landing/shared";
+import type { ArticleInput, ArticleRecord, ArticleStatus } from "@agromilk/shared";
 
 export const emptyArticle: ArticleInput = {
   title: "",

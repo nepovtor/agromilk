@@ -1,4 +1,4 @@
-import type { ArticleStatus } from "@landing/shared";
+import type { ArticleStatus } from "@agromilk/shared";
 import { Link, useLocation, useParams } from "wouter";
 import {
   ArrowLeft,

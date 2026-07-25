@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ArticleRecord } from "@landing/shared";
+import type { ArticleRecord } from "@agromilk/shared";
 import { Link } from "wouter";
 import { api } from "@/api";
 import { PublicLayout } from "@/components/PublicLayout";

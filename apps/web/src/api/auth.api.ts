@@ -1,4 +1,4 @@
-import type { AdminUser } from "@landing/shared";
+import type { AdminUser } from "@agromilk/shared";
 import { request } from "./http";
 
 export const authApi = {

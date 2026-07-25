@@ -1,4 +1,4 @@
-import type { ProductInput, ProductRecord, ProductStatus } from "@landing/shared";
+import type { ProductInput, ProductRecord, ProductStatus } from "@agromilk/shared";
 
 export type ProductFormValues = {
   name: string;

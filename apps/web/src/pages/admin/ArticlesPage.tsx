@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ArticleRecord, ArticleStatus, Paginated } from "@landing/shared";
+import type { ArticleRecord, ArticleStatus, Paginated } from "@agromilk/shared";
 import { Link } from "wouter";
 import { Edit3, ExternalLink, Plus, Search, Trash2 } from "@/components/icons";
 import { api } from "@/api";

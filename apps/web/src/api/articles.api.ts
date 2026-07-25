@@ -1,4 +1,4 @@
-import type { ArticleInput, ArticleRecord, Paginated } from "@landing/shared";
+import type { ArticleInput, ArticleRecord, Paginated } from "@agromilk/shared";
 import { request } from "./http";
 
 export const articlesApi = {

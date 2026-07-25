@@ -1,5 +1,5 @@
 {
-  "name": "@landing/api",
+  "name": "@agromilk/api",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -21,7 +21,7 @@
     "@fastify/multipart": "10.1.0",
     "@fastify/rate-limit": "11.1.0",
     "@fastify/static": "10.1.0",
-    "@landing/shared": "workspace:*",
+    "@agromilk/shared": "workspace:*",
     "bcryptjs": "3.0.3",
     "dotenv": "17.4.2",
     "drizzle-orm": "0.45.2",

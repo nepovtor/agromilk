@@ -1,4 +1,4 @@
-import type { ProductStatus } from "@landing/shared";
+import type { ProductStatus } from "@agromilk/shared";
 
 export const productStatusLabels: Record<ProductStatus, string> = {
   draft: "Черновик",

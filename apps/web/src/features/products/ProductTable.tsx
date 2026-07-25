@@ -1,4 +1,4 @@
-import type { ProductRecord, ProductStatus } from "@landing/shared";
+import type { ProductRecord, ProductStatus } from "@agromilk/shared";
 import { Boxes, Edit3, Search, Trash2 } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

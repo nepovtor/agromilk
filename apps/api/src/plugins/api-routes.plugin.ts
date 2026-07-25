@@ -3,12 +3,12 @@ import fp from "fastify-plugin";
 import { db } from "../db/index.js";
 import { analyticsRoutes } from "../routes/analytics.routes.js";
 import { adminApplicationRoutes, publicApplicationRoutes } from "../routes/applications.routes.js";
-import { adminArticleRoutes, publicArticleRoutes } from "../routes/articles.routes.js";
+import { adminArticleRoutes, publicArticleRoutes } from "../modules/articles/article.routes.js";
 import { assistantRoutes } from "../routes/assistant.routes.js";
-import { authRoutes } from "../routes/auth.routes.js";
-import { mediaRoutes } from "../routes/media.routes.js";
+import { authRoutes } from "../modules/auth/auth.routes.js";
+import { mediaRoutes } from "../modules/media/media.routes.js";
 import { adminProductRoutes, publicProductRoutes } from "../routes/products.routes.js";
-import { statisticsRoutes } from "../routes/statistics.routes.js";
+import { statisticsRoutes } from "../modules/statistics/statistics.routes.js";
 
 export const apiRoutesPlugin = fp(
   async (app) => {

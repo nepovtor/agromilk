@@ -50,7 +50,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["**/*.test.ts"],
+    files: ["**/*.test.{ts,tsx}"],
     rules: {
       // Fastify's response.json() intentionally returns any in integration tests.
       "@typescript-eslint/no-unsafe-argument": "off",

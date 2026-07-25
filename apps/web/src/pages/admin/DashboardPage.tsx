@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { StatisticsPoint, StatisticsSummary } from "@landing/shared";
+import type { StatisticsPoint, StatisticsSummary } from "@agromilk/shared";
 import {
   CartesianGrid,
   Line,

@@ -1,4 +1,4 @@
-import type { StatisticsPoint, StatisticsSummary } from "@landing/shared";
+import type { StatisticsPoint, StatisticsSummary } from "@agromilk/shared";
 import { request } from "./http";
 
 export const statisticsApi = {

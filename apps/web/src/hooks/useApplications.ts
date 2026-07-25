@@ -4,9 +4,8 @@ import type {
   ApplicationStatus,
   Paginated,
   UpdateApplicationInput,
-} from "@landing/shared";
+} from "@agromilk/shared";
 import { api } from "@/api";
-import { applicationStatusLabels } from "@/features/applications/application-status";
 
 type UseApplicationsOptions = {
   applicationId?: string;
@@ -155,29 +154,7 @@ export function useApplications({ applicationId, navigate }: UseApplicationsOpti
     setExporting(true);
     setError("");
     try {
-      const first = await api.applications.list(queryFor(1, 100));
-      const pages: Paginated<ApplicationRecord>[] = [];
-      for (let nextPage = 2; nextPage <= first.pagination.totalPages; nextPage += 1)
-        pages.push(await api.applications.list(queryFor(nextPage, 100)));
-      const rows = [
-        ["Дата", "Клиент", "Телефон", "Email", "Сообщение", "Статус", "Комментарий", "Источник"],
-        ...[first, ...pages].flatMap((response) =>
-          response.items.map((item) => [
-            item.createdAt,
-            item.name,
-            item.phone,
-            item.email,
-            item.message,
-            applicationStatusLabels[item.status],
-            item.adminComment,
-            item.sourcePage,
-          ]),
-        ),
-      ];
-      const escape = (value: string | null | undefined) => `"${(value ?? "").replace(/"/g, '""')}"`;
-      const blob = new Blob([`\ufeff${rows.map((row) => row.map(escape).join(";")).join("\n")}`], {
-        type: "text/csv;charset=utf-8",
-      });
+      const blob = await api.applications.exportCsv(queryFor(1, 100));
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;

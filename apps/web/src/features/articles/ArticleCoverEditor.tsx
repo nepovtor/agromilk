@@ -1,5 +1,5 @@
 import { type PointerEvent as ReactPointerEvent, useRef, useState } from "react";
-import type { ArticleInput } from "@landing/shared";
+import type { ArticleInput } from "@agromilk/shared";
 import { ImagePlus, Loader2, UploadCloud } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

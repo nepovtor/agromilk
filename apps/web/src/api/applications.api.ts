@@ -3,17 +3,19 @@ import type {
   ApplicationStatus,
   Paginated,
   UpdateApplicationInput,
-} from "@landing/shared";
-import { request } from "./http";
+} from "@agromilk/shared";
+import { request, requestBlob } from "./http";
 
 export const applicationsApi = {
   create: (data: unknown) =>
-    request<{ success: true; id: string }>("/applications", {
+    request<{ success: true; id: string; deduplicated?: boolean }>("/applications", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   list: (params: URLSearchParams) =>
     request<Paginated<ApplicationRecord>>(`/admin/applications?${params}`),
+  exportCsv: (params: URLSearchParams) =>
+    requestBlob(`/admin/applications/export.csv?${params}`),
   get: (id: string) => request<ApplicationRecord>(`/admin/applications/${id}`),
   update: (id: string, data: UpdateApplicationInput) =>
     request<ApplicationRecord>(`/admin/applications/${id}`, {

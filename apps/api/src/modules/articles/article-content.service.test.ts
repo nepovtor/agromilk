@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sanitizeArticleContent } from "./article.service.js";
+import { sanitizeArticleContent } from "./article-content.service.js";
 
 describe("sanitizeArticleContent", () => {
   it("keeps editable table structure and removes unsafe attributes", () => {

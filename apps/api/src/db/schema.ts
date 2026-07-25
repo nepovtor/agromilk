@@ -62,6 +62,8 @@ export const applications = pgTable(
   "applications",
   {
     id: uuid("id").primaryKey().defaultRandom(),
+    submissionId: uuid("submission_id"),
+    visitorId: uuid("visitor_id"),
     name: varchar("name", { length: 100 }).notNull(),
     phone: varchar("phone", { length: 30 }).notNull(),
     email: varchar("email", { length: 320 }),
@@ -78,6 +80,8 @@ export const applications = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
+    uniqueIndex("applications_submission_unique").on(table.submissionId),
+    index("applications_visitor_idx").on(table.visitorId),
     index("applications_created_idx").on(table.createdAt),
     index("applications_status_idx").on(table.status),
   ],

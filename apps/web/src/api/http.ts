@@ -41,3 +41,17 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
 
   return payload as T;
 }
+
+export async function requestBlob(path: string, options: RequestInit = {}): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/api/v1${path}`, {
+    credentials: "include",
+    ...options,
+  });
+  if (!response.ok) {
+    const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+    if (response.status === 401 && typeof window !== "undefined")
+      window.dispatchEvent(new Event("admin-session-expired"));
+    throw new ApiError(response.status, payload?.message || "Ошибка запроса", payload);
+  }
+  return response.blob();
+}

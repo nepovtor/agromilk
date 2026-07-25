@@ -2,12 +2,12 @@ import { randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { and, eq } from "drizzle-orm";
 import type { FastifyPluginAsync, FastifyReply } from "fastify";
-import { googleCallbackQuerySchema, loginSchema } from "@landing/shared";
-import { env, useSecureCookies } from "../config/env.js";
-import { db } from "../db/index.js";
-import { admins, adminSessions } from "../db/schema.js";
-import { createAdminSession, hashToken, requireAdmin, SESSION_COOKIE } from "../lib/auth.js";
-import { parseOrThrow } from "../lib/http.js";
+import { googleCallbackQuerySchema, loginSchema } from "@agromilk/shared";
+import { env, useSecureCookies } from "../../config/env.js";
+import { db } from "../../db/index.js";
+import { admins, adminSessions } from "../../db/schema.js";
+import { createAdminSession, hashToken, requireAdmin, SESSION_COOKIE } from "../../lib/auth.js";
+import { parseOrThrow } from "../../lib/http.js";
 
 const GOOGLE_STATE_COOKIE = "google_oauth_state";
 const googleEnabled = Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);

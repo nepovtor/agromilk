@@ -1,11 +1,11 @@
 import { and, count, countDistinct, eq, gte, lte, sql } from "drizzle-orm";
 import type { FastifyPluginAsync } from "fastify";
-import { statisticsRangeQuerySchema } from "@landing/shared";
-import { db } from "../db/index.js";
-import { analyticsEvents, applications } from "../db/schema.js";
-import { requireAdmin } from "../lib/auth.js";
-import { ValidationError } from "../lib/errors.js";
-import { parseOrThrow } from "../lib/http.js";
+import { statisticsRangeQuerySchema } from "@agromilk/shared";
+import { db } from "../../db/index.js";
+import { analyticsEvents, applications } from "../../db/schema.js";
+import { requireAdmin } from "../../lib/auth.js";
+import { ValidationError } from "../../lib/errors.js";
+import { parseOrThrow } from "../../lib/http.js";
 
 function getRange(query: { from?: string; to?: string }) {
   const now = new Date();
@@ -45,16 +45,24 @@ export const statisticsRoutes: FastifyPluginAsync = async (app) => {
         .select({ visitors: countDistinct(analyticsEvents.visitorId), pageViews: count() })
         .from(analyticsEvents)
         .where(eventWhere),
-      db.select({ applications: count() }).from(applications).where(appWhere),
+      db
+        .select({
+          applications: count(),
+          convertedVisitors: countDistinct(applications.visitorId),
+        })
+        .from(applications)
+        .where(appWhere),
     ]);
     const visitors = Number(eventStats[0]?.visitors ?? 0);
     const pageViews = Number(eventStats[0]?.pageViews ?? 0);
     const applicationCount = Number(appStats[0]?.applications ?? 0);
+    const convertedVisitors = Number(appStats[0]?.convertedVisitors ?? 0);
     return {
       visitors,
       pageViews,
       applications: applicationCount,
-      conversionRate: visitors > 0 ? Number(((applicationCount / visitors) * 100).toFixed(2)) : 0,
+      conversionRate:
+        visitors > 0 ? Number(((convertedVisitors / visitors) * 100).toFixed(2)) : 0,
     };
   });
 

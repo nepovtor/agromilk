@@ -7,19 +7,19 @@ import {
   idParamsSchema,
   publicArticleListQuerySchema,
   slugParamsSchema,
-} from "@landing/shared";
-import { db } from "../db/index.js";
-import { articles } from "../db/schema.js";
-import { requireAdmin } from "../lib/auth.js";
+} from "@agromilk/shared";
+import { db } from "../../db/index.js";
+import { articles } from "../../db/schema.js";
+import { requireAdmin } from "../../lib/auth.js";
 import {
   ConflictError,
   isUniqueConstraintError,
   NotFoundError,
   ValidationError,
-} from "../lib/errors.js";
-import { parseOrThrow } from "../lib/http.js";
-import { serializeDates } from "../lib/serialize.js";
-import { hasInvalidArticleEmbed, sanitizeArticleContent } from "../services/article.service.js";
+} from "../../lib/errors.js";
+import { parseOrThrow } from "../../lib/http.js";
+import { serializeDates } from "../../lib/serialize.js";
+import { hasInvalidArticleEmbed, sanitizeArticleContent } from "./article-content.service.js";
 
 export const publicArticleRoutes: FastifyPluginAsync = async (app) => {
   app.get("/", async (request) => {

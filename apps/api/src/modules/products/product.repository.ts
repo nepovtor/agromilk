@@ -1,5 +1,5 @@
 import { and, asc, count, desc, eq, ilike, or } from "drizzle-orm";
-import type { ProductInput, ProductStatus } from "@landing/shared";
+import type { ProductInput, ProductStatus } from "@agromilk/shared";
 import { db } from "../../db/index.js";
 import { products } from "../../db/schema.js";
 

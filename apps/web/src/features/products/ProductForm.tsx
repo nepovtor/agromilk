@@ -1,4 +1,4 @@
-import type { ProductStatus } from "@landing/shared";
+import type { ProductStatus } from "@agromilk/shared";
 import { Save, Trash2, UploadCloud, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

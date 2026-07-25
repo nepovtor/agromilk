@@ -1,4 +1,7 @@
 import bcrypt from "bcryptjs";
+import { existsSync } from "node:fs";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { buildApp } from "./app.js";
@@ -90,19 +93,35 @@ describe.sequential("critical API scenarios", () => {
   });
 
   it("creates and updates an application", async () => {
+    const visitorId = crypto.randomUUID();
+    const submissionId = crypto.randomUUID();
+    const payload = {
+      submissionId,
+      visitorId,
+      name: "Test User",
+      phone: "+375290000000",
+      email: "user@example.com",
+      message: "Test",
+      consent: true,
+    };
     const created = await app.inject({
       method: "POST",
       url: "/api/v1/applications",
-      payload: {
-        name: "Test User",
-        phone: "+375290000000",
-        email: "user@example.com",
-        message: "Test",
-        consent: true,
-      },
+      payload,
     });
     expect(created.statusCode).toBe(201);
     applicationId = created.json().id;
+
+    const duplicate = await app.inject({
+      method: "POST",
+      url: "/api/v1/applications",
+      payload,
+    });
+    expect(duplicate.statusCode).toBe(200);
+    expect(duplicate.json()).toMatchObject({
+      id: applicationId,
+      deduplicated: true,
+    });
 
     const retrieved = await app.inject({
       method: "GET",
@@ -154,6 +173,18 @@ describe.sequential("critical API scenarios", () => {
     });
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual({ success: true, updated: 1 });
+  });
+
+  it("exports filtered applications as CSV", async () => {
+    const response = await app.inject({
+      method: "GET",
+      url: "/api/v1/admin/applications/export.csv?status=completed&search=Test%20User",
+      headers: { cookie },
+    });
+    expect(response.statusCode).toBe(200);
+    expect(response.headers["content-type"]).toContain("text/csv");
+    expect(response.body).toContain("Test User");
+    expect(response.body).toContain("Завершена");
   });
 
   it("deletes an application", async () => {
@@ -373,12 +404,52 @@ describe.sequential("critical API scenarios", () => {
     expect(response.json().error).toBe("INVALID_FILE");
   });
 
+  it("keeps uploaded files and media records consistent", async () => {
+    const boundary = "----agromilk-valid-media";
+    const image = await readFile("../web/public/assets/agromilk/logo-desktop.webp");
+    const body = Buffer.concat([
+      Buffer.from(
+        `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="logo.webp"\r\nContent-Type: image/webp\r\n\r\n`,
+      ),
+      image,
+      Buffer.from(`\r\n--${boundary}--\r\n`),
+    ]);
+    const uploaded = await app.inject({
+      method: "POST",
+      url: "/api/v1/admin/media",
+      headers: { cookie, "content-type": `multipart/form-data; boundary=${boundary}` },
+      payload: body,
+    });
+    expect(uploaded.statusCode).toBe(201);
+    const record = uploaded.json();
+    expect(existsSync(path.resolve("uploads", record.storedName))).toBe(true);
+
+    const deleted = await app.inject({
+      method: "DELETE",
+      url: `/api/v1/admin/media/${record.id}`,
+      headers: { cookie },
+    });
+    expect(deleted.statusCode).toBe(200);
+    expect(existsSync(path.resolve("uploads", record.storedName))).toBe(false);
+  });
+
   it("returns numeric statistics", async () => {
     const visitorId = crypto.randomUUID();
     await app.inject({
       method: "POST",
       url: "/api/v1/analytics/events",
       payload: { visitorId, sessionId: crypto.randomUUID(), eventType: "page_view", pagePath: "/" },
+    });
+    await app.inject({
+      method: "POST",
+      url: "/api/v1/applications",
+      payload: {
+        submissionId: crypto.randomUUID(),
+        visitorId,
+        name: "Analytics User",
+        phone: "+375290000001",
+        consent: true,
+      },
     });
     const today = new Date().toISOString().slice(0, 10);
     const response = await app.inject({
@@ -395,6 +466,7 @@ describe.sequential("critical API scenarios", () => {
         conversionRate: expect.any(Number),
       }),
     );
+    expect(response.json().conversionRate).toBe(100);
 
     const from = new Date();
     from.setUTCDate(from.getUTCDate() - 2);

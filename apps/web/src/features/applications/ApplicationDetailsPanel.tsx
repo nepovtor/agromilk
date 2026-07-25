@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ApplicationRecord, ApplicationStatus, UpdateApplicationInput } from "@landing/shared";
+import type { ApplicationRecord, ApplicationStatus, UpdateApplicationInput } from "@agromilk/shared";
 import { Trash2, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";

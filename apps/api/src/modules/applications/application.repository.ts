@@ -5,7 +5,7 @@ import type {
   BulkUpdateApplicationsInput,
   CreateApplicationInput,
   UpdateApplicationInput,
-} from "@landing/shared";
+} from "@agromilk/shared";
 import { db } from "../../db/index.js";
 import { applications } from "../../db/schema.js";
 
@@ -29,8 +29,17 @@ export class ApplicationRepository {
         utmMedium: data.utmMedium || null,
         utmCampaign: data.utmCampaign || null,
       })
+      .onConflictDoNothing({ target: applications.submissionId })
       .returning();
-    return created;
+    if (created) return { record: created, created: true as const };
+    if (!data.submissionId) throw new Error("Не удалось создать заявку");
+    const [existing] = await db
+      .select()
+      .from(applications)
+      .where(eq(applications.submissionId, data.submissionId))
+      .limit(1);
+    if (!existing) throw new Error("Не удалось найти ранее созданную заявку");
+    return { record: existing, created: false as const };
   }
 
   async list(query: ApplicationListQuery) {
@@ -65,6 +74,28 @@ export class ApplicationRepository {
     ]);
 
     return { items, totalItems: Number(totalRows[0]?.value ?? 0) };
+  }
+
+  async listForExport(query: ApplicationListQuery) {
+    const conditions = [];
+    if (query.status) conditions.push(eq(applications.status, query.status));
+    if (query.search) {
+      const pattern = `%${query.search}%`;
+      conditions.push(
+        or(
+          ilike(applications.name, pattern),
+          ilike(applications.phone, pattern),
+          ilike(applications.email, pattern),
+        )!,
+      );
+    }
+    if (query.from)
+      conditions.push(gte(applications.createdAt, new Date(`${query.from}T00:00:00.000Z`)));
+    if (query.to)
+      conditions.push(lte(applications.createdAt, new Date(`${query.to}T23:59:59.999Z`)));
+    const where = conditions.length ? and(...conditions) : undefined;
+    const order = query.sort === "asc" ? asc(applications.createdAt) : desc(applications.createdAt);
+    return db.select().from(applications).where(where).orderBy(order);
   }
 
   async findById(id: string) {

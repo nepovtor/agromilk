@@ -1,15 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { api } from "@/api";
-
-const getId = (key: string, storage: Storage) => {
-  let value = storage.getItem(key);
-  if (!value) {
-    value = crypto.randomUUID();
-    storage.setItem(key, value);
-  }
-  return value;
-};
+import { getSessionId, getVisitorId } from "@/lib/analyticsIdentity";
 
 export function useAnalytics() {
   const [location] = useLocation();
@@ -18,8 +10,8 @@ export function useAnalytics() {
     const query = new URLSearchParams(window.location.search);
     void api.analytics
       .pageView({
-        visitorId: getId("visitor_id", localStorage),
-        sessionId: getId("session_id", sessionStorage),
+        visitorId: getVisitorId(),
+        sessionId: getSessionId(),
         eventType: "page_view",
         pagePath: `${location}${window.location.search}`,
         referrer: document.referrer,

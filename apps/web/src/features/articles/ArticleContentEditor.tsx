@@ -1,4 +1,4 @@
-import type { ArticleInput } from "@landing/shared";
+import type { ArticleInput } from "@agromilk/shared";
 import { Sparkles } from "@/components/icons";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { Button } from "@/components/ui/button";

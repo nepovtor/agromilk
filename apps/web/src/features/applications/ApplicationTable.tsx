@@ -1,4 +1,4 @@
-import type { ApplicationRecord } from "@landing/shared";
+import type { ApplicationRecord } from "@agromilk/shared";
 import { Eye, Trash2 } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

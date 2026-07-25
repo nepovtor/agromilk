@@ -4,7 +4,7 @@ import {
   idParamsSchema,
   productInputSchema,
   slugParamsSchema,
-} from "@landing/shared";
+} from "@agromilk/shared";
 import { requireAdmin } from "../lib/auth.js";
 import { parseOrThrow } from "../lib/http.js";
 import { ProductRepository } from "../modules/products/product.repository.js";

@@ -5,7 +5,7 @@ import {
   createApplicationSchema,
   idParamsSchema,
   updateApplicationSchema,
-} from "@landing/shared";
+} from "@agromilk/shared";
 import { requireAdmin } from "../lib/auth.js";
 import { getClientIp, parseOrThrow } from "../lib/http.js";
 import { applicationNotificationPublisher } from "../modules/applications/application-notification.publisher.js";
@@ -23,13 +23,15 @@ export const publicApplicationRoutes: FastifyPluginAsync = async (app) => {
     { config: { rateLimit: { max: 5, timeWindow: "10 minutes" } } },
     async (request, reply) => {
       const data = parseOrThrow(createApplicationSchema, request.body);
-      const created = await applicationService.create(data, {
+      const result = await applicationService.create(data, {
         ipAddress: getClientIp(request.headers, request.ip),
         userAgent: request.headers["user-agent"],
         logger: request.log,
       });
-      if (!created) return { success: true };
-      return reply.code(201).send({ success: true, id: created.id });
+      if (!result) return { success: true };
+      return reply
+        .code(result.created ? 201 : 200)
+        .send({ success: true, id: result.record.id, deduplicated: !result.created });
     },
   );
 };
@@ -45,6 +47,16 @@ export const adminApplicationRoutes: FastifyPluginAsync = async (app) => {
   app.patch("/bulk", async (request) => {
     const data = parseOrThrow(bulkUpdateApplicationsSchema, request.body);
     return applicationService.bulkUpdate(data);
+  });
+
+  app.get("/export.csv", async (request, reply) => {
+    const query = parseOrThrow(applicationListQuerySchema, request.query);
+    const csv = await applicationService.exportCsv(query);
+    const date = new Date().toISOString().slice(0, 10);
+    return reply
+      .header("Content-Type", "text/csv; charset=utf-8")
+      .header("Content-Disposition", `attachment; filename="agromilk-applications-${date}.csv"`)
+      .send(csv);
   });
 
   app.get("/:id", async (request) => {

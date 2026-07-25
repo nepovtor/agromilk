@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { ArticleInput } from "@landing/shared";
+import type { ArticleInput } from "@agromilk/shared";
 import { Laptop, Smartphone, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

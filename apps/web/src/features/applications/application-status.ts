@@ -1,4 +1,4 @@
-import type { ApplicationStatus } from "@landing/shared";
+import type { ApplicationStatus } from "@agromilk/shared";
 
 export const applicationStatusLabels: Record<ApplicationStatus, string> = {
   new: "Новая",

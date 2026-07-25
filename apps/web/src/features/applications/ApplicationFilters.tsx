@@ -1,4 +1,4 @@
-import type { ApplicationStatus } from "@landing/shared";
+import type { ApplicationStatus } from "@agromilk/shared";
 import { Search } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import type { Paginated, ProductRecord, ProductStatus } from "@landing/shared";
+import type { Paginated, ProductRecord, ProductStatus } from "@agromilk/shared";
 import { Plus } from "@/components/icons";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";

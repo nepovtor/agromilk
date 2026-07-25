@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
-import { analyticsEventSchema } from "@landing/shared";
+import { analyticsEventSchema } from "@agromilk/shared";
 import { db } from "../db/index.js";
 import { analyticsEvents } from "../db/schema.js";
 import { and, eq, gte } from "drizzle-orm";

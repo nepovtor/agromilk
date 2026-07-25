@@ -1,5 +1,5 @@
 {
-  "name": "landing-admin-platform",
+  "name": "agromilk-platform",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -8,20 +8,20 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "pnpm --filter @landing/shared build && pnpm --parallel --filter @landing/web --filter @landing/api dev",
-    "build": "pnpm --filter @landing/shared build && pnpm --filter @landing/web build && pnpm --filter @landing/api build",
+    "dev": "pnpm --filter @agromilk/shared build && pnpm --parallel --filter @agromilk/web --filter @agromilk/api dev",
+    "build": "pnpm --filter @agromilk/shared build && pnpm --filter @agromilk/web build && pnpm --filter @agromilk/api build",
     "build:netlify": "pnpm --dir packages/shared build && pnpm --dir apps/web build && node scripts/prepare-netlify.mjs",
-    "typecheck": "pnpm --filter @landing/shared build && pnpm --filter @landing/web typecheck && pnpm --filter @landing/api typecheck",
+    "typecheck": "pnpm --filter @agromilk/shared build && pnpm --filter @agromilk/web typecheck && pnpm --filter @agromilk/api typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "pnpm --filter @landing/shared build && pnpm --filter @landing/api test",
-    "db:generate": "pnpm --filter @landing/api db:generate",
-    "db:migrate": "pnpm --filter @landing/api db:migrate",
-    "db:studio": "pnpm --filter @landing/api db:studio",
-    "db:seed": "pnpm --filter @landing/api seed",
+    "test": "pnpm --filter @agromilk/shared build && pnpm --filter @agromilk/web test && pnpm --filter @agromilk/api test",
+    "db:generate": "pnpm --filter @agromilk/api db:generate",
+    "db:migrate": "pnpm --filter @agromilk/api db:migrate",
+    "db:studio": "pnpm --filter @agromilk/api db:studio",
+    "db:seed": "pnpm --filter @agromilk/api seed",
     "seed": "pnpm db:seed",
-    "start": "pnpm --filter @landing/api start",
+    "start": "pnpm --filter @agromilk/api start",
     "smoke-test": "./scripts/ci-smoke.sh"
   },
   "devDependencies": {

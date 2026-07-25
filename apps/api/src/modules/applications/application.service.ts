@@ -3,7 +3,7 @@ import type {
   BulkUpdateApplicationsInput,
   CreateApplicationInput,
   UpdateApplicationInput,
-} from "@landing/shared";
+} from "@agromilk/shared";
 import { NotFoundError } from "../../lib/errors.js";
 import { serializeDates } from "../../lib/serialize.js";
 import type { ApplicationNotificationPublisher } from "./application-notification.publisher.js";
@@ -24,9 +24,9 @@ export class ApplicationService {
   async create(data: CreateApplicationInput, context: CreateApplicationContext) {
     if (data.website) return null;
     const { logger, ...requestMetadata } = context;
-    const created = await this.repository.create({ ...data, ...requestMetadata });
-    await this.notifications.publishCreated(created, logger);
-    return created;
+    const result = await this.repository.create({ ...data, ...requestMetadata });
+    if (result.created) await this.notifications.publishCreated(result.record, logger);
+    return result;
   }
 
   async list(query: ApplicationListQuery) {
@@ -46,6 +46,33 @@ export class ApplicationService {
     const item = await this.repository.findById(id);
     if (!item) throw new NotFoundError("Заявка не найдена");
     return serializeDates(item);
+  }
+
+  async exportCsv(query: ApplicationListQuery) {
+    const items = await this.repository.listForExport(query);
+    const statusLabels = {
+      new: "Новая",
+      viewed: "Просмотрена",
+      in_progress: "В работе",
+      completed: "Завершена",
+      rejected: "Отклонена",
+    } as const;
+    const escape = (value: string | null | undefined) =>
+      `"${(value ?? "").replace(/"/g, '""')}"`;
+    const rows = [
+      ["Дата", "Клиент", "Телефон", "Email", "Сообщение", "Статус", "Комментарий", "Источник"],
+      ...items.map((item) => [
+        item.createdAt.toISOString(),
+        item.name,
+        item.phone,
+        item.email,
+        item.message,
+        statusLabels[item.status],
+        item.adminComment,
+        item.sourcePage,
+      ]),
+    ];
+    return `\ufeff${rows.map((row) => row.map(escape).join(";")).join("\n")}`;
   }
 
   async update(id: string, data: UpdateApplicationInput) {
