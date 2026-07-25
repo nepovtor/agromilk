@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { MediaRepository } from "./media.repository.js";
 import { MediaService } from "./media.service.js";
 import { MediaStorage } from "./media.storage.js";
+import { ConflictError, NotFoundError } from "../../lib/errors.js";
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -53,5 +54,80 @@ describe("MediaService", () => {
       new Error("disk unavailable"),
     );
     await expect(new MediaService().cleanupQuarantine()).rejects.toThrow("disk unavailable");
+  });
+
+  it("rolls back a written file when the database insert fails", async () => {
+    const failure = new Error("database unavailable");
+    vi.spyOn(MediaStorage.prototype, "write").mockResolvedValue();
+    const remove = vi.spyOn(MediaStorage.prototype, "remove").mockResolvedValue();
+    vi.spyOn(MediaRepository.prototype, "create").mockRejectedValue(failure);
+    const app = fastify();
+
+    await expect(
+      new MediaService().upload(
+        {
+          buffer: Buffer.from("image"),
+          extension: "webp",
+          mimeType: "image/webp",
+          originalName: "image.webp",
+          uploadedBy: crypto.randomUUID(),
+        },
+        app.log,
+      ),
+    ).rejects.toThrow(failure);
+    expect(remove).toHaveBeenCalledOnce();
+    await app.close();
+  });
+
+  it("rejects missing and referenced media before changing files", async () => {
+    vi.spyOn(MediaRepository.prototype, "findById").mockResolvedValueOnce(undefined as never);
+    const app = fastify();
+    await expect(new MediaService().delete(crypto.randomUUID(), app.log)).rejects.toThrow(
+      NotFoundError,
+    );
+
+    const record = {
+      id: crypto.randomUUID(),
+      originalName: "image.webp",
+      storedName: "stored.webp",
+      mimeType: "image/webp",
+      size: 100,
+      url: "/uploads/stored.webp",
+      uploadedBy: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    vi.spyOn(MediaRepository.prototype, "findById").mockResolvedValue(record);
+    vi.spyOn(MediaRepository.prototype, "isReferenced").mockResolvedValue(true);
+    const move = vi.spyOn(MediaStorage.prototype, "move");
+    await expect(new MediaService().delete(record.id, app.log)).rejects.toThrow(ConflictError);
+    expect(move).not.toHaveBeenCalled();
+    await app.close();
+  });
+
+  it("restores a quarantined file when database deletion fails", async () => {
+    const record = {
+      id: crypto.randomUUID(),
+      originalName: "image.webp",
+      storedName: "stored.webp",
+      mimeType: "image/webp",
+      size: 100,
+      url: "/uploads/stored.webp",
+      uploadedBy: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    vi.spyOn(MediaRepository.prototype, "findById").mockResolvedValue(record);
+    vi.spyOn(MediaRepository.prototype, "isReferenced").mockResolvedValue(false);
+    vi.spyOn(MediaRepository.prototype, "delete").mockRejectedValue(
+      new Error("database unavailable"),
+    );
+    const move = vi.spyOn(MediaStorage.prototype, "move").mockResolvedValue();
+    const app = fastify();
+    await expect(new MediaService().delete(record.id, app.log)).rejects.toThrow(
+      "database unavailable",
+    );
+    expect(move).toHaveBeenCalledTimes(2);
+    await app.close();
   });
 });

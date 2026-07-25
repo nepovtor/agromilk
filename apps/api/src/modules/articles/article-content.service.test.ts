@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { sanitizeArticleContent } from "./article-content.service.js";
+import {
+  articleContentMediaUrls,
+  hasInvalidArticleEmbed,
+  sanitizeArticleContent,
+} from "./article-content.service.js";
 
 describe("sanitizeArticleContent", () => {
   it("keeps editable table structure and removes unsafe attributes", () => {
@@ -23,5 +27,20 @@ describe("sanitizeArticleContent", () => {
     );
 
     expect(content).toBe('<p style="text-align:center">По центру</p>');
+  });
+
+  it("accepts only YouTube embeds and discovers unique uploaded media", () => {
+    expect(
+      hasInvalidArticleEmbed('<iframe src="https://www.youtube.com/embed/abcdefghijk"></iframe>'),
+    ).toBe(false);
+    expect(
+      hasInvalidArticleEmbed('<iframe src="https://evil.example/embed/abcdefghijk"></iframe>'),
+    ).toBe(true);
+    expect(hasInvalidArticleEmbed("<iframe></iframe>")).toBe(true);
+    expect(
+      articleContentMediaUrls(
+        '<img src="/uploads/a.webp"><img src="/uploads/a.webp"><img src="https://example.com/a.webp">',
+      ),
+    ).toEqual(["/uploads/a.webp"]);
   });
 });

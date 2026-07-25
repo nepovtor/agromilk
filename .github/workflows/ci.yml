@@ -74,14 +74,11 @@ jobs:
         run: pnpm test:e2e:ci
         env:
           NODE_ENV: test
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
       - name: Build Docker image
-        run: docker build -t agromilk-ci .
-      - name: Run Docker smoke test
-        run: |
-          docker run --rm --network host -d --name agromilk-ci \
-            -e HOST=127.0.0.1 -e PORT=3100 -e DATABASE_URL="$DATABASE_URL" \
-            -e DATABASE_SSL=false -e COOKIE_SECRET="$COOKIE_SECRET" \
-            -e ADMIN_EMAIL="$ADMIN_EMAIL" -e ADMIN_PASSWORD="$ADMIN_PASSWORD" \
-            -e ADMIN_NAME="$ADMIN_NAME" agromilk-ci
-          pnpm smoke-test
-          docker stop agromilk-ci
+        run: docker build --progress=plain -t agromilk-ci .

@@ -48,4 +48,52 @@ describe("auth API", () => {
     expect(response.statusCode).toBe(200);
     expect(response.json()).toMatchObject({ status: "ok", database: "ok" });
   });
+
+  it("handles sessions, logout and disabled Google OAuth without exposing credentials", async () => {
+    const login = await context.app.inject({
+      method: "POST",
+      url: "/api/v1/auth/login",
+      payload: { email: context.adminEmail, password: context.adminPassword },
+    });
+    expect(login.json()).toEqual({
+      user: expect.not.objectContaining({ passwordHash: expect.anything() }),
+    });
+    const me = await context.app.inject({
+      method: "GET",
+      url: "/api/v1/auth/me",
+      headers: { cookie: context.cookie },
+    });
+    expect(me.statusCode).toBe(200);
+    expect(me.json().user.email).toBe(context.adminEmail);
+    expect(
+      (
+        await context.app.inject({
+          method: "GET",
+          url: "/api/v1/auth/me",
+          headers: { cookie: "admin_session=corrupted" },
+        })
+      ).statusCode,
+    ).toBe(401);
+    expect(
+      (await context.app.inject({ method: "GET", url: "/api/v1/auth/google/status" })).json(),
+    ).toEqual({
+      enabled: false,
+    });
+    expect(
+      (await context.app.inject({ method: "GET", url: "/api/v1/auth/google" })).statusCode,
+    ).toBe(404);
+    const callback = await context.app.inject({
+      method: "GET",
+      url: "/api/v1/auth/google/callback?code=code&state=bad",
+    });
+    expect(callback.statusCode).toBe(302);
+    expect(callback.headers.location).toContain("google_error=not_configured");
+    const logout = await context.app.inject({
+      method: "POST",
+      url: "/api/v1/auth/logout",
+      headers: { cookie: context.cookie },
+    });
+    expect(logout.json()).toEqual({ success: true });
+    expect(logout.headers["set-cookie"]).toContain("admin_session=");
+  });
 });
