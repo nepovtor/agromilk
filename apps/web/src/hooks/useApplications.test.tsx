@@ -47,4 +47,34 @@ describe("useApplications", () => {
     rerender({ applicationId: "application-id" });
     await waitFor(() => expect(getApplication).toHaveBeenCalledOnce());
   });
+
+  it("keeps the newest application when an earlier request resolves last", async () => {
+    const navigate = vi.fn();
+    let resolveFirst: ((value: { id: string }) => void) | undefined;
+    let resolveSecond: ((value: { id: string }) => void) | undefined;
+    getApplication
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveFirst = resolve;
+          }),
+      )
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveSecond = resolve;
+          }),
+      );
+    const { result, rerender } = renderHook(
+      ({ applicationId }: { applicationId?: string }) =>
+        useApplications({ applicationId, navigate }),
+      { initialProps: { applicationId: "first" } },
+    );
+    rerender({ applicationId: "second" });
+    await waitFor(() => expect(getApplication).toHaveBeenCalledTimes(2));
+    await act(async () => resolveSecond?.({ id: "second" }));
+    await waitFor(() => expect(result.current.selected?.id).toBe("second"));
+    await act(async () => resolveFirst?.({ id: "first" }));
+    expect(result.current.selected?.id).toBe("second");
+  });
 });

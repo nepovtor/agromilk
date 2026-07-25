@@ -14,9 +14,9 @@ export const applicationsApi = {
     }),
   list: (params: URLSearchParams) =>
     request<Paginated<ApplicationRecord>>(`/admin/applications?${params}`),
-  exportCsv: (params: URLSearchParams) =>
-    requestBlob(`/admin/applications/export.csv?${params}`),
-  get: (id: string) => request<ApplicationRecord>(`/admin/applications/${id}`),
+  exportCsv: (params: URLSearchParams) => requestBlob(`/admin/applications/export.csv?${params}`),
+  get: (id: string, signal?: AbortSignal) =>
+    request<ApplicationRecord>(`/admin/applications/${id}`, { signal }),
   update: (id: string, data: UpdateApplicationInput) =>
     request<ApplicationRecord>(`/admin/applications/${id}`, {
       method: "PATCH",

@@ -34,7 +34,6 @@ export class ApplicationRepository {
       .onConflictDoNothing({ target: applications.submissionId })
       .returning();
     if (created) return { record: created, created: true as const };
-    if (!data.submissionId) throw new Error("Не удалось создать заявку");
     const [existing] = await db
       .select()
       .from(applications)

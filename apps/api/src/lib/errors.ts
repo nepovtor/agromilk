@@ -44,6 +44,16 @@ export class ValidationError extends ApiError {
   }
 }
 
+export class ConversionInvariantError extends Error {
+  constructor(
+    public readonly visitors: number,
+    public readonly convertedVisitors: number,
+  ) {
+    super("Количество сконвертированных посетителей не может превышать количество посетителей");
+    this.name = "ConversionInvariantError";
+  }
+}
+
 export function isUniqueConstraintError(error: unknown) {
   if (typeof error !== "object" || error === null) return false;
   const candidate = error as { code?: unknown; cause?: unknown };

@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import fp from "fastify-plugin";
+import type { FastifyReply, FastifyRequest } from "fastify";
 import { db } from "../db/index.js";
 import { analyticsRoutes } from "../modules/analytics/analytics.routes.js";
 import { adminApplicationRoutes, publicApplicationRoutes } from "../routes/applications.routes.js";
@@ -12,7 +13,7 @@ import { statisticsRoutes } from "../modules/statistics/statistics.routes.js";
 
 export const apiRoutesPlugin = fp(
   async (app) => {
-    app.get("/api/v1/health", async (_request, reply) => {
+    const databaseHealth = async (_request: FastifyRequest, reply: FastifyReply) => {
       try {
         await db.execute(sql`select 1`);
         return { status: "ok", database: "ok", time: new Date().toISOString() };
@@ -21,7 +22,9 @@ export const apiRoutesPlugin = fp(
           .code(503)
           .send({ status: "error", database: "unavailable", time: new Date().toISOString() });
       }
-    });
+    };
+    app.get("/api/v1/health", databaseHealth);
+    app.get("/api/v1/readiness", databaseHealth);
 
     await app.register(authRoutes, { prefix: "/api/v1/auth" });
     await app.register(publicApplicationRoutes, { prefix: "/api/v1/applications" });

@@ -1,6 +1,6 @@
-import { and, count, desc, eq, ilike, or } from "drizzle-orm";
+import { and, count, desc, eq, ilike, inArray, or } from "drizzle-orm";
 import { db } from "../../db/index.js";
-import { articles } from "../../db/schema.js";
+import { articleMedia, articles, mediaFiles } from "../../db/schema.js";
 import type { AdminArticleQuery, PublicArticleQuery } from "./article.types.js";
 
 export class ArticleRepository {
@@ -32,7 +32,12 @@ export class ArticleRepository {
   }
 
   publicGet(slug: string) {
-    return db.select().from(articles).where(and(eq(articles.slug, slug), eq(articles.status, "published"))).limit(1).then(([item]) => item);
+    return db
+      .select()
+      .from(articles)
+      .where(and(eq(articles.slug, slug), eq(articles.status, "published")))
+      .limit(1)
+      .then(([item]) => item);
   }
 
   async adminList(query: AdminArticleQuery) {
@@ -45,25 +50,102 @@ export class ArticleRepository {
     }
     const where = conditions.length ? and(...conditions) : undefined;
     const [items, total] = await Promise.all([
-      db.select().from(articles).where(where).orderBy(desc(articles.updatedAt)).limit(query.pageSize).offset((query.page - 1) * query.pageSize),
+      db
+        .select()
+        .from(articles)
+        .where(where)
+        .orderBy(desc(articles.updatedAt))
+        .limit(query.pageSize)
+        .offset((query.page - 1) * query.pageSize),
       db.select({ value: count() }).from(articles).where(where),
     ]);
     return { items, total: Number(total[0]?.value ?? 0) };
   }
 
   findById(id: string) {
-    return db.select().from(articles).where(eq(articles.id, id)).limit(1).then(([item]) => item);
+    return db
+      .select()
+      .from(articles)
+      .where(eq(articles.id, id))
+      .limit(1)
+      .then(([item]) => item);
   }
 
   create(values: typeof articles.$inferInsert) {
-    return db.insert(articles).values(values).returning().then(([item]) => item);
+    return db
+      .insert(articles)
+      .values(values)
+      .returning()
+      .then(([item]) => item);
+  }
+
+  async mediaIdsForUrls(urls: string[]) {
+    if (!urls.length) return [];
+    return db
+      .select({ id: mediaFiles.id, url: mediaFiles.url })
+      .from(mediaFiles)
+      .where(inArray(mediaFiles.url, urls));
+  }
+
+  async createWithMedia(
+    values: typeof articles.$inferInsert,
+    media: Array<{ id: string; usageType: "cover" | "content" }>,
+  ) {
+    return db.transaction(async (tx) => {
+      const [item] = await tx.insert(articles).values(values).returning();
+      if (media.length)
+        await tx
+          .insert(articleMedia)
+          .values(
+            media.map((itemMedia) => ({
+              articleId: item.id,
+              mediaId: itemMedia.id,
+              usageType: itemMedia.usageType,
+            })),
+          )
+          .onConflictDoNothing();
+      return item;
+    });
   }
 
   update(id: string, values: Partial<typeof articles.$inferInsert>) {
-    return db.update(articles).set(values).where(eq(articles.id, id)).returning().then(([item]) => item);
+    return db
+      .update(articles)
+      .set(values)
+      .where(eq(articles.id, id))
+      .returning()
+      .then(([item]) => item);
+  }
+
+  async updateWithMedia(
+    id: string,
+    values: Partial<typeof articles.$inferInsert>,
+    media: Array<{ id: string; usageType: "cover" | "content" }>,
+  ) {
+    return db.transaction(async (tx) => {
+      const [item] = await tx.update(articles).set(values).where(eq(articles.id, id)).returning();
+      if (!item) return item;
+      await tx.delete(articleMedia).where(eq(articleMedia.articleId, id));
+      if (media.length)
+        await tx
+          .insert(articleMedia)
+          .values(
+            media.map((itemMedia) => ({
+              articleId: id,
+              mediaId: itemMedia.id,
+              usageType: itemMedia.usageType,
+            })),
+          )
+          .onConflictDoNothing();
+      return item;
+    });
   }
 
   delete(id: string) {
-    return db.delete(articles).where(eq(articles.id, id)).returning({ id: articles.id }).then(([item]) => item);
+    return db
+      .delete(articles)
+      .where(eq(articles.id, id))
+      .returning({ id: articles.id })
+      .then(([item]) => item);
   }
 }

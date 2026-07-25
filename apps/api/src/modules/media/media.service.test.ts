@@ -22,7 +22,9 @@ describe("MediaService", () => {
     vi.spyOn(MediaRepository.prototype, "findById").mockResolvedValue(record);
     vi.spyOn(MediaRepository.prototype, "isReferenced").mockResolvedValue(false);
     vi.spyOn(MediaRepository.prototype, "delete").mockResolvedValue(record);
-    vi.spyOn(MediaStorage.prototype, "quarantineFiles").mockResolvedValue([]);
+    const quarantineFiles = vi
+      .spyOn(MediaStorage.prototype, "quarantineFiles")
+      .mockResolvedValue([]);
     vi.spyOn(MediaStorage.prototype, "move").mockResolvedValue();
     vi.spyOn(MediaStorage.prototype, "remove").mockRejectedValue(new Error("disk unavailable"));
     const app = fastify();
@@ -31,7 +33,25 @@ describe("MediaService", () => {
     await expect(new MediaService().delete(record.id, app.log)).resolves.toEqual({
       success: true,
     });
+    expect(quarantineFiles).not.toHaveBeenCalled();
     expect(log).toHaveBeenCalled();
     await app.close();
+  });
+
+  it("deletes only stale quarantine files", async () => {
+    vi.spyOn(MediaStorage.prototype, "quarantineFiles").mockResolvedValue(["old.deleting-token"]);
+    const remove = vi.spyOn(MediaStorage.prototype, "remove").mockResolvedValue();
+    await expect(new MediaService().cleanupQuarantine()).resolves.toEqual({
+      scanned: 1,
+      removed: 1,
+    });
+    expect(remove).toHaveBeenCalledWith("old.deleting-token");
+  });
+
+  it("surfaces cleanup failures for the startup and CLI callers to log", async () => {
+    vi.spyOn(MediaStorage.prototype, "quarantineFiles").mockRejectedValue(
+      new Error("disk unavailable"),
+    );
+    await expect(new MediaService().cleanupQuarantine()).rejects.toThrow("disk unavailable");
   });
 });

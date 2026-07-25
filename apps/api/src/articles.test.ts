@@ -36,8 +36,9 @@ describe("articles API", () => {
       coverImagePositionX: 40,
       coverImagePositionY: 60,
     });
-    expect((await context.app.inject({ method: "GET", url: `/api/v1/articles/${slug}` })).statusCode)
-      .toBe(404);
+    expect(
+      (await context.app.inject({ method: "GET", url: `/api/v1/articles/${slug}` })).statusCode,
+    ).toBe(404);
     const published = await context.app.inject({
       method: "PATCH",
       url: `/api/v1/admin/articles/${id}`,
@@ -45,12 +46,12 @@ describe("articles API", () => {
       payload: {
         status: "published",
         content: '<p onclick="alert(1)">Safe</p><script>alert(1)</script>',
-        coverImageUrl: "/uploads/example-cover.webp",
+        coverImageUrl: "https://example.com/example-cover.webp",
       },
     });
     expect(published.json()).toMatchObject({
       content: "<p>Safe</p>",
-      coverImageUrl: "/uploads/example-cover.webp",
+      coverImageUrl: "https://example.com/example-cover.webp",
     });
     const publicArticle = await context.app.inject({
       method: "GET",

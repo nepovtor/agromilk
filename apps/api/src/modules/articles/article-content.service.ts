@@ -66,3 +66,18 @@ export function sanitizeArticleContent(content: string) {
     },
   });
 }
+
+export function articleContentMediaUrls(content: string) {
+  const urls = new Set<string>();
+  sanitizeHtml(content, {
+    allowedTags: ["img"],
+    allowedAttributes: { img: ["src"] },
+    transformTags: {
+      img: (tagName, attribs) => {
+        if (attribs.src?.startsWith("/uploads/")) urls.add(attribs.src);
+        return { tagName, attribs };
+      },
+    },
+  });
+  return [...urls];
+}

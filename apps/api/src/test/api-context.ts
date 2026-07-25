@@ -7,6 +7,7 @@ import {
   adminSessions,
   analyticsEvents,
   applications,
+  articleMedia,
   articles,
   mediaFiles,
   products,
@@ -20,6 +21,7 @@ export async function createApiContext() {
   await db.delete(adminSessions);
   await db.delete(analyticsEvents);
   await db.delete(applications);
+  await db.delete(articleMedia);
   await db.delete(articles);
   await db.delete(products);
   await db.delete(mediaFiles);

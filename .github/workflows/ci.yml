@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   verify:
@@ -34,24 +35,53 @@ jobs:
       ADMIN_FORCE_RESET: false
       UPLOAD_DIR: uploads
     steps:
-      - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
+      - name: Check out source
+        uses: actions/checkout@v7
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
         with:
           version: 10.13.1
-      - uses: actions/setup-node@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm lint
-      - run: pnpm db:migrate
-      - run: pnpm db:migrate
-      - run: pnpm seed
-      - run: pnpm test
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Type-check
+        run: pnpm typecheck
+      - name: Lint
+        run: pnpm lint
+      - name: Check formatting
+        run: pnpm format:check
+      - name: Apply migrations
+        run: pnpm db:migrate
+      - name: Reapply migrations
+        run: pnpm db:migrate
+      - name: Seed database
+        run: pnpm seed
+      - name: Run unit and integration coverage tests
+        run: pnpm test:coverage
         env:
           NODE_ENV: test
-      - run: pnpm build
+      - name: Build production application
+        run: pnpm build
         env:
           NODE_ENV: production
-      - run: pnpm smoke-test
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run end-to-end tests
+        run: pnpm test:e2e:ci
+        env:
+          NODE_ENV: test
+      - name: Build Docker image
+        run: docker build -t agromilk-ci .
+      - name: Run Docker smoke test
+        run: |
+          docker run --rm --network host -d --name agromilk-ci \
+            -e HOST=127.0.0.1 -e PORT=3100 -e DATABASE_URL="$DATABASE_URL" \
+            -e DATABASE_SSL=false -e COOKIE_SECRET="$COOKIE_SECRET" \
+            -e ADMIN_EMAIL="$ADMIN_EMAIL" -e ADMIN_PASSWORD="$ADMIN_PASSWORD" \
+            -e ADMIN_NAME="$ADMIN_NAME" agromilk-ci
+          pnpm smoke-test
+          docker stop agromilk-ci

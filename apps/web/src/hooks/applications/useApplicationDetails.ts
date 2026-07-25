@@ -20,15 +20,19 @@ export function useApplicationDetails({
 
   useEffect(() => {
     if (!applicationId) return;
+    const controller = new AbortController();
     api.applications
-      .get(applicationId)
+      .get(applicationId, controller.signal)
       .then((item) => {
+        if (controller.signal.aborted) return;
         setSelected(item);
         replaceInList(item);
       })
-      .catch((cause: unknown) =>
-        setError(applicationErrorMessage(cause, "Не удалось загрузить заявку")),
-      );
+      .catch((cause: unknown) => {
+        if (cause instanceof DOMException && cause.name === "AbortError") return;
+        setError(applicationErrorMessage(cause, "Не удалось загрузить заявку"));
+      });
+    return () => controller.abort();
   }, [applicationId, replaceInList, setError]);
 
   const open = useCallback((id: string) => navigate(`/admin/applications/${id}`), [navigate]);

@@ -12,7 +12,6 @@ const mediaService = new MediaService();
 
 export const mediaRoutes: FastifyPluginAsync = async (app) => {
   app.addHook("preHandler", requireAdmin);
-  await mediaService.cleanupOrphans(app.log);
 
   app.post("/", async (request, reply) => {
     const admin = request.admin;

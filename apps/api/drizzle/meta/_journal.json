@@ -64,6 +64,13 @@
       "when": 1784980922642,
       "tag": "0008_analytics_event_id",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1784982000000,
+      "tag": "0009_reliable_submissions_and_article_media",
+      "breakpoints": true
     }
   ]
 }

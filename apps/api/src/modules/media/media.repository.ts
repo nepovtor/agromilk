@@ -1,12 +1,16 @@
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "../../db/index.js";
-import { articles, mediaFiles, products } from "../../db/schema.js";
+import { articleMedia, mediaFiles, products } from "../../db/schema.js";
 
 type CreateMediaFile = typeof mediaFiles.$inferInsert;
 
 export class MediaRepository {
   create(data: CreateMediaFile) {
-    return db.insert(mediaFiles).values(data).returning().then(([record]) => record);
+    return db
+      .insert(mediaFiles)
+      .values(data)
+      .returning()
+      .then(([record]) => record);
   }
 
   async list() {
@@ -22,25 +26,16 @@ export class MediaRepository {
       .then(([record]) => record);
   }
 
-  async isReferenced(url: string) {
-    const [article, embeddedArticle, product] = await Promise.all([
+  async isReferenced(mediaId: string, url: string) {
+    const [article, product] = await Promise.all([
       db
-        .select({ id: articles.id })
-        .from(articles)
-        .where(eq(articles.coverImageUrl, url))
+        .select({ id: articleMedia.articleId })
+        .from(articleMedia)
+        .where(eq(articleMedia.mediaId, mediaId))
         .limit(1),
-      db
-        .select({ id: articles.id })
-        .from(articles)
-        .where(sql`position(${url} in ${articles.content}) > 0`)
-        .limit(1),
-      db
-        .select({ id: products.id })
-        .from(products)
-        .where(eq(products.imageUrl, url))
-        .limit(1),
+      db.select({ id: products.id }).from(products).where(eq(products.imageUrl, url)).limit(1),
     ]);
-    return Boolean(article[0] || embeddedArticle[0] || product[0]);
+    return Boolean(article[0] || product[0]);
   }
 
   delete(id: string) {

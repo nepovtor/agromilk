@@ -107,11 +107,13 @@ describe("analytics and statistics API", () => {
     ]);
     await db.insert(applications).values([
       {
+        submissionId: crypto.randomUUID(),
         name: "Before midnight",
         phone: "+375290000020",
         createdAt: new Date("2026-07-24T20:59:59.000Z"),
       },
       {
+        submissionId: crypto.randomUUID(),
         name: "After midnight",
         phone: "+375290000021",
         createdAt: new Date("2026-07-24T21:00:01.000Z"),

@@ -13,7 +13,7 @@ export const applicationListQuerySchema = z.object({
 });
 
 export const createApplicationSchema = z.object({
-  submissionId: z.string().uuid().optional(),
+  submissionId: z.string().uuid(),
   visitorId: z.string().uuid().optional(),
   name: z.string().trim().min(2, "Укажите имя").max(100),
   phone: z.string().trim().min(7, "Укажите телефон").max(30),

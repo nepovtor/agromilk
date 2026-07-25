@@ -44,12 +44,13 @@ for _ in $(seq 1 30); do
 done
 
 curl -fsS "$BASE/health" >/dev/null
+curl -fsS "$BASE/readiness" >/dev/null
 curl -fsS -c "$COOKIE_JAR" -H 'Content-Type: application/json' \
   -d "{\"email\":\"${ADMIN_EMAIL}\",\"password\":\"${ADMIN_PASSWORD}\"}" \
   "$BASE/auth/login" | grep -q '"user"'
 
 curl -fsS -H 'Content-Type: application/json' \
-  -d '{"name":"CI User","phone":"+375290000000","email":"ci@example.com","message":"Smoke test","consent":true}' \
+  -d '{"submissionId":"00000000-0000-4000-8000-000000000001","name":"CI User","phone":"+375290000000","email":"ci@example.com","message":"Smoke test","consent":true}' \
   "$BASE/applications" | grep -q '"success":true'
 
 curl -fsS -b "$COOKIE_JAR" "$BASE/admin/applications?page=1&pageSize=10" | grep -q 'CI User'

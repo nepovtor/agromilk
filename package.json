@@ -22,16 +22,23 @@
     "db:seed": "pnpm --filter @agromilk/api seed",
     "seed": "pnpm db:seed",
     "start": "pnpm --filter @agromilk/api start",
-    "smoke-test": "./scripts/ci-smoke.sh"
+    "smoke-test": "./scripts/ci-smoke.sh",
+    "media:cleanup": "pnpm --filter @agromilk/api media:cleanup",
+    "test:coverage": "pnpm --filter @agromilk/shared build && pnpm --filter @agromilk/web test:coverage && pnpm --filter @agromilk/api test:coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ci": "playwright test --reporter=line"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.55.0",
+    "@types/node": "26.1.1",
+    "@vitest/coverage-v8": "4.1.10",
     "eslint": "10.7.0",
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "17.7.0",
     "prettier": "3.9.6",
-    "typescript-eslint": "8.65.0",
-    "typescript": "6.0.2"
+    "typescript": "6.0.2",
+    "typescript-eslint": "8.65.0"
   },
   "engines": {
     "node": ">=22"

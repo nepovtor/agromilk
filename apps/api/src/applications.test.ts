@@ -14,6 +14,66 @@ afterAll(async () => {
 });
 
 describe("applications API", () => {
+  it("requires a submission ID", async () => {
+    const response = await context.app.inject({
+      method: "POST",
+      url: "/api/v1/applications",
+      remoteAddress: "127.0.0.2",
+      payload: { name: "Test User", phone: "+375290000000", consent: true },
+    });
+    expect(response.statusCode).toBe(400);
+    expect(response.json()).toMatchObject({
+      error: "VALIDATION_ERROR",
+      fields: { submissionId: expect.any(Array) },
+    });
+  });
+
+  it("creates distinct submissions independently", async () => {
+    const payload = { name: "Test User", phone: "+375290000000", consent: true };
+    const [first, second] = await Promise.all([
+      context.app.inject({
+        method: "POST",
+        url: "/api/v1/applications",
+        remoteAddress: "127.0.0.3",
+        payload: { ...payload, submissionId: crypto.randomUUID() },
+      }),
+      context.app.inject({
+        method: "POST",
+        url: "/api/v1/applications",
+        remoteAddress: "127.0.0.4",
+        payload: { ...payload, submissionId: crypto.randomUUID() },
+      }),
+    ]);
+    expect(first.statusCode).toBe(201);
+    expect(second.statusCode).toBe(201);
+    expect(first.json().id).not.toBe(second.json().id);
+  });
+
+  it("deduplicates simultaneous requests with one submission ID", async () => {
+    const payload = {
+      submissionId: crypto.randomUUID(),
+      name: "Fast Click",
+      phone: "+375290000000",
+      consent: true,
+    };
+    const [first, second] = await Promise.all([
+      context.app.inject({
+        method: "POST",
+        url: "/api/v1/applications",
+        remoteAddress: "127.0.0.5",
+        payload,
+      }),
+      context.app.inject({
+        method: "POST",
+        url: "/api/v1/applications",
+        remoteAddress: "127.0.0.5",
+        payload,
+      }),
+    ]);
+    expect([first.statusCode, second.statusCode].sort()).toEqual([200, 201]);
+    expect(first.json().id).toBe(second.json().id);
+  });
+
   it("creates idempotently and supports the complete admin lifecycle", async () => {
     const payload = {
       submissionId: crypto.randomUUID(),
@@ -101,11 +161,13 @@ describe("applications API", () => {
   it("uses Minsk calendar boundaries for lists and CSV export", async () => {
     await db.insert(applications).values([
       {
+        submissionId: crypto.randomUUID(),
         name: "Before midnight",
         phone: "+375290000010",
         createdAt: new Date("2026-07-24T20:59:59.000Z"),
       },
       {
+        submissionId: crypto.randomUUID(),
         name: "After midnight",
         phone: "+375290000011",
         createdAt: new Date("2026-07-24T21:00:01.000Z"),
@@ -117,9 +179,7 @@ describe("applications API", () => {
       url: `/api/v1/admin/applications?${query}`,
       headers: { cookie: context.cookie },
     });
-    expect(list.json().items).toEqual([
-      expect.objectContaining({ name: "After midnight" }),
-    ]);
+    expect(list.json().items).toEqual([expect.objectContaining({ name: "After midnight" })]);
     const csv = await context.app.inject({
       method: "GET",
       url: `/api/v1/admin/applications/export.csv?${query}`,

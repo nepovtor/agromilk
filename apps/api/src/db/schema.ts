@@ -62,7 +62,7 @@ export const applications = pgTable(
   "applications",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    submissionId: uuid("submission_id"),
+    submissionId: uuid("submission_id").notNull(),
     visitorId: uuid("visitor_id"),
     name: varchar("name", { length: 100 }).notNull(),
     phone: varchar("phone", { length: 30 }).notNull(),
@@ -151,6 +151,25 @@ export const mediaFiles = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [uniqueIndex("media_stored_name_unique").on(table.storedName)],
+);
+
+export const articleMedia = pgTable(
+  "article_media",
+  {
+    articleId: uuid("article_id")
+      .notNull()
+      .references(() => articles.id, { onDelete: "cascade" }),
+    mediaId: uuid("media_id")
+      .notNull()
+      .references(() => mediaFiles.id),
+    usageType: varchar("usage_type", { length: 20 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("article_media_usage_unique").on(table.articleId, table.mediaId, table.usageType),
+    index("article_media_article_idx").on(table.articleId),
+    index("article_media_media_idx").on(table.mediaId),
+  ],
 );
 
 export const analyticsEvents = pgTable(
