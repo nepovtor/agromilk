@@ -46,6 +46,7 @@ test("administrator finds, updates and protects an application", async ({ page }
     page.getByRole("row", { name: new RegExp(marker) }).getByText("В работе"),
   ).toBeVisible();
 
+  await page.getByRole("dialog").getByRole("button").first().click();
   await page.getByRole("button", { name: "Выйти" }).click();
   await expect(page).toHaveURL(/\/admin\/login$/);
   await page.goto("/admin/applications");
