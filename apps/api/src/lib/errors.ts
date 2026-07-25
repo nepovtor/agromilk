@@ -25,6 +25,12 @@ export class ConflictError extends ApiError {
   }
 }
 
+export class LimitExceededError extends ApiError {
+  constructor(message: string) {
+    super(message, 413, "LIMIT_EXCEEDED");
+  }
+}
+
 export class ValidationError extends ApiError {
   constructor(
     message = "Проверьте введённые данные",

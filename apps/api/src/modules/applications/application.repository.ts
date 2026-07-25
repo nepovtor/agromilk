@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, gte, ilike, inArray, lte, or } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray, lt, or } from "drizzle-orm";
 import type { InferSelectModel } from "drizzle-orm";
 import type {
   ApplicationListQuery,
@@ -8,6 +8,8 @@ import type {
 } from "@agromilk/shared";
 import { db } from "../../db/index.js";
 import { applications } from "../../db/schema.js";
+import { env } from "../../config/env.js";
+import { getBusinessDateRange } from "../../lib/business-date-range.js";
 
 export type Application = InferSelectModel<typeof applications>;
 
@@ -47,18 +49,18 @@ export class ApplicationRepository {
     if (query.status) conditions.push(eq(applications.status, query.status));
     if (query.search) {
       const pattern = `%${query.search}%`;
-      conditions.push(
-        or(
-          ilike(applications.name, pattern),
-          ilike(applications.phone, pattern),
-          ilike(applications.email, pattern),
-        )!,
+      const searchCondition = or(
+        ilike(applications.name, pattern),
+        ilike(applications.phone, pattern),
+        ilike(applications.email, pattern),
       );
+      if (searchCondition) conditions.push(searchCondition);
     }
-    if (query.from)
-      conditions.push(gte(applications.createdAt, new Date(`${query.from}T00:00:00.000Z`)));
-    if (query.to)
-      conditions.push(lte(applications.createdAt, new Date(`${query.to}T23:59:59.999Z`)));
+    if (query.from || query.to) {
+      const range = getBusinessDateRange(query);
+      conditions.push(gte(applications.createdAt, range.from));
+      conditions.push(lt(applications.createdAt, range.toExclusive));
+    }
 
     const where = conditions.length ? and(...conditions) : undefined;
     const order = query.sort === "asc" ? asc(applications.createdAt) : desc(applications.createdAt);
@@ -81,21 +83,26 @@ export class ApplicationRepository {
     if (query.status) conditions.push(eq(applications.status, query.status));
     if (query.search) {
       const pattern = `%${query.search}%`;
-      conditions.push(
-        or(
-          ilike(applications.name, pattern),
-          ilike(applications.phone, pattern),
-          ilike(applications.email, pattern),
-        )!,
+      const searchCondition = or(
+        ilike(applications.name, pattern),
+        ilike(applications.phone, pattern),
+        ilike(applications.email, pattern),
       );
+      if (searchCondition) conditions.push(searchCondition);
     }
-    if (query.from)
-      conditions.push(gte(applications.createdAt, new Date(`${query.from}T00:00:00.000Z`)));
-    if (query.to)
-      conditions.push(lte(applications.createdAt, new Date(`${query.to}T23:59:59.999Z`)));
+    if (query.from || query.to) {
+      const range = getBusinessDateRange(query);
+      conditions.push(gte(applications.createdAt, range.from));
+      conditions.push(lt(applications.createdAt, range.toExclusive));
+    }
     const where = conditions.length ? and(...conditions) : undefined;
     const order = query.sort === "asc" ? asc(applications.createdAt) : desc(applications.createdAt);
-    return db.select().from(applications).where(where).orderBy(order);
+    return db
+      .select()
+      .from(applications)
+      .where(where)
+      .orderBy(order)
+      .limit(env.CSV_EXPORT_LIMIT + 1);
   }
 
   async findById(id: string) {

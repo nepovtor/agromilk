@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import fp from "fastify-plugin";
 import { db } from "../db/index.js";
-import { analyticsRoutes } from "../routes/analytics.routes.js";
+import { analyticsRoutes } from "../modules/analytics/analytics.routes.js";
 import { adminApplicationRoutes, publicApplicationRoutes } from "../routes/applications.routes.js";
 import { adminArticleRoutes, publicArticleRoutes } from "../modules/articles/article.routes.js";
 import { assistantRoutes } from "../routes/assistant.routes.js";

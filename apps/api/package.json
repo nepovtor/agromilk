@@ -7,7 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsup",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "tsx src/db/prepare-test-db.ts && NODE_ENV=test DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@127.0.0.1:55432/landing_admin_test} COOKIE_SECRET=${COOKIE_SECRET:-test-cookie-secret-at-least-32-characters} ADMIN_EMAIL=${ADMIN_EMAIL:-admin@example.com} ADMIN_PASSWORD=${ADMIN_PASSWORD:-TestPassword123!} vitest run",
+    "test": "tsx src/db/prepare-test-db.ts && NODE_ENV=test TRUST_PROXY=false DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@127.0.0.1:55432/agromilk_test} COOKIE_SECRET=${COOKIE_SECRET:-test-cookie-secret-at-least-32-characters} ADMIN_EMAIL=${ADMIN_EMAIL:-admin@example.com} ADMIN_PASSWORD=${ADMIN_PASSWORD:-TestPassword123!} vitest run",
     "start": "node dist/server.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/db/migrate.ts",

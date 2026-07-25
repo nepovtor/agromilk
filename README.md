@@ -206,12 +206,16 @@ pnpm smoke-test
 cp .env.example .env
 # Задайте безопасные COOKIE_SECRET, ADMIN_EMAIL и ADMIN_PASSWORD
 docker compose build
+docker compose up -d postgres
+docker compose run --rm app node dist/db/migrate.js
+# Только при первоначальном создании администратора:
+docker compose run --rm app node dist/db/seed.js
 docker compose up -d
 curl http://localhost:3000/api/v1/health
 docker compose down
 ```
 
-Образ собирается в несколько стадий, запускается от пользователя `node`, имеет встроенный healthcheck и обслуживает API, SPA и `/uploads`. Именованный volume сохраняет PostgreSQL и загрузки между перезапусками.
+Контейнер приложения не запускает миграции и seed автоматически. Миграции выполняются отдельной командой под advisory lock, а seed — только явно. Образ собирается в несколько стадий, запускается от пользователя `node`, имеет встроенный healthcheck и обслуживает API, SPA и `/uploads`. Именованный volume сохраняет PostgreSQL и загрузки между перезапусками.
 
 ## База данных и администратор
 
@@ -222,8 +226,8 @@ docker compose down
 Резервная копия PostgreSQL:
 
 ```bash
-docker compose exec -T postgres pg_dump -U postgres -d landing_admin -Fc > landing_admin.dump
-docker compose exec -T postgres pg_restore -U postgres -d landing_admin --clean --if-exists < landing_admin.dump
+docker compose exec -T postgres pg_dump -U postgres -d agromilk -Fc > agromilk.dump
+docker compose exec -T postgres pg_restore -U postgres -d agromilk --clean --if-exists < agromilk.dump
 ```
 
 Отдельно копируйте volume uploads. В Render он монтируется в `/var/data/uploads`; для нескольких экземпляров приложения следует перейти на S3-совместимое хранилище.

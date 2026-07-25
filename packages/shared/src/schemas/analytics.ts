@@ -7,6 +7,7 @@ export const statisticsRangeQuerySchema = z.object({
 });
 
 export const analyticsEventSchema = z.object({
+  eventId: z.string().uuid(),
   visitorId: z.string().uuid(),
   sessionId: z.string().uuid(),
   eventType: z.enum(["page_view"]),

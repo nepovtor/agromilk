@@ -21,10 +21,9 @@ RUN pnpm install --prod --frozen-lockfile
 COPY --from=build /app/apps/api/dist ./apps/api/dist
 COPY --from=build /app/apps/api/drizzle ./apps/api/drizzle
 COPY --from=build /app/apps/web/dist ./apps/web/dist
-COPY docker-entrypoint.sh ./docker-entrypoint.sh
-RUN chmod +x ./docker-entrypoint.sh && mkdir -p /app/apps/api/uploads && chown -R node:node /app
+RUN mkdir -p /app/apps/api/uploads && chown -R node:node /app
 WORKDIR /app/apps/api
 EXPOSE 3000
 USER node
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 CMD wget -q -O /dev/null "http://127.0.0.1:${PORT:-3000}/api/v1/health" || exit 1
-ENTRYPOINT ["/app/docker-entrypoint.sh"]
+CMD ["node", "dist/server.js"]

@@ -1,132 +1,21 @@
-import { and, count, countDistinct, eq, gte, lte, sql } from "drizzle-orm";
 import type { FastifyPluginAsync } from "fastify";
-import { statisticsRangeQuerySchema } from "@agromilk/shared";
-import { db } from "../../db/index.js";
-import { analyticsEvents, applications } from "../../db/schema.js";
 import { requireAdmin } from "../../lib/auth.js";
-import { ValidationError } from "../../lib/errors.js";
 import { parseOrThrow } from "../../lib/http.js";
+import { statisticsRangeQuerySchema } from "./statistics.schemas.js";
+import { StatisticsService } from "./statistics.service.js";
 
-function getRange(query: { from?: string; to?: string }) {
-  const now = new Date();
-  const defaultFrom = new Date(now);
-  defaultFrom.setUTCDate(defaultFrom.getUTCDate() - 29);
-  defaultFrom.setUTCHours(0, 0, 0, 0);
-  const from = query.from ? new Date(`${query.from}T00:00:00.000Z`) : defaultFrom;
-  const to = query.to ? new Date(`${query.to}T23:59:59.999Z`) : now;
-  if (Number.isNaN(from.valueOf()) || Number.isNaN(to.valueOf()) || from > to)
-    throw new ValidationError("Некорректный диапазон дат", {
-      from: ["Укажите корректную начальную дату"],
-      to: ["Укажите корректную конечную дату"],
-    });
-  if (to.valueOf() - from.valueOf() > 366 * 24 * 60 * 60 * 1000)
-    throw new ValidationError("Диапазон дат не должен превышать 366 дней", {
-      to: ["Диапазон дат не должен превышать 366 дней"],
-    });
-  return { from, to };
-}
+const statisticsService = new StatisticsService();
 
 export const statisticsRoutes: FastifyPluginAsync = async (app) => {
   app.addHook("preHandler", requireAdmin);
 
   app.get("/summary", async (request) => {
-    const range = getRange(parseOrThrow(statisticsRangeQuerySchema, request.query));
-    const eventWhere = and(
-      eq(analyticsEvents.eventType, "page_view"),
-      gte(analyticsEvents.createdAt, range.from),
-      lte(analyticsEvents.createdAt, range.to),
-    );
-    const appWhere = and(
-      gte(applications.createdAt, range.from),
-      lte(applications.createdAt, range.to),
-    );
-    const [eventStats, appStats] = await Promise.all([
-      db
-        .select({ visitors: countDistinct(analyticsEvents.visitorId), pageViews: count() })
-        .from(analyticsEvents)
-        .where(eventWhere),
-      db
-        .select({
-          applications: count(),
-          convertedVisitors: countDistinct(applications.visitorId),
-        })
-        .from(applications)
-        .where(appWhere),
-    ]);
-    const visitors = Number(eventStats[0]?.visitors ?? 0);
-    const pageViews = Number(eventStats[0]?.pageViews ?? 0);
-    const applicationCount = Number(appStats[0]?.applications ?? 0);
-    const convertedVisitors = Number(appStats[0]?.convertedVisitors ?? 0);
-    return {
-      visitors,
-      pageViews,
-      applications: applicationCount,
-      conversionRate:
-        visitors > 0 ? Number(((convertedVisitors / visitors) * 100).toFixed(2)) : 0,
-    };
+    const query = parseOrThrow(statisticsRangeQuerySchema, request.query);
+    return statisticsService.summary(query);
   });
 
   app.get("/timeline", async (request) => {
-    const range = getRange(parseOrThrow(statisticsRangeQuerySchema, request.query));
-
-    const [eventsByDate, applicationsByDate] = await Promise.all([
-      db
-        .select({
-          date: sql<string>`to_char(date_trunc('day', ${analyticsEvents.createdAt}), 'YYYY-MM-DD')`,
-          visitors: countDistinct(analyticsEvents.visitorId),
-          pageViews: count(),
-        })
-        .from(analyticsEvents)
-        .where(
-          and(
-            eq(analyticsEvents.eventType, "page_view"),
-            gte(analyticsEvents.createdAt, range.from),
-            lte(analyticsEvents.createdAt, range.to),
-          ),
-        )
-        .groupBy(sql`date_trunc('day', ${analyticsEvents.createdAt})`)
-        .orderBy(sql`date_trunc('day', ${analyticsEvents.createdAt})`),
-      db
-        .select({
-          date: sql<string>`to_char(date_trunc('day', ${applications.createdAt}), 'YYYY-MM-DD')`,
-          applications: count(),
-        })
-        .from(applications)
-        .where(and(gte(applications.createdAt, range.from), lte(applications.createdAt, range.to)))
-        .groupBy(sql`date_trunc('day', ${applications.createdAt})`)
-        .orderBy(sql`date_trunc('day', ${applications.createdAt})`),
-    ]);
-
-    const map = new Map<
-      string,
-      { date: string; visitors: number; pageViews: number; applications: number }
-    >();
-    for (const row of eventsByDate)
-      map.set(row.date, {
-        date: row.date,
-        visitors: Number(row.visitors),
-        pageViews: Number(row.pageViews),
-        applications: 0,
-      });
-    for (const row of applicationsByDate) {
-      const item = map.get(row.date) ?? {
-        date: row.date,
-        visitors: 0,
-        pageViews: 0,
-        applications: 0,
-      };
-      item.applications = Number(row.applications);
-      map.set(row.date, item);
-    }
-    const cursor = new Date(range.from);
-    cursor.setUTCHours(0, 0, 0, 0);
-    const lastDate = new Date(range.to);
-    lastDate.setUTCHours(0, 0, 0, 0);
-    while (cursor <= lastDate) {
-      const date = cursor.toISOString().slice(0, 10);
-      if (!map.has(date)) map.set(date, { date, visitors: 0, pageViews: 0, applications: 0 });
-      cursor.setUTCDate(cursor.getUTCDate() + 1);
-    }
-    return { items: [...map.values()].sort((a, b) => a.date.localeCompare(b.date)) };
+    const query = parseOrThrow(statisticsRangeQuerySchema, request.query);
+    return statisticsService.timeline(query);
   });
 };

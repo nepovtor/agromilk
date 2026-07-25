@@ -42,10 +42,10 @@ build:
 	$(COMPOSE) build
 
 migrate:
-	$(COMPOSE) exec app node dist/db/migrate.js
+	$(COMPOSE) run --rm app node dist/db/migrate.js
 
 seed:
-	$(COMPOSE) exec app node dist/db/seed.js
+	$(COMPOSE) run --rm app node dist/db/seed.js
 
 test:
 	$(PNPM) test

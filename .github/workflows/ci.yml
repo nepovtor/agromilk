@@ -12,21 +12,20 @@ jobs:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_DB: landing_admin
+          POSTGRES_DB: agromilk
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres -d landing_admin"
+          --health-cmd "pg_isready -U postgres -d agromilk"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 20
     env:
-      NODE_ENV: production
       HOST: 127.0.0.1
       PORT: 3100
-      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/landing_admin
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/agromilk
       DATABASE_SSL: false
       COOKIE_SECRET: ci-cookie-secret-at-least-32-characters-long
       ADMIN_EMAIL: admin@example.com
@@ -46,8 +45,13 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm lint
-      - run: pnpm test
-      - run: pnpm build
+      - run: pnpm db:migrate
       - run: pnpm db:migrate
       - run: pnpm seed
+      - run: pnpm test
+        env:
+          NODE_ENV: test
+      - run: pnpm build
+        env:
+          NODE_ENV: production
       - run: pnpm smoke-test

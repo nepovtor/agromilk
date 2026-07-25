@@ -73,12 +73,12 @@ Docker-образ уже содержит собранный frontend, поэт�
 ## Вариант 3. Любой Docker-хостинг
 
 ```bash
-docker build -t landing-admin-platform .
+docker build -t agromilk-platform .
 docker run -p 3000:3000 \
   --env-file .env \
   -e DATABASE_URL='postgresql://...' \
-  -v landing_uploads:/app/apps/api/uploads \
-  landing-admin-platform
+  -v agromilk_uploads:/app/apps/api/uploads \
+  agromilk-platform
 ```
 
 Для production необходим постоянный том для каталога загрузок. Без него изображения будут удалены при пересоздании контейнера.

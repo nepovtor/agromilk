@@ -7,7 +7,7 @@ import {
   updateApplicationSchema,
 } from "@agromilk/shared";
 import { requireAdmin } from "../lib/auth.js";
-import { getClientIp, parseOrThrow } from "../lib/http.js";
+import { parseOrThrow } from "../lib/http.js";
 import { applicationNotificationPublisher } from "../modules/applications/application-notification.publisher.js";
 import { ApplicationRepository } from "../modules/applications/application.repository.js";
 import { ApplicationService } from "../modules/applications/application.service.js";
@@ -24,7 +24,7 @@ export const publicApplicationRoutes: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       const data = parseOrThrow(createApplicationSchema, request.body);
       const result = await applicationService.create(data, {
-        ipAddress: getClientIp(request.headers, request.ip),
+        ipAddress: request.ip,
         userAgent: request.headers["user-agent"],
         logger: request.log,
       });

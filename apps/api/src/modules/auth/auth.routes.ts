@@ -1,17 +1,15 @@
 import { randomBytes } from "node:crypto";
-import bcrypt from "bcryptjs";
-import { and, eq } from "drizzle-orm";
 import type { FastifyPluginAsync, FastifyReply } from "fastify";
-import { googleCallbackQuerySchema, loginSchema } from "@agromilk/shared";
 import { env, useSecureCookies } from "../../config/env.js";
-import { db } from "../../db/index.js";
-import { admins, adminSessions } from "../../db/schema.js";
-import { createAdminSession, hashToken, requireAdmin, SESSION_COOKIE } from "../../lib/auth.js";
+import { createAdminSession, requireAdmin, SESSION_COOKIE } from "../../lib/auth.js";
 import { parseOrThrow } from "../../lib/http.js";
+import { googleCallbackQuerySchema, loginSchema } from "./auth.schemas.js";
+import { AuthService } from "./auth.service.js";
 
 const GOOGLE_STATE_COOKIE = "google_oauth_state";
 const googleEnabled = Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);
 const googleCallbackUrl = `${env.APP_URL.replace(/\/$/, "")}/api/v1/auth/google/callback`;
+const authService = new AuthService();
 
 function appRedirect(path: string) {
   return `${env.APP_ORIGIN.replace(/\/$/, "")}${path}`;
@@ -27,22 +25,13 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     { config: { rateLimit: { max: 10, timeWindow: "15 minutes" } } },
     async (request, reply) => {
       const data = parseOrThrow(loginSchema, request.body);
-
-      const email = data.email.toLowerCase();
-      const [admin] = await db
-        .select()
-        .from(admins)
-        .where(and(eq(admins.email, email), eq(admins.isActive, 1)))
-        .limit(1);
-      if (!admin || !(await bcrypt.compare(data.password, admin.passwordHash))) {
+      const admin = await authService.authenticate(data.email, data.password);
+      if (!admin)
         return reply
           .code(401)
           .send({ error: "INVALID_CREDENTIALS", message: "Неверный email или пароль" });
-      }
-
       await createAdminSession(admin.id, request, reply);
-
-      return { user: { id: admin.id, email: admin.email, name: admin.name, role: admin.role } };
+      return { user: authService.toPublicUser(admin) };
     },
   );
 
@@ -65,15 +54,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         signed: true,
         maxAge: 10 * 60,
       });
-      const params = new URLSearchParams({
-        client_id: env.GOOGLE_CLIENT_ID!,
-        redirect_uri: googleCallbackUrl,
-        response_type: "code",
-        scope: "openid email profile",
-        state,
-        prompt: "select_account",
-      });
-      return reply.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
+      return reply.redirect(authService.googleAuthorizationUrl(state, googleCallbackUrl));
     },
   );
 
@@ -85,54 +66,20 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     if (!query.success || query.data.error) return redirectToLogin(clearState(), "cancelled");
     const signedState = request.cookies[GOOGLE_STATE_COOKIE];
     const savedState = signedState ? request.unsignCookie(signedState) : null;
-    if (
-      !query.data.code ||
-      !query.data.state ||
-      !savedState?.valid ||
-      savedState.value !== query.data.state
-    ) {
+    if (!query.data.code || !query.data.state || !savedState?.valid || savedState.value !== query.data.state)
       return redirectToLogin(clearState(), "invalid_state");
-    }
     clearState();
 
     try {
-      const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-        method: "POST",
-        headers: { "content-type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          code: query.data.code,
-          client_id: env.GOOGLE_CLIENT_ID!,
-          client_secret: env.GOOGLE_CLIENT_SECRET!,
-          redirect_uri: googleCallbackUrl,
-          grant_type: "authorization_code",
-        }),
-      });
-      if (!tokenResponse.ok)
-        throw new Error(`Google token exchange failed: ${tokenResponse.status}`);
-      const token = (await tokenResponse.json()) as { access_token?: string };
-      if (!token.access_token) throw new Error("Google did not return an access token");
-      const profileResponse = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
-        headers: { authorization: `Bearer ${token.access_token}` },
-      });
-      if (!profileResponse.ok)
-        throw new Error(`Google profile request failed: ${profileResponse.status}`);
-      const profile = (await profileResponse.json()) as {
-        email?: string;
-        email_verified?: boolean;
-      };
-      if (!profile.email || profile.email_verified !== true)
-        return redirectToLogin(reply, "email_not_verified");
-      const email = profile.email.toLowerCase();
-      const [admin] = await db
-        .select()
-        .from(admins)
-        .where(and(eq(admins.email, email), eq(admins.isActive, 1)))
-        .limit(1);
+      const admin = await authService.authenticateGoogle(query.data.code, googleCallbackUrl);
       if (!admin) return redirectToLogin(reply, "access_denied");
       await createAdminSession(admin.id, request, reply);
       return reply.redirect(appRedirect("/admin"));
     } catch (error) {
-      request.log.error({ err: error }, "Google OAuth failed");
+      request.log.error(
+        { error: error instanceof Error ? { name: error.name, message: error.message } : { name: "UnknownError" } },
+        "Google OAuth failed",
+      );
       return redirectToLogin(reply, "provider_error");
     }
   });
@@ -143,11 +90,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     const signed = request.cookies[SESSION_COOKIE];
     if (signed) {
       const unsigned = request.unsignCookie(signed);
-      if (unsigned.valid && unsigned.value) {
-        await db
-          .delete(adminSessions)
-          .where(eq(adminSessions.tokenHash, hashToken(unsigned.value)));
-      }
+      if (unsigned.valid && unsigned.value) await authService.logout(unsigned.value);
     }
     reply.clearCookie(SESSION_COOKIE, { path: "/" });
     return { success: true };

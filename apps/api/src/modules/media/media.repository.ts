@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { articles, mediaFiles, products } from "../../db/schema.js";
 
@@ -23,11 +23,16 @@ export class MediaRepository {
   }
 
   async isReferenced(url: string) {
-    const [article, product] = await Promise.all([
+    const [article, embeddedArticle, product] = await Promise.all([
       db
         .select({ id: articles.id })
         .from(articles)
         .where(eq(articles.coverImageUrl, url))
+        .limit(1),
+      db
+        .select({ id: articles.id })
+        .from(articles)
+        .where(sql`position(${url} in ${articles.content}) > 0`)
         .limit(1),
       db
         .select({ id: products.id })
@@ -35,7 +40,7 @@ export class MediaRepository {
         .where(eq(products.imageUrl, url))
         .limit(1),
     ]);
-    return Boolean(article[0] || product[0]);
+    return Boolean(article[0] || embeddedArticle[0] || product[0]);
   }
 
   delete(id: string) {

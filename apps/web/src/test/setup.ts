@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach } from "vitest";
 
-function createStorage(): Storage {
+export function createStorage(): Storage {
   const values = new Map<string, string>();
   return {
     get length() {
@@ -16,7 +16,11 @@ function createStorage(): Storage {
   };
 }
 
-Object.defineProperty(window, "localStorage", { value: createStorage(), configurable: true });
-Object.defineProperty(window, "sessionStorage", { value: createStorage(), configurable: true });
+export function installTestStorage() {
+  Object.defineProperty(window, "localStorage", { value: createStorage(), configurable: true });
+  Object.defineProperty(window, "sessionStorage", { value: createStorage(), configurable: true });
+}
+
+installTestStorage();
 
 afterEach(() => cleanup());

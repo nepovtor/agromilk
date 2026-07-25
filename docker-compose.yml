@@ -3,7 +3,7 @@ services:
     image: postgres:17-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: landing_admin
+      POSTGRES_DB: agromilk
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
@@ -11,7 +11,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d landing_admin"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d agromilk"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -24,9 +24,11 @@ services:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 3000
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/landing_admin
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/agromilk
       DATABASE_SSL: "false"
       UPLOAD_DIR: uploads
+      TRUST_PROXY: "false"
+      BUSINESS_TIME_ZONE: Europe/Minsk
       OLLAMA_URL: http://host.docker.internal:11434
       OLLAMA_MODEL: qwen2.5:3b
     extra_hosts:

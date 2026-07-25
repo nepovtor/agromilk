@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import type { FastifyBaseLogger } from "fastify";
 import { ConflictError, NotFoundError } from "../../lib/errors.js";
 import { serializeDates } from "../../lib/serialize.js";
 import { MediaRepository } from "./media.repository.js";
@@ -13,7 +14,12 @@ type UploadMediaInput = {
 };
 
 function isMissingFile(error: unknown) {
-  return (error as NodeJS.ErrnoException)?.code === "ENOENT";
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === "ENOENT"
+  );
 }
 
 export class MediaService {
@@ -22,7 +28,7 @@ export class MediaService {
     private readonly storage = new MediaStorage(),
   ) {}
 
-  async upload(input: UploadMediaInput) {
+  async upload(input: UploadMediaInput, logger: FastifyBaseLogger) {
     const storedName = `${randomUUID()}.${input.extension}`;
     await this.storage.write(storedName, input.buffer);
     try {
@@ -36,7 +42,9 @@ export class MediaService {
       });
       return serializeDates(record);
     } catch (error) {
-      await this.storage.remove(storedName).catch(() => undefined);
+      await this.storage.remove(storedName).catch((cleanupError: unknown) =>
+        logger.error({ err: cleanupError, storedName }, "Failed to roll back media file"),
+      );
       throw error;
     }
   }
@@ -46,7 +54,23 @@ export class MediaService {
     return { items: items.map(serializeDates) };
   }
 
-  async delete(id: string) {
+  async cleanupOrphans(logger: FastifyBaseLogger) {
+    const olderThan = new Date(Date.now() - 60 * 60 * 1000);
+    const files = await this.storage.quarantineFiles(olderThan).catch((error: unknown) => {
+      logger.error({ err: error }, "Failed to inspect media quarantine files");
+      return [];
+    });
+    await Promise.all(
+      files.map((name) =>
+        this.storage.remove(name).catch((error: unknown) =>
+          logger.error({ err: error, name }, "Failed to remove orphaned media quarantine file"),
+        ),
+      ),
+    );
+  }
+
+  async delete(id: string, logger: FastifyBaseLogger) {
+    await this.cleanupOrphans(logger);
     const record = await this.repository.findById(id);
     if (!record) throw new NotFoundError("Файл не найден");
     if (await this.repository.isReferenced(record.url))
@@ -66,11 +90,16 @@ export class MediaService {
       if (!deleted) throw new NotFoundError("Файл не найден");
     } catch (error) {
       if (quarantined)
-        await this.storage.move(quarantinedName, record.storedName).catch(() => undefined);
+        await this.storage.move(quarantinedName, record.storedName).catch((restoreError: unknown) =>
+          logger.error({ err: restoreError, quarantinedName }, "Failed to restore quarantined media"),
+        );
       throw error;
     }
 
-    if (quarantined) await this.storage.remove(quarantinedName);
-    return { success: true as const };
+    if (quarantined)
+      await this.storage.remove(quarantinedName).catch((cleanupError: unknown) =>
+        logger.error({ err: cleanupError, quarantinedName }, "Failed to finalize media cleanup"),
+      );
+    return { success: true };
   }
 }

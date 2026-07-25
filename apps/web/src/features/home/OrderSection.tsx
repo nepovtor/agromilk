@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { Link } from "wouter";
 import { api } from "@/api";
 import { ArrowRight } from "@/components/icons";
-import { getVisitorId } from "@/lib/analyticsIdentity";
+import { getVisitorId, safeRandomUUID } from "@/lib/analyticsIdentity";
 
 const initialValues = {
   name: "",
@@ -36,7 +36,7 @@ export function OrderSection({ products, request }: OrderSectionProps) {
     ? products.find((item) => item.id === request.productId)
     : undefined;
   const submissionInFlight = useRef(false);
-  const [submissionId, setSubmissionId] = useState(() => crypto.randomUUID());
+  const [submissionId, setSubmissionId] = useState(() => safeRandomUUID());
   const [selectedProductId, setSelectedProductId] = useState(requestedProduct?.id ?? "");
   const [serverError, setServerError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -74,7 +74,7 @@ export function OrderSection({ products, request }: OrderSectionProps) {
       setSuccess(true);
       setSelectedProductId("");
       reset(initialValues);
-      setSubmissionId(crypto.randomUUID());
+      setSubmissionId(safeRandomUUID());
     } catch (error) {
       setServerError(error instanceof Error ? error.message : "Не удалось отправить заявку");
     }

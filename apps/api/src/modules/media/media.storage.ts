@@ -1,4 +1,4 @@
-import { mkdir, rename, unlink, writeFile } from "node:fs/promises";
+import { mkdir, readdir, rename, stat, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { env } from "../../config/env.js";
 
@@ -16,6 +16,17 @@ export class MediaStorage {
 
   move(source: string, target: string) {
     return rename(this.resolve(source), this.resolve(target));
+  }
+
+  async quarantineFiles(olderThan: Date) {
+    await mkdir(this.directory, { recursive: true });
+    const names = (await readdir(this.directory)).filter((name) => name.includes(".deleting-"));
+    const stale: string[] = [];
+    for (const name of names) {
+      const details = await stat(this.resolve(name));
+      if (details.mtime < olderThan) stale.push(name);
+    }
+    return stale;
   }
 
   private resolve(storedName: string) {

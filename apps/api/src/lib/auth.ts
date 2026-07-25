@@ -4,7 +4,6 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { env, useSecureCookies } from "../config/env.js";
 import { db } from "../db/index.js";
 import { admins, adminSessions } from "../db/schema.js";
-import { getClientIp } from "./http.js";
 
 export const SESSION_COOKIE = "admin_session";
 export const hashToken = (token: string) => createHash("sha256").update(token).digest("hex");
@@ -21,7 +20,7 @@ export async function createAdminSession(
     adminId,
     tokenHash: hashToken(token),
     expiresAt,
-    ipAddress: getClientIp(request.headers, request.ip),
+    ipAddress: request.ip,
     userAgent: request.headers["user-agent"],
   });
   await db

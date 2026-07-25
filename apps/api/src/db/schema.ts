@@ -157,6 +157,7 @@ export const analyticsEvents = pgTable(
   "analytics_events",
   {
     id: uuid("id").primaryKey().defaultRandom(),
+    eventId: uuid("event_id").notNull(),
     visitorId: uuid("visitor_id").notNull(),
     sessionId: uuid("session_id").notNull(),
     eventType: varchar("event_type", { length: 50 }).notNull(),
@@ -170,6 +171,7 @@ export const analyticsEvents = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
+    uniqueIndex("analytics_event_id_unique").on(table.eventId),
     index("analytics_created_idx").on(table.createdAt),
     index("analytics_visitor_idx").on(table.visitorId),
     index("analytics_visitor_created_idx").on(table.visitorId, table.createdAt),

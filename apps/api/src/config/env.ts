@@ -1,4 +1,5 @@
 import path from "node:path";
+import { isIP } from "node:net";
 import { config } from "dotenv";
 import { z } from "zod";
 
@@ -16,6 +17,39 @@ const optionalSecret = z.preprocess(
   z.string().trim().min(1).optional(),
 );
 
+function isProxyAddress(value: string) {
+  const [address, prefix, ...extra] = value.split("/");
+  const version = isIP(address);
+  if (!version || extra.length) return false;
+  if (prefix === undefined) return true;
+  const prefixLength = Number(prefix);
+  return (
+    Number.isInteger(prefixLength) &&
+    prefixLength >= 0 &&
+    prefixLength <= (version === 4 ? 32 : 128)
+  );
+}
+
+const trustProxyFromEnv = z.preprocess((value) => {
+  if (value === undefined || value === "" || value === false || value === "false") return false;
+  if (typeof value !== "string") return value;
+  if (["1", "true", "yes", "on"].includes(value.toLowerCase())) return true;
+  const proxies = value.split(",").map((item) => item.trim()).filter(Boolean);
+  return proxies.length === 1 ? proxies[0] : proxies;
+}, z.union([
+  z.literal(false),
+  z.string().refine(isProxyAddress, "Укажите IP-адрес или CIDR доверенного proxy"),
+  z.array(z.string().refine(isProxyAddress, "Укажите IP-адрес или CIDR доверенного proxy")).min(1),
+]));
+const timeZoneSchema = z.string().default("Europe/Minsk").refine((value) => {
+  try {
+    new Intl.DateTimeFormat("en", { timeZone: value }).format();
+    return true;
+  } catch {
+    return false;
+  }
+}, "Некорректный часовой пояс");
+
 const envSchema = z
   .object({
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
@@ -29,6 +63,7 @@ const envSchema = z
     SESSION_TTL_DAYS: z.coerce.number().int().positive().default(14),
     GOOGLE_CLIENT_ID: optionalSecret,
     GOOGLE_CLIENT_SECRET: optionalSecret,
+    GOOGLE_OAUTH_TIMEOUT_MS: z.coerce.number().int().min(1000).max(30000).default(8000),
     ADMIN_EMAIL: z
       .string()
       .trim()
@@ -62,7 +97,12 @@ const envSchema = z
       .positive()
       .max(25 * 1024 * 1024)
       .default(5 * 1024 * 1024),
-    TRUST_PROXY: booleanFromEnv.default(true),
+    MAX_IMAGE_WIDTH: z.coerce.number().int().positive().max(20000).default(8000),
+    MAX_IMAGE_HEIGHT: z.coerce.number().int().positive().max(20000).default(8000),
+    MAX_IMAGE_PIXELS: z.coerce.number().int().positive().max(100_000_000).default(40_000_000),
+    CSV_EXPORT_LIMIT: z.coerce.number().int().positive().max(100_000).default(10_000),
+    BUSINESS_TIME_ZONE: timeZoneSchema,
+    TRUST_PROXY: trustProxyFromEnv.default(false),
     OLLAMA_URL: z.string().url().default("http://127.0.0.1:11434"),
     OLLAMA_MODEL: z.string().min(1).default("qwen2.5:3b"),
   })

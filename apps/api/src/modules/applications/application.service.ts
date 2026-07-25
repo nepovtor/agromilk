@@ -4,7 +4,8 @@ import type {
   CreateApplicationInput,
   UpdateApplicationInput,
 } from "@agromilk/shared";
-import { NotFoundError } from "../../lib/errors.js";
+import { env } from "../../config/env.js";
+import { LimitExceededError, NotFoundError } from "../../lib/errors.js";
 import { serializeDates } from "../../lib/serialize.js";
 import type { ApplicationNotificationPublisher } from "./application-notification.publisher.js";
 import { ApplicationRepository } from "./application.repository.js";
@@ -50,6 +51,10 @@ export class ApplicationService {
 
   async exportCsv(query: ApplicationListQuery) {
     const items = await this.repository.listForExport(query);
+    if (items.length > env.CSV_EXPORT_LIMIT)
+      throw new LimitExceededError(
+        `Экспорт ограничен ${env.CSV_EXPORT_LIMIT} заявками. Уточните фильтры.`,
+      );
     const statusLabels = {
       new: "Новая",
       viewed: "Просмотрена",
