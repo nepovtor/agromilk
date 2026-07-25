@@ -62,8 +62,7 @@ export class ApplicationService {
       completed: "Завершена",
       rejected: "Отклонена",
     } as const;
-    const escape = (value: string | null | undefined) =>
-      `"${(value ?? "").replace(/"/g, '""')}"`;
+    const escape = (value: string | null | undefined) => `"${(value ?? "").replace(/"/g, '""')}"`;
     const rows = [
       ["Дата", "Клиент", "Телефон", "Email", "Сообщение", "Статус", "Комментарий", "Источник"],
       ...items.map((item) => [

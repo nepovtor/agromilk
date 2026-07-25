@@ -1,4 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { eq } from "drizzle-orm";
+import { db } from "./db/index.js";
+import { articleMedia, articles, mediaFiles } from "./db/schema.js";
+import { backfillArticleMedia } from "./modules/articles/article-media-backfill.service.js";
 import type { createApiContext } from "./test/api-context.js";
 import { createApiContext as setup } from "./test/api-context.js";
 
@@ -12,6 +16,36 @@ afterAll(async () => {
 });
 
 describe("articles API", () => {
+  it("backfills content media relations for legacy articles idempotently", async () => {
+    const storedName = `${crypto.randomUUID()}.webp`;
+    const [media] = await db
+      .insert(mediaFiles)
+      .values({
+        originalName: "legacy.webp",
+        storedName,
+        mimeType: "image/webp",
+        size: 1,
+        url: `/uploads/${storedName}`,
+      })
+      .returning();
+    const [article] = await db
+      .insert(articles)
+      .values({
+        title: "Legacy content media",
+        slug: `legacy-media-${crypto.randomUUID()}`,
+        content: `<p><img src="${media.url}" alt="Legacy image"></p>`,
+      })
+      .returning();
+
+    await expect(backfillArticleMedia()).resolves.toMatchObject({ relationsCreated: 1 });
+    await expect(backfillArticleMedia()).resolves.toMatchObject({ relationsCreated: 0 });
+    await expect(
+      db.select().from(articleMedia).where(eq(articleMedia.articleId, article.id)),
+    ).resolves.toEqual([
+      expect.objectContaining({ articleId: article.id, mediaId: media.id, usageType: "content" }),
+    ]);
+  });
+
   it("keeps drafts private and sanitizes published content", async () => {
     const slug = `article-${Date.now()}`;
     const created = await context.app.inject({

@@ -1,5 +1,7 @@
 dist/
 coverage/
+test-results/
 node_modules/
 apps/api/uploads/
+apps/api/drizzle/meta/
 *.tsbuildinfo

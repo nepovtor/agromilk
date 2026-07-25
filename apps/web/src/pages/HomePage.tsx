@@ -7,10 +7,7 @@ import { HomeIntro } from "@/features/home/HomeIntro";
 import { HomeModals } from "@/features/home/HomeModals";
 import { HomeSupport } from "@/features/home/HomeSupport";
 import { OrderSection, type OrderRequest } from "@/features/home/OrderSection";
-import {
-  ProductCatalog,
-  type ProductPopover,
-} from "@/features/home/ProductCatalog";
+import { ProductCatalog, type ProductPopover } from "@/features/home/ProductCatalog";
 
 export function HomePage() {
   const [products, setProducts] = useState<ProductRecord[]>([]);

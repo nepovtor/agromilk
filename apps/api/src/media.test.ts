@@ -23,7 +23,10 @@ describe("media API", () => {
     const response = await context.app.inject({
       method: "POST",
       url: "/api/v1/admin/media",
-      headers: { cookie: context.cookie, "content-type": `multipart/form-data; boundary=${boundary}` },
+      headers: {
+        cookie: context.cookie,
+        "content-type": `multipart/form-data; boundary=${boundary}`,
+      },
       payload: body,
     });
     expect(response.statusCode).toBe(400);
@@ -43,7 +46,10 @@ describe("media API", () => {
     const uploaded = await context.app.inject({
       method: "POST",
       url: "/api/v1/admin/media",
-      headers: { cookie: context.cookie, "content-type": `multipart/form-data; boundary=${boundary}` },
+      headers: {
+        cookie: context.cookie,
+        "content-type": `multipart/form-data; boundary=${boundary}`,
+      },
       payload: body,
     });
     expect(uploaded.statusCode).toBe(201);

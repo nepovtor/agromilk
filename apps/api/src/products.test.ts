@@ -42,8 +42,9 @@ describe("products API", () => {
       payload,
     });
     expect(duplicate.statusCode).toBe(409);
-    expect((await context.app.inject({ method: "GET", url: `/api/v1/products/${slug}` })).statusCode)
-      .toBe(404);
+    expect(
+      (await context.app.inject({ method: "GET", url: `/api/v1/products/${slug}` })).statusCode,
+    ).toBe(404);
     const updated = await context.app.inject({
       method: "PATCH",
       url: `/api/v1/admin/products/${id}`,

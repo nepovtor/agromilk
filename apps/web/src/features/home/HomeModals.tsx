@@ -122,7 +122,6 @@ export function HomeModals({
           </div>
         </div>
       )}
-
     </>
   );
 }

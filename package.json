@@ -24,6 +24,7 @@
     "start": "pnpm --filter @agromilk/api start",
     "smoke-test": "./scripts/ci-smoke.sh",
     "media:cleanup": "pnpm --filter @agromilk/api media:cleanup",
+    "article-media:backfill": "pnpm --filter @agromilk/api article-media:backfill",
     "test:coverage": "pnpm --filter @agromilk/shared build && pnpm --filter @agromilk/web test:coverage && pnpm --filter @agromilk/api test:coverage",
     "test:e2e": "playwright test",
     "test:e2e:ci": "playwright test --reporter=line"

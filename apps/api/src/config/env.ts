@@ -30,25 +30,36 @@ function isProxyAddress(value: string) {
   );
 }
 
-const trustProxyFromEnv = z.preprocess((value) => {
-  if (value === undefined || value === "" || value === false || value === "false") return false;
-  if (typeof value !== "string") return value;
-  if (["1", "true", "yes", "on"].includes(value.toLowerCase())) return true;
-  const proxies = value.split(",").map((item) => item.trim()).filter(Boolean);
-  return proxies.length === 1 ? proxies[0] : proxies;
-}, z.union([
-  z.literal(false),
-  z.string().refine(isProxyAddress, "Укажите IP-адрес или CIDR доверенного proxy"),
-  z.array(z.string().refine(isProxyAddress, "Укажите IP-адрес или CIDR доверенного proxy")).min(1),
-]));
-const timeZoneSchema = z.string().default("Europe/Minsk").refine((value) => {
-  try {
-    new Intl.DateTimeFormat("en", { timeZone: value }).format();
-    return true;
-  } catch {
-    return false;
-  }
-}, "Некорректный часовой пояс");
+const trustProxyFromEnv = z.preprocess(
+  (value) => {
+    if (value === undefined || value === "" || value === false || value === "false") return false;
+    if (typeof value !== "string") return value;
+    if (["1", "true", "yes", "on"].includes(value.toLowerCase())) return true;
+    const proxies = value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+    return proxies.length === 1 ? proxies[0] : proxies;
+  },
+  z.union([
+    z.literal(false),
+    z.string().refine(isProxyAddress, "Укажите IP-адрес или CIDR доверенного proxy"),
+    z
+      .array(z.string().refine(isProxyAddress, "Укажите IP-адрес или CIDR доверенного proxy"))
+      .min(1),
+  ]),
+);
+const timeZoneSchema = z
+  .string()
+  .default("Europe/Minsk")
+  .refine((value) => {
+    try {
+      new Intl.DateTimeFormat("en", { timeZone: value }).format();
+      return true;
+    } catch {
+      return false;
+    }
+  }, "Некорректный часовой пояс");
 
 const envSchema = z
   .object({

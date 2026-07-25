@@ -9,11 +9,7 @@ type ApplicationSelectionOptions = {
   setError: (error: string) => void;
 };
 
-export function useApplicationSelection({
-  items,
-  load,
-  setError,
-}: ApplicationSelectionOptions) {
+export function useApplicationSelection({ items, load, setError }: ApplicationSelectionOptions) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkStatus, setBulkStatus] = useState<ApplicationStatus>("in_progress");
   const [bulkSaving, setBulkSaving] = useState(false);

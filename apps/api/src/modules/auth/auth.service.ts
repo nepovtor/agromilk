@@ -17,7 +17,10 @@ export class AuthService {
 
   async authenticate(email: string, password: string) {
     const admin = await this.repository.findActiveAdmin(email);
-    const passwordMatches = await bcrypt.compare(password, admin?.passwordHash ?? DUMMY_PASSWORD_HASH);
+    const passwordMatches = await bcrypt.compare(
+      password,
+      admin?.passwordHash ?? DUMMY_PASSWORD_HASH,
+    );
     return admin && passwordMatches ? admin : undefined;
   }
 
@@ -52,13 +55,15 @@ export class AuthService {
       }),
       signal: AbortSignal.timeout(env.GOOGLE_OAUTH_TIMEOUT_MS),
     });
-    if (!tokenResponse.ok) throw new Error(`Google token endpoint returned ${tokenResponse.status}`);
+    if (!tokenResponse.ok)
+      throw new Error(`Google token endpoint returned ${tokenResponse.status}`);
     const token = googleTokenResponseSchema.parse(await tokenResponse.json());
     const profileResponse = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
       headers: { authorization: `Bearer ${token.access_token}` },
       signal: AbortSignal.timeout(env.GOOGLE_OAUTH_TIMEOUT_MS),
     });
-    if (!profileResponse.ok) throw new Error(`Google profile endpoint returned ${profileResponse.status}`);
+    if (!profileResponse.ok)
+      throw new Error(`Google profile endpoint returned ${profileResponse.status}`);
     const profile = googleProfileSchema.parse(await profileResponse.json());
     return this.repository.findActiveAdmin(profile.email);
   }

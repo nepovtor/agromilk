@@ -87,6 +87,20 @@ export class ArticleRepository {
       .where(inArray(mediaFiles.url, urls));
   }
 
+  listForMediaBackfill() {
+    return db.select({ id: articles.id, content: articles.content }).from(articles);
+  }
+
+  async addContentMediaRelations(articleId: string, mediaIds: string[]) {
+    if (!mediaIds.length) return 0;
+    const inserted = await db
+      .insert(articleMedia)
+      .values(mediaIds.map((mediaId) => ({ articleId, mediaId, usageType: "content" })))
+      .onConflictDoNothing()
+      .returning({ mediaId: articleMedia.mediaId });
+    return inserted.length;
+  }
+
   async createWithMedia(
     values: typeof articles.$inferInsert,
     media: Array<{ id: string; usageType: "cover" | "content" }>,

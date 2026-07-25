@@ -15,10 +15,8 @@ export function ProductCard({
   showProductDetails,
   toggleProductPopover,
 }: ProductCardProps) {
-  const compositionOpen =
-    popover?.productId === product.id && popover.kind === "composition";
-  const preparationOpen =
-    popover?.productId === product.id && popover.kind === "preparation";
+  const compositionOpen = popover?.productId === product.id && popover.kind === "composition";
+  const preparationOpen = popover?.productId === product.id && popover.kind === "preparation";
   const compositionPopoverId = `composition-${product.id}`;
   const preparationPopoverId = `preparation-${product.id}`;
 
@@ -28,9 +26,7 @@ export function ProductCard({
     >
       <div className="agro-product-card__top">
         <span className="agro-product-card__category">{product.category}</span>
-        {product.featured && (
-          <span className="agro-product-card__featured">Популярный выбор</span>
-        )}
+        {product.featured && <span className="agro-product-card__featured">Популярный выбор</span>}
       </div>
       <div className="agro-product-card__body">
         <div className="agro-product-card__image">
@@ -71,8 +67,7 @@ export function ProductCard({
           >
             <strong>Состав и показатели</strong>
             <p>
-              {product.composition ||
-                "Точные показатели и состав указаны в документации к партии."}
+              {product.composition || "Точные показатели и состав указаны в документации к партии."}
             </p>
             <button type="button" onClick={() => showProductDetails(product)}>
               Все сведения о продукте <ArrowRight size={14} />

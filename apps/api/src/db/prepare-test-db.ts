@@ -1,7 +1,6 @@
 import { Client } from "pg";
 
-const DEFAULT_TEST_DATABASE_URL =
-  "postgresql://postgres:postgres@127.0.0.1:55432/agromilk_test";
+const DEFAULT_TEST_DATABASE_URL = "postgresql://postgres:postgres@127.0.0.1:55432/agromilk_test";
 
 const quoteIdentifier = (value: string) => `"${value.replaceAll('"', '""')}"`;
 

@@ -18,8 +18,9 @@ describe("AuthService Google OAuth", () => {
     vi.stubGlobal("fetch", fetchMock);
     const { AuthService } = await import("./auth.service.js");
 
-    await expect(new AuthService().authenticateGoogle("code", "http://localhost/callback")).rejects
-      .toMatchObject({ name: "TimeoutError" });
+    await expect(
+      new AuthService().authenticateGoogle("code", "http://localhost/callback"),
+    ).rejects.toMatchObject({ name: "TimeoutError" });
     expect(fetchMock).toHaveBeenCalledOnce();
   });
 });

@@ -7,7 +7,11 @@ function jpegDimensions(buffer: Buffer) {
     if (buffer[offset] !== 0xff) break;
     const marker = buffer[offset + 1];
     const length = buffer.readUInt16BE(offset + 2);
-    if ([0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf].includes(marker))
+    if (
+      [0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf].includes(
+        marker,
+      )
+    )
       return { width: buffer.readUInt16BE(offset + 7), height: buffer.readUInt16BE(offset + 5) };
     if (length < 2) break;
     offset += length + 2;

@@ -66,7 +66,12 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     if (!query.success || query.data.error) return redirectToLogin(clearState(), "cancelled");
     const signedState = request.cookies[GOOGLE_STATE_COOKIE];
     const savedState = signedState ? request.unsignCookie(signedState) : null;
-    if (!query.data.code || !query.data.state || !savedState?.valid || savedState.value !== query.data.state)
+    if (
+      !query.data.code ||
+      !query.data.state ||
+      !savedState?.valid ||
+      savedState.value !== query.data.state
+    )
       return redirectToLogin(clearState(), "invalid_state");
     clearState();
 
@@ -77,7 +82,12 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
       return reply.redirect(appRedirect("/admin"));
     } catch (error) {
       request.log.error(
-        { error: error instanceof Error ? { name: error.name, message: error.message } : { name: "UnknownError" } },
+        {
+          error:
+            error instanceof Error
+              ? { name: error.name, message: error.message }
+              : { name: "UnknownError" },
+        },
         "Google OAuth failed",
       );
       return redirectToLogin(reply, "provider_error");
